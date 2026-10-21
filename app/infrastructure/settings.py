@@ -100,7 +100,8 @@ def load_settings() -> Settings:
             "export LLM_API_KEY=<你的密钥>；或在项目根目录创建本地 .env 文件"
             "（参考 .env.example，该文件已被 gitignore，不会入库）。"
         )
-    data_dir = Path(os.getenv("DATA_DIR", str(PROJECT_ROOT / "data")))
+    default_data_dir = "/tmp/shopmind" if os.getenv("VERCEL") == "1" else str(PROJECT_ROOT / "data")
+    data_dir = Path(os.getenv("DATA_DIR", default_data_dir))
     data_dir.mkdir(parents=True, exist_ok=True)  # SQLite 默认落在此目录，建库前必须存在
     return Settings(
         llm_base_url=llm_base_url,

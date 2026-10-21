@@ -24,11 +24,11 @@
 ## 技术栈
 
 - 前端：React 18、TypeScript、Vite，沿用对话式购物工作台交互。
-- 后端：Python 3.11+、FastAPI、Uvicorn，提供会话 API 与 SSE 事件流。
+- 后端：Python 3.12、FastAPI、Uvicorn，提供会话 API 与 SSE 事件流。
 - Agent 编排：AgentScope 2.x；项目工厂封装 MainAgent/SearchAgent，`task_dispatch` 将 SearchAgent 作为子 Agent 调度。
 - 检索：模拟商品目录、结构化过滤和候选重排；向量检索可使用 Qdrant，未配置外部服务时按本地设置运行。
-- 模型：OpenAI 兼容接口；Render Blueprint 默认配置 SiliconFlow 与 DeepSeek V3.2，密钥仅由部署环境注入。
-- 部署：Docker Web Service + Render Blueprint。前端也可单独部署，并用 `VITE_API_BASE` 指向后端。
+- 模型：OpenAI 兼容接口；Vercel 环境变量可配置 SiliconFlow 与 DeepSeek V3.2，密钥仅由部署环境注入。
+- 部署：Vercel Services 将 Vite 前端与 Python FastAPI Agent API 分成两个服务，通过同一域名按路径路由；Python 服务使用 Vercel Python Runtime。
 
 MVP 默认使用文件会话存储，关闭 Redis 队列和语义缓存，以降低部署复杂度。它适合验证对话、清单状态和增量搜索链路，不等同于带真实商品、库存、交易与用户数据的生产电商系统。
 
@@ -69,4 +69,4 @@ uv run python scripts/eval_scenarios.py --base-url https://你的后端地址
 
 ## 部署
 
-仓库包含 `render.yaml` 与 `Dockerfile`。Render 服务需要配置 `LLM_API_KEY` 后才能调用模型；成功部署后可通过 `/health` 检查服务。不要把密钥写入代码或提交到 Git。
+Vercel 项目通过仓库根目录的 `vercel.json` 声明 `web`（`frontend/`）和 `agent`（根目录 FastAPI）服务；`/commerce/*` 与 `/health` 路由到 Python Agent，其余路径路由到前端。导入项目后，在 Vercel 环境变量中配置 `LLM_API_KEY`，以及模型服务对应的 `LLM_BASE_URL`、`LLM_MODEL`、`EMBEDDING_BASE_URL`、`EMBEDDING_MODEL` 和 `EMBEDDING_DIM`。Vercel Function 的 `/tmp` 是临时目录；如需跨实例和重新部署持久保存会话，应配置托管数据库并通过 `DATABASE_URL` 注入连接串。部署后可通过 `/health` 检查 Agent 服务。不要把密钥写入代码或提交到 Git。

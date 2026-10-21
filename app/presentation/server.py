@@ -299,7 +299,10 @@ def build_app() -> FastAPI:
             raise HTTPException(status_code=400, detail=str(err)) from err
 
     # 云端镜像同时提供编译后的 React 前端；本地开发仍使用独立 Vite 服务。
-    static_dir = Path(__file__).resolve().parents[2] / "frontend-dist"
+    project_root = Path(__file__).resolve().parents[2]
+    static_dir = project_root / "frontend-dist"
+    if not static_dir.is_dir():
+        static_dir = project_root / "frontend" / "dist"
     if static_dir.is_dir() and (static_dir / "index.html").is_file():
         assets_dir = static_dir / "assets"
         if assets_dir.is_dir():
