@@ -1,0 +1,95 @@
+version: 1
+description: >-
+  Ten scripted synthetic shopping missions for ShopMind's public API smoke evaluation.
+  They are not human-user research and do not measure satisfaction.
+scenarios:
+  - id: beach-weekend
+    goal: 海边周末出行
+    turns:
+      - 周末去海边两天，帮我准备一份别漏关键东西、也别买太多的清单。
+      - 一个人，主要拍照，可能下水；预算300元，想轻便。我有双肩包、毛巾和防晒霜。
+      - 只找手机防水袋，其他已有的不用推荐；如果防水等级没写清楚请提醒我。
+    expected_slots: [手机防水袋, 防水袋]
+    existing_items: [双肩包, 毛巾, 防晒霜]
+    min_search_tasks: 1
+  - id: first-rental
+    goal: 首次租房入住
+    turns:
+      - 我第一次租房入住，不知道哪些东西要买，帮我按先后安排。
+      - 一个人住，房间有床和衣柜，不能打孔；预算800元，先解决睡觉、照明和清洁。
+      - 我有台灯和清洁工具，床品还没有。先只给床品候选，尺寸我之后确认。
+    expected_slots: [床品, 床上用品]
+    existing_items: [台灯, 清洁工具]
+    min_search_tasks: 1
+  - id: dorm-move
+    goal: 大学新生宿舍入住
+    turns:
+      - 下周第一次去大学宿舍住，帮我看看需要准备什么，尽量别重复买。
+      - 学校提供床和衣柜，宿舍不能用大功率电器，预算500元；我已有行李箱和水杯。
+      - 先找宿舍收纳和床品，水杯、行李箱不要重复推荐；电器安全要求不确定的先标出来。
+    expected_slots: [收纳, 床品]
+    existing_items: [水杯, 行李箱]
+    min_search_tasks: 1
+  - id: short-business-trip
+    goal: 两天一夜出差
+    turns:
+      - 临时要出差两天一夜，帮我准备采购清单，别把证件之类当成商品。
+      - 坐飞机，带电脑，预算400元，偏轻便；已有背包、充电器和洗漱包。
+      - 只帮我补一个行李收纳用品，已有物品不需要商品卡，电脑尺寸还没确认。
+    expected_slots: [收纳, 行李收纳]
+    existing_items: [背包, 充电器, 洗漱包]
+    min_search_tasks: 1
+  - id: road-trip
+    goal: 周末自驾出游
+    turns:
+      - 周末准备自驾出去两天，给我一份刚好够用的准备清单。
+      - 两个人，住民宿，不露营，预算600元；车里已有充电线和急救包。
+      - 我想买车载收纳，其他准备先不买；不要把民宿已经提供的床品列成待购。
+    expected_slots: [车载收纳, 收纳]
+    existing_items: [充电线, 急救包]
+    min_search_tasks: 1
+  - id: beginner-camping
+    goal: 第一次露营
+    turns:
+      - 我第一次露营，想先知道必须准备什么，怕漏买也怕一次买太多。
+      - 两个人，春天在营地过夜，预算1000元；帐篷和睡袋可以向朋友借。
+      - 先看照明和防潮用品，借来的帐篷、睡袋不买；天气和营地规则我还没确认。
+    expected_slots: [露营灯, 照明]
+    existing_items: [帐篷, 睡袋]
+    min_search_tasks: 1
+  - id: home-coffee
+    goal: 第一次在家手冲咖啡
+    turns:
+      - 第一次在家做手冲咖啡，需要买哪些东西？给我最小够用方案。
+      - 预算300元，家里有热水壶和杯子，没有磨豆机；先按容易上手考虑。
+      - 先推荐滤杯和滤纸，热水壶、杯子不用买；磨豆机放可选，不要算进必需总价。
+    expected_slots: [滤杯, 滤纸]
+    existing_items: [热水壶, 杯子]
+    min_search_tasks: 1
+  - id: birthday-gift
+    goal: 给长辈准备生日礼物
+    turns:
+      - 想给家里长辈准备生日礼物，但还没想好买什么，帮我缩小范围。
+      - 对方平时喜欢喝茶，预算200元；我不知道家里茶叶库存，也不清楚口味。
+      - 先比较茶叶礼盒和茶点两个方向，只买一份；把口味和饮食限制列为待确认，不要假设。
+    expected_slots: [茶叶, 礼盒, 茶点]
+    existing_items: []
+    min_search_tasks: 1
+  - id: pet-travel
+    goal: 带宠物短途出行
+    turns:
+      - 周末要带狗坐车出门，帮我列采购和准备清单。
+      - 一只中型犬，车程两小时，预算300元；我已有牵引绳和水碗。
+      - 先找车载宠物安全固定用品，已有牵引绳和水碗不要推荐；车型适配需要我再确认。
+    expected_slots: [宠物, 车载, 安全]
+    existing_items: [牵引绳, 水碗]
+    min_search_tasks: 1
+  - id: home-study-setup
+    goal: 在家搭建学习桌面
+    turns:
+      - 我想在家整理一个学习桌面，告诉我哪些东西值得买、哪些可以先不买。
+      - 预算500元，主要看书和用笔记本；已有书桌、台灯和插线板。
+      - 先找桌面收纳，已有物品不重复买；显示器支架是否需要取决于笔记本高度，先放待确认。
+    expected_slots: [桌面收纳, 收纳]
+    existing_items: [书桌, 台灯, 插线板]
+    min_search_tasks: 1

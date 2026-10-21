@@ -1,0 +1,5 @@
+scenario_id,run_date,run_type,public_revision,goal,api_requests,api_successes,api_failures,time_to_first_response_sec,first_stage,visible_question,checklist_specificity_1to5,purchase_prep_separated,duplicate_slots,product_cards_before_confirmation,product_stage_tested,budget_or_compare_tested,screenshot,status,main_finding
+TRIP-IT-01,2026-10-18,public API baseline,f373304,意大利城市观光一周,3,1,2,29.4,plan,0,2,0,0,0,failed_503,0,not captured,incomplete,宽泛类目；证件与保险混入采购清单；question字段没有展示；商品阶段两次503
+BEACH-02,2026-10-18,public API baseline,f373304,海边两天拍照且可能下水,1,1,0,20.2,plan,0,4,1,1,0,not tested,0,not captured,partial,物品较具体且识别已有背包与防晒；下水鞋同时列为必备和可选；关键追问未显示
+RENT-03,2026-10-18,public API baseline,f373304,小空间第一次租房入住预算800元,1,1,0,18.9,plan,0,3,0,0,0,not tested,0,not captured,partial,家具是否已有的问题只在question字段；床品清洁照明收纳仍是混合粒度
+GIFT-TEA-04,2026-10-18,public API baseline,f373304,给爱喝茶的妈妈买300元生日礼物,1,1,0,19.6,plan,0,3,0,0,0,not tested,0,not captured,partial,茶叶与茶具方向存在但范围宽；散茶或茶包追问未显示；本轮未进入商品匹配

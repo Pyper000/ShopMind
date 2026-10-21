@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: ecommerce-agent
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: LLM_BASE_URL
+        value: https://api.siliconflow.cn/v1
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: deepseek-ai/DeepSeek-V3.2
+      - key: LLM_FALLBACK_MODEL
+        value: deepseek-ai/DeepSeek-V3.2
+      - key: EMBEDDING_BASE_URL
+        value: https://api.siliconflow.cn/v1
+      - key: EMBEDDING_MODEL
+        value: BAAI/bge-m3
+      - key: EMBEDDING_DIM
+        value: "1024"
+      - key: QDRANT_URL
+        value: ""
+      - key: DATABASE_URL
+        value: file
+      - key: REDIS_URL
+        value: ""
+      - key: QUEUE_ENABLED
+        value: "0"
+      - key: SEMANTIC_CACHE_ENABLED
+        value: "0"
+      - key: DATA_DIR
+        value: /app/data
+      - key: CORS_ORIGINS
+        value: http://localhost:5173,http://127.0.0.1:5173,https://pyper000-github-io.vercel.app,https://pyper000.github.io

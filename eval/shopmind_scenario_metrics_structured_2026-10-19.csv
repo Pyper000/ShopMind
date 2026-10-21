@@ -1,0 +1,2 @@
+scenario_id,run_date,run_type,public_revision,goal,api_requests,planning_model_calls,product_model_calls,api_successes,api_failures,latency_sec,stage,confirmed_buy_slots,slots_with_candidates,slots_with_two_candidates,product_cards,required_total_cny,budget_limit_cny,budget_status,screenshot,status,main_finding
+BEACH-02-STRUCTURED,2026-10-19,public API smoke,b777516,海边两天拍照且可能下水,1,0,1,1,0,16.6,search,2,2,1,3,118,300,within_budget,not captured,pass,确认清单以结构化checklist传入；跳过重复需求解析，保留商品解释调用；2个待购槽位均有候选，防水袋有2件可比，响应从上一轮42.4秒降至16.6秒
