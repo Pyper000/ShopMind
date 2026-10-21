@@ -92,7 +92,10 @@ class Settings:
 
 
 def load_settings() -> Settings:
-    llm_base_url = os.getenv("LLM_BASE_URL", "https://api.siliconflow.cn/v1")
+    # ShopMind /commerce runs on the DeepSeek route. Normalize legacy Vercel
+    # Qwen/DashScope variables so stale deployment settings cannot silently
+    # switch the AgentScope service back to another provider.
+    llm_base_url = "https://api.siliconflow.cn/v1"
     llm_api_key = os.getenv("LLM_API_KEY", "")
     if not llm_api_key:
         raise RuntimeError(
@@ -106,7 +109,7 @@ def load_settings() -> Settings:
     return Settings(
         llm_base_url=llm_base_url,
         llm_api_key=llm_api_key,
-        llm_model=os.getenv("LLM_MODEL", "deepseek-ai/DeepSeek-V3.2"),
+        llm_model="deepseek-ai/DeepSeek-V3.2",
         port=int(os.getenv("PORT", "8000")),
         log_level=os.getenv("LOG_LEVEL", "info"),
         # embedding 默认复用 LLM 网关（OpenAI 兼容 /v1/embeddings）

@@ -96,6 +96,19 @@ class TestEngineSelection:
         monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:////tmp/explicit.db")
         assert load_settings().database_url.endswith("explicit.db")
 
+    async def test_shopmind_llm_ignores_legacy_qwen_environment(self, tmp_path, monkeypatch):
+        from app.infrastructure.settings import load_settings
+
+        monkeypatch.setenv("LLM_API_KEY", "test-key")
+        monkeypatch.setenv("LLM_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        monkeypatch.setenv("LLM_MODEL", "qwen3-max")
+        monkeypatch.setenv("DATA_DIR", str(tmp_path))
+
+        settings = load_settings()
+
+        assert settings.llm_base_url == "https://api.siliconflow.cn/v1"
+        assert settings.llm_model == "deepseek-ai/DeepSeek-V3.2"
+
 
 class TestSessionStore:
     async def test_state_roundtrip(self, engine):
