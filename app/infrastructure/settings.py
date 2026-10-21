@@ -92,7 +92,7 @@ class Settings:
 
 
 def load_settings() -> Settings:
-    llm_base_url = os.getenv("LLM_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+    llm_base_url = os.getenv("LLM_BASE_URL", "https://api.siliconflow.cn/v1")
     llm_api_key = os.getenv("LLM_API_KEY", "")
     if not llm_api_key:
         raise RuntimeError(
@@ -106,7 +106,7 @@ def load_settings() -> Settings:
     return Settings(
         llm_base_url=llm_base_url,
         llm_api_key=llm_api_key,
-        llm_model=os.getenv("LLM_MODEL", "qwen3-max"),
+        llm_model=os.getenv("LLM_MODEL", "deepseek-ai/DeepSeek-V3.2"),
         port=int(os.getenv("PORT", "8000")),
         log_level=os.getenv("LOG_LEVEL", "info"),
         # embedding 默认复用 LLM 网关（OpenAI 兼容 /v1/embeddings）
