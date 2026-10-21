@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ecommerce-agent
+    name: shopmind
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile

@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.repository == 'Pyper000/Pyper000.github.io'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +40,7 @@ jobs:
         with:
           path: frontend/dist
   deploy:
+    if: github.repository == 'Pyper000/Pyper000.github.io'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
