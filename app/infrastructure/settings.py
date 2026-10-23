@@ -58,6 +58,8 @@ class Settings:
     # 这组给默认值：前面几期每次扩字段都会打断测试里手工构造的 Settings，
     # 新增可选配置一律带默认值，避免同样的修改成本反复发生。
     llm_fallback_model: str = ""  # 空 = 不回退，重试用尽直接报错
+    llm_max_tokens: int = 800  # ShopMind MVP 只需结构化方案/短解释，避免长输出拖慢首屏
+    llm_temperature: float = 0.2
     llm_max_concurrency: int = 2  # 同时在飞的模型请求上限
     llm_min_interval_seconds: float = 1.0  # 相邻请求起跑最小间隔，治速率爬升过快
     llm_max_retries: int = 2  # 瞬时故障重试次数（指数退避）
@@ -89,6 +91,9 @@ class Settings:
     preference_subagent_inject: bool = True  # 给检索子 Agent 注入偏好（纯本地拼装，零成本）
     queue_priority_enabled: bool = True  # 双队列优先级（无 Redis 时自动无效）
     queue_large_request_turns: int = 30  # 对话轮数 >= 此值走大请求队列
+    # Vercel 每次冷启动都重建 480 个商品向量会拖垮首轮延迟；无外部 Qdrant 时
+    # 默认在 serverless 环境走本地关键词召回，显式配置后仍可强制开启。
+    vector_bootstrap_enabled: bool = True
 
 
 def load_settings() -> Settings:
@@ -138,9 +143,10 @@ def load_settings() -> Settings:
             ).split(",")
             if origin.strip()
         ],
-        # 实测 qwen3.7-plus 配额池极紧（单发一条也可能 429），默认配上备用模型保底，
-        # 重试用尽后自动回退并发 model.fallback 事件，不静默降级
-        llm_fallback_model=os.getenv("LLM_FALLBACK_MODEL", "qwen-plus"),
+        # 只有显式配置备用模型时才在重试后回退，并发 model.fallback 事件。
+        llm_fallback_model=os.getenv("LLM_FALLBACK_MODEL", ""),
+        llm_max_tokens=int(os.getenv("LLM_MAX_TOKENS", "800")),
+        llm_temperature=float(os.getenv("LLM_TEMPERATURE", "0.2")),
         # 默认 2 而不是 1：三期真并行 fork 实测 1.84x 加速，设 1 会把并行收益完全抹掉
         llm_max_concurrency=int(os.getenv("LLM_MAX_CONCURRENCY", "2")),
         llm_min_interval_seconds=float(os.getenv("LLM_MIN_INTERVAL_SECONDS", "1.0")),
@@ -170,4 +176,9 @@ def load_settings() -> Settings:
         not in ("0", "false", "False"),
         queue_priority_enabled=os.getenv("QUEUE_PRIORITY_ENABLED", "1") not in ("0", "false", "False"),
         queue_large_request_turns=int(os.getenv("QUEUE_LARGE_REQUEST_TURNS", "30")),
+        vector_bootstrap_enabled=(
+            os.getenv("VECTOR_BOOTSTRAP_ENABLED", "").lower() in ("1", "true")
+            if os.getenv("VECTOR_BOOTSTRAP_ENABLED") is not None
+            else os.getenv("VERCEL") != "1"
+        ),
     )

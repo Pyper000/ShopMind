@@ -22,6 +22,9 @@ class ShoppingPlan:
     core_use: Optional[str] = None
     people: Optional[int] = None
     state_version: int = 0
+    template_id: Optional[str] = None
+    template_version: Optional[int] = None
+    checklist_sections: list[dict] = field(default_factory=list)
     must_buy: list[str] = field(default_factory=list)
     optional: list[str] = field(default_factory=list)
     reusable: list[str] = field(default_factory=list)
@@ -41,8 +44,8 @@ class ShoppingPlan:
             raise ValueError("人数必须为正整数")
         if self.state_version < 0:
             raise ValueError("state_version 不能为负数")
-        if len(self.tasks) > 4:
-            raise ValueError("首期购物计划最多包含 4 个任务")
+        if len(self.tasks) > 32:
+            raise ValueError("单份清单最多包含 32 件具体物品，请按任务分批整理")
 
     def to_dict(self) -> dict:
         return asdict(self)

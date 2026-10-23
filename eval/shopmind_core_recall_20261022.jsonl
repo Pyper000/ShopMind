@@ -1,0 +1,14 @@
+{"scene":"beach-weekend","slot":"swimwear","shopping_task":"泳衣","query":"泳衣","kind":"lexical","relevant":["P1117","P1127","P1345","P1346","P1347"],"note":"海边核心场景：泳衣；5个同任务候选均相关，模拟商品"}
+{"scene":"beach-weekend","slot":"swimwear","shopping_task":"泳衣","query":"去海边下水需要穿的衣服","kind":"semantic","relevant":["P1117","P1127","P1345","P1346","P1347"],"note":"海边核心场景：泳衣语义表达，不含泳衣字面"}
+{"scene":"beach-weekend","slot":"phone-waterproof-pouch","shopping_task":"手机防水袋","query":"手机防水袋","kind":"lexical","relevant":["P1116","P1126","P1175","P1176","P1177"],"note":"海边核心场景：手机防水袋；均为同槽位模拟候选"}
+{"scene":"beach-weekend","slot":"phone-waterproof-pouch","shopping_task":"手机防水袋","query":"下水时保护手机不进水","kind":"semantic","relevant":["P1116","P1126","P1175","P1176","P1177"],"note":"海边核心场景：手机防水袋语义表达，不含商品名"}
+{"scene":"beach-weekend","slot":"towel","shopping_task":"毛巾","query":"速干旅行毛巾","kind":"lexical","relevant":["P1007"],"note":"海边核心场景：毛巾；当前目录只有一款明确速干旅行毛巾"}
+{"scene":"beach-weekend","slot":"towel","shopping_task":"毛巾","query":"擦身体而且干得快的布","kind":"semantic","relevant":["P1007"],"note":"海边核心场景：毛巾语义表达"}
+{"scene":"first-rental","slot":"bedding","shopping_task":"床品","query":"床品","kind":"lexical","relevant":["P1118","P1122","P1255","P1256","P1257"],"note":"首次租房：床品套件及床单被套；均满足床品采购任务"}
+{"scene":"first-rental","slot":"bedding","shopping_task":"床品","query":"租房睡觉要铺在床上的用品","kind":"semantic","relevant":["P1118","P1122","P1255","P1256","P1257"],"note":"首次租房：床品套件语义表达；包含床单被套"}
+{"scene":"first-rental","slot":"lighting","shopping_task":"台灯","query":"可调光夹式台灯","kind":"lexical","relevant":["P1120"],"note":"首次租房：床头/桌面照明，商品属性与任务槽位明确匹配"}
+{"scene":"first-rental","slot":"lighting","shopping_task":"台灯","query":"夹在床边用来照明的小灯","kind":"semantic","relevant":["P1120"],"note":"首次租房：需要可夹在床边的灯；P1120夹式台灯符合，床头小夜灯不满足夹装条件"}
+{"scene":"first-rental","slot":"cleaning-tools","shopping_task":"清洁工具","query":"入住清洁工具","kind":"lexical","relevant":["P1119","P1124","P1258","P1259","P1260"],"note":"首次租房：入住清洁工具；5款商品均为同任务候选"}
+{"scene":"first-rental","slot":"cleaning-tools","shopping_task":"清洁工具","query":"租房入住前打扫房间要用的工具","kind":"semantic","relevant":["P1119","P1124","P1258","P1259","P1260"],"note":"首次租房：清洁工具语义表达；包含通用与模拟目录候选"}
+{"scene":"first-rental","slot":"storage-box","shopping_task":"布艺收纳箱","query":"折叠布艺收纳箱","kind":"lexical","relevant":["P1121"],"note":"首次租房：房间衣物收纳箱；明确匹配商品"}
+{"scene":"first-rental","slot":"storage-box","shopping_task":"布艺收纳箱","query":"能装衣物又方便收起来的箱子","kind":"semantic","relevant":["P1121"],"note":"首次租房：布艺收纳箱语义表达；收纳筐是相邻品类，不按箱类正例计"}

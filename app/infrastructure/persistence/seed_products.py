@@ -18,6 +18,9 @@
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from app.domain.catalog.money import Money
 from app.domain.catalog.product import Product, ProductHighlight
 from app.domain.catalog.sku import Sku
@@ -245,8 +248,49 @@ def _build_extra() -> list[Product]:
     return products
 
 
+_CATALOG_PATHS = (
+    Path(__file__).with_name("beach_products.json"),
+    Path(__file__).with_name("catalog.json"),
+)
+
+
+def _merge_catalog(products: list[Product]) -> list[Product]:
+    """Use the public demo catalogue for entries not hand-authored above."""
+    by_id = {product.product_id: product for product in products}
+    for catalog_path in _CATALOG_PATHS:
+        if not catalog_path.is_file():
+            continue
+        try:
+            rows = json.loads(catalog_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        for row in rows:
+            product_id = str(row.get("id") or "")
+            if not product_id or product_id in by_id:
+                continue
+            price = float(row.get("price") or 0)
+            highlights = []
+            for value in row.get("highlights") or []:
+                label, _, detail = str(value).partition(":")
+                if not detail:
+                    label, _, detail = str(value).partition("：")
+                highlights.append(ProductHighlight(label.strip(), detail.strip()))
+            by_id[product_id] = Product(
+                product_id=product_id,
+                title=str(row.get("title") or product_id),
+                brand=str(row.get("brand") or ""),
+                category=str(row.get("category") or "未分类"),
+                origin_country="UNKNOWN",
+                description=str(row.get("description") or ""),
+                highlights=highlights,
+                ships_to=[str(code) for code in row.get("ships_to") or []],
+                skus=[_sku(f"{product_id}-S1", "默认规格", price, str(row.get("currency") or "CNY"), int(row.get("stock") or 0))],
+            )
+    return list(by_id.values())
+
+
 def build_seed_products() -> list[Product]:
-    return [
+    products = [
         Product(
             product_id="P1001",
             title="Nomadica 旅行三件套（收纳袋+颈枕+眼罩）",
@@ -415,3 +459,4 @@ def build_seed_products() -> list[Product]:
         ),
         *_build_extra(),
     ]
+    return _merge_catalog(products)

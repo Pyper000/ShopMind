@@ -1,194 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import "./landing.css";
 import LiveChat from "./components/LiveChat";
 
-type Product = {
-  name: string;
-  category: string;
-  price: string;
-  kind: "must" | "optional" | "alternative";
-  reason: string;
-  tradeoff: string;
-  unknown: string;
-  accent: string;
-};
-
-type Scenario = {
-  id: string;
-  category: string;
-  prompt: string;
-  chips: string[];
-  reply: string;
-  question: string;
-  answer: string;
-  planReply: string;
-  preferenceAnswer: string;
-  directions: string[];
-  preparation: { label: string; items: string[] }[];
-  reusable: string[];
-  notBuy: string[];
-  noBuyPlan: string;
-  optional: string[];
-  openQuestions: string[];
-  summary: string;
-  comparisonSummary: string;
-  budgetLimit?: number;
-  requiredPlanTotal: number;
-  optionalTotal: number;
-  products: Product[];
-};
-
-const scenarios: Scenario[] = [
-  {
-    id: "beach-trip",
-    category: "旅游出行",
-    prompt: "周末去海边两天，帮我准备购物清单",
-    chips: ["场景: 海边短途出行", "人数: 1人", "偏好: 轻装少占空间"],
-    question: "收到，我来帮你梳理一套刚好适配的采购方案。先确认两个会影响清单的问题：几个人同行？行李有数量或体积限制吗？",
-    answer: "一个人，我想只带个随身包，家里有个双肩包。",
-    planReply: "先按一个人、两天海边来列清单：防晒、换洗衣物和洗漱用品是基础准备；双肩包继续复用；衣物收纳袋是可选项；如果会下水，再考虑防水手机袋和沙滩拖鞋。你更在意轻装少占空间，还是功能齐全？",
-    preferenceAnswer: "轻量少占空间，换洗和洗漱用品家里都有，防晒还没准备。",
-    reply: "好，按轻量少占空间来选；双肩包、换洗衣物和洗漱用品都继续复用，本次只为未准备的防晒任务匹配商品。收纳袋保留为可选，下水用品先不计入。",
-    directions: ["复用现有双肩包", "必备任务：防晒准备", "收纳袋与下水用品：按需"],
-    preparation: [
-      { label: "已有可复用", items: ["双肩包"] },
-      { label: "必备清单", items: ["防晒用品", "换洗衣物", "洗漱用品"] },
-      { label: "建议 / 按需", items: ["轻量衣物收纳袋", "下水时再准备防水手机袋、沙滩拖鞋"] },
-    ],
-    reusable: ["双肩包、换洗衣物、洗漱用品（用户明确）"],
-    notBuy: ["不重复购买背包", "未确认下水前不买泳衣、防水手机袋和沙滩拖鞋"],
-    noBuyPlan: "现有双肩包可装换洗衣物；如果不需要独立分装，收纳袋可以不买。",
-    optional: ["压缩收纳袋：现有背包分装不便时再考虑"],
-    openQuestions: ["是否下水未确认；相关商品暂不计入采购方案"],
-    summary: "复用双肩包、换洗和洗漱用品；必买 1 件防晒候选，商品价 89 元。收纳袋可选，下水用品暂缓。",
-    comparisonSummary: "防晒伞是当前必需候选（89元）；压缩收纳袋是可选项（89元），两者解决不同任务，不作为同类替代，也不叠加进必需总价。",
-    requiredPlanTotal: 89,
-    optionalTotal: 89,
-    products: [
-      { name: "MiniUmbrella 五折超轻晴雨伞", category: "防晒准备", price: "CNY 89", kind: "must", reason: "目录标注 180g、UPF50+，可作为轻装防晒候选。", tradeoff: "需要手持；不等同于防晒霜，具体遮挡效果受使用方式影响。", unknown: "演示目录未提供伞面尺寸和实际防晒测试报告。", accent: "sky" },
-      { name: "CompressCube 压缩收纳方块", category: "衣物收纳", price: "CNY 89", kind: "optional", reason: "目录标注可用于行李分装，并称体积减少 40%。", tradeoff: "会多带一件收纳用品；背包内直接分装够用时不建议购买。", unknown: "目录未提供具体尺寸、重量和装入衣物后的实测体积。", accent: "blue" },
-    ],
-  },
-  {
-    id: "rental-home",
-    category: "第一次租房",
-    prompt: "第一次租房入住，不知道要准备什么",
-    chips: ["场景: 首次租房入住", "约束: 不打孔", "偏好: 先满足日常使用"],
-    question: "先确认两个会改变清单的问题：房间是空房还是已有基础家具？租期内能打孔或粘贴墙面吗？",
-    answer: "基础家具都有，不能打孔，想先把卧室和日常收纳弄好。",
-    planReply: "先列入住清单：基础准备是床品、照明和清洁用品；特别考虑不能破坏墙面，需要免打孔收纳和可移除布置；按需准备桌面收纳、氛围灯。你更在意先把日常用起来，还是优先改善视觉效果？",
-    preferenceAnswer: "先解决日常使用，预算500元，家里有台灯和基础清洁用品。",
-    reply: "按日常使用优先来选；台灯和清洁用品复用，不重复购买。先补床品和免打孔收纳，装饰类放到可选项。",
-    directions: ["复用已有台灯和清洁用品", "必备任务：床品与基础收纳", "装饰布置：按需"],
-    preparation: [{ label: "基础准备", items: ["床品", "照明", "清洁用品"] }, { label: "特别考虑", items: ["免打孔收纳", "可移除墙面布置"] }, { label: "按需准备", items: ["桌面收纳", "氛围灯"] }],
-    reusable: ["台灯、基础清洁用品（用户明确）"],
-    notBuy: ["不重复购买台灯和清洁用品", "不买需要打孔的固定式收纳"],
-    noBuyPlan: "先用已有台灯和清洁用品完成入住；装饰和氛围灯不影响基本生活，可以暂缓。",
-    optional: ["桌面收纳：桌面确实凌乱时再补", "氛围灯：不影响入住，可后置"],
-    openQuestions: ["床垫和被褥尺寸尚未确认", "墙面材质未确认，免打孔产品需先核对"],
-    summary: "复用已有台灯和清洁用品，先补床品与不伤墙的收纳；氛围灯和装饰不计入最低配置。",
-    budgetLimit: 500,
-    requiredPlanTotal: 268,
-    optionalTotal: 79,
-    products: [
-      { name: "SoftNest 可机洗基础床品套装", category: "床品", price: "CNY 199", kind: "must", reason: "先满足入住后的睡眠使用，套装比零散购买更省决策。", tradeoff: "尺寸必须先确认；暂不追求高规格面料。", unknown: "模拟目录未提供具体尺寸、面料克重和洗后表现。", accent: "sky" },
-      { name: "NoDrill 免打孔收纳架", category: "免打孔收纳", price: "CNY 69", kind: "must", reason: "补充日常收纳，同时符合租房不能打孔的约束。", tradeoff: "承重和适用墙面有限；重物仍需改用落地收纳。", unknown: "目录未提供墙面适配范围和实测承重。", accent: "violet" },
-      { name: "DeskGrid 桌面分区收纳盒", category: "桌面收纳", price: "CNY 79", kind: "optional", reason: "桌面确实凌乱时再补，提升使用便利但不影响入住。", tradeoff: "会增加一件物品；桌面物品较少时可以不买。", unknown: "模拟目录未提供具体尺寸和分格数量。", accent: "blue" },
-    ],
-    comparisonSummary: "床品和免打孔收纳解决不同任务，不能为了比价互相替代；桌面收纳是可选项，不和最低配置一起强制购买。",
-  },
-  {
-    id: "gift",
-    category: "送礼",
-    prompt: "想给妈妈买礼物，不知道买什么",
-    chips: ["场景: 生日送礼", "对象: 妈妈", "预算: CNY 200"],
-    question: "我先帮你把送礼方案收敛一下：这次是什么场合？预算大概希望控制在多少？",
-    answer: "生日，预算200元，妈妈平时喜欢喝茶。",
-    planReply: "先列送礼任务框架：核心是一份符合她日常兴趣的礼物；包装或贺卡按需增加；饮食限制和已有相似物品尚未确认。你更偏向能分享的茶点，还是日常喝的茶？",
-    preferenceAnswer: "日常喝的茶，简单实用就好。",
-    reply: "明白，我按日常饮茶、实用优先来选。先比较茶叶礼盒和茶点礼盒这两个不同方向；两者都在200元预算内，但只选一份，不叠加计算。",
-    directions: ["一份主礼物", "预算上限 CNY 200", "包装与贺卡按需"],
-    preparation: [{ label: "必备任务", items: ["一份适合收礼人的主礼物"] }, { label: "已有可复用", items: ["尚未确认，不假设已有"] }, { label: "按需准备", items: ["礼品包装、贺卡"] }],
-    reusable: ["收礼人日常喜欢喝茶（用户明确）"],
-    notBuy: ["不同时购买茶叶和茶点礼盒，避免超出送礼所需"],
-    noBuyPlan: "在两个候选中选一份即可；包装或贺卡若已有合适的就不用额外购买。",
-    optional: ["礼品包装或贺卡：按现有包装情况决定"],
-    openQuestions: ["饮食限制、口味偏好和家中茶叶库存未确认"],
-    summary: "推荐 1 件乌龙茶礼盒，商品价 168 元，预算内余 32 元；128 元茶点礼盒是更省钱的替代，不与主方案相加。",
-    comparisonSummary: "两款是主礼物的互斥选择：茶叶礼盒168元，更贴近日常饮茶；茶点礼盒128元，便宜40元、适合分享但不是茶叶。预算200元时都可选，按“日常喝的茶”偏好选前者。",
-    budgetLimit: 200,
-    requiredPlanTotal: 168,
-    optionalTotal: 0,
-    products: [
-      { name: "MountainTea 清香乌龙茶礼盒", category: "茶叶礼盒", price: "CNY 168", kind: "must", reason: "与妈妈日常饮茶习惯相关，价格在200元预算内。", tradeoff: "比茶点礼盒贵40元；需确认收礼人是否接受乌龙茶。", unknown: "模拟目录未提供产地、等级与保质期。", accent: "blue" },
-      { name: "GoodDay 茶点分享礼盒", category: "茶点礼盒", price: "CNY 128", kind: "alternative", reason: "价格低40元，独立小份装适合家庭分享。", tradeoff: "更偏茶点，不是日常饮用的茶叶；饮食限制需先核对。", unknown: "模拟目录未提供具体口味、配料与保质期。", accent: "sky" },
-    ],
-  },
-];
-const demoScenarios = [scenarios[0], scenarios[2], scenarios[1]];
-
-function getScenario(query: string): Scenario {
-  const text = query.toLowerCase();
-  if (/海边|沙滩|beach/.test(text)) return scenarios[0];
-  if (/租房|入住|搬家|租屋|rental/.test(text)) return scenarios[1];
-  if (/妈妈|礼物|送礼|gift/.test(text)) return scenarios[2];
-  return { ...scenarios[1], prompt: query, chips: ["自然语言需求", "预算: 待确认", "已有物品: 待确认"], reply: "我先按你的生活任务整理采购品类；你补充预算、已有物品或优先级后，我会更新整套方案。", directions: ["先列必备任务", "已有物品待确认", "可选项不计入必需总价"], preparation: [{ label: "必备清单", items: ["按场景拆解，不默认用户库存"] }, { label: "已有可复用", items: ["待用户补充"] }, { label: "建议 / 按需", items: ["根据场景和回答增减"] }] };
-}
-
-function ProductCard({ product }: { product: Product }) {
-  const kindLabel = product.kind === "must" ? "最低配置候选" : product.kind === "optional" ? "可选提升" : "备选，不叠加预算";
-  return (
-    <article className="product-card">
-      <div className={`product-art ${product.accent}`}><span>{product.category}</span><i /><i /><i /></div>
-      <div className="product-copy">
-        <div className="product-meta"><span>{kindLabel}</span><span>{product.price}</span></div>
-        <h4>{product.name}</h4>
-        <p>{product.reason}</p><p className="demo-tradeoff"><b>取舍：</b>{product.tradeoff}</p><p className="demo-unknown"><b>未知：</b>{product.unknown}</p>
-      </div>
-    </article>
-  );
-}
-
 export default function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scenario, setScenario] = useState(scenarios[0]);
-  const [query, setQuery] = useState(scenarios[0].prompt);
-  const [thinking, setThinking] = useState(true);
-  const [typing, setTyping] = useState(false);
-  const [typedReply, setTypedReply] = useState("");
-  const timers = useRef<number[]>([]);
-
-  const clearTimers = () => {
-    timers.current.forEach((timer) => window.clearTimeout(timer));
-    timers.current = [];
-  };
-
-  const runDemo = (nextQuery: string) => {
-    const next = getScenario(nextQuery);
-    clearTimers();
-    setScenario(next);
-    setQuery(nextQuery);
-    setThinking(true);
-    setTyping(false);
-    setTypedReply("");
-    timers.current.push(window.setTimeout(() => {
-      setThinking(false);
-      setTyping(true);
-      let index = 0;
-      const typeNext = () => {
-        index += 1;
-        setTypedReply(next.reply.slice(0, index));
-        if (index < next.reply.length) timers.current.push(window.setTimeout(typeNext, 16));
-        else setTyping(false);
-      };
-      typeNext();
-    }, 720));
-  };
-
-  useEffect(() => {
-    runDemo(scenarios[0].prompt);
-    return clearTimers;
-  }, []);
 
   return (
     <div className="site-shell">
@@ -211,19 +26,59 @@ export default function Landing() {
             <div className="hero-actions"><a className="primary-btn" href="#live">开始购物对话 <span>↗</span></a><a className="secondary-btn" href="#orchestration">查看能力 <span>↓</span></a></div>
             <div className="capability-tags"><span>Intent Understanding</span><span>Tool Calling</span><span>Explainable Recommendations</span></div>
           </div>
-          <div className="hero-console reveal delayed">
-            <div className="console-header"><div>ShopMind Assistant</div><span>场景示例 · 模拟商品</span></div>
-            <div className="console-chat"><div className="mini-message user">周末去海边两天，帮我准备购物清单</div><div className="mini-message ai">几个人同行？行李有数量或体积限制吗？</div></div>
-            <div className="console-chat"><div className="mini-message user">一个人，我想只带个随身包，家里有个双肩包。</div><div className="mini-message ai">复用双肩包；先列基础防晒、换洗和洗漱，再按需考虑收纳与下水用品。</div></div>
-            <div className="mini-products">
-              <article className="mini-product"><div className="mini-product-art blue" /><div><b>必需方案</b><span>CNY 89 · 1 个采购任务</span></div></article>
-              <article className="mini-product"><div className="mini-product-art violet" /><div><b>收纳袋（可选）</b><span>CNY 89 · 不计入必需总价</span></div></article>
+          <div className="hero-console reveal delayed" aria-label="ShopMind 从生活任务到采购方案的流程动画">
+            <div className="console-header"><div>ShopMind · 决策预览</div><span>模拟商品 · 不实际下单</span></div>
+            <p className="preview-slogan">列清单我来，标记已有 / 要买你来；商品只为缺的推荐。</p>
+            <div className="preview-journey">
+              <div className="preview-query">
+                <small>01 · 你的需求</small>
+                <p>周末去海边两天，一个人，预算 300 元，想轻便，帮我准备清单。</p>
+              </div>
+              <div className="preview-reply">
+                <small>02 · ShopMind 整理清单</small>
+                <p>按场景拆出 16 项，分组逐项确认；没标记的不会默认已有。下方预览 2 项。</p>
+              </div>
+              <section className="preview-checklist" aria-label="海边清单状态预览">
+                <header><b>游泳与海边活动</b><span>分组清单 · 2 / 16 项</span></header>
+                <article className="preview-item required">
+                  <div className="preview-item-meta"><b>泳衣 <em>必备</em></b><small>1–2 套 · 按行程和晾晒条件调整</small></div>
+                  <div className="preview-status" role="group" aria-label="泳衣状态示意">
+                    <span>已有</span><span className="selected required">✓ 需要购买</span><span>还没确认</span>
+                  </div>
+                </article>
+                <article className="preview-item optional">
+                  <div className="preview-item-meta"><b>泳镜 <em>按需</em></b><small>计划游泳时</small></div>
+                  <div className="preview-status" role="group" aria-label="泳镜状态示意">
+                    <span className="selected optional">✓ 已有</span><span>这次要买</span><span>不需要</span><span>还不确定</span>
+                  </div>
+                </article>
+              </section>
+              <section className="preview-candidate" aria-label="只为步骤 02 中标记待购的泳衣推荐模拟商品">
+                <div className="preview-candidate-head"><small>03 · 商品候选</small><span>对应步骤 02：泳衣 · 需要购买</span></div>
+                <div className="preview-products">
+                  <article className="preview-product-card featured">
+                    <small>轻便首选</small><b>SwimEase<br />轻便速干泳衣</b>
+                    <p>匹配“轻便”；用于海边游泳</p><strong>CNY 159</strong>
+                  </article>
+                  <article className="preview-product-card">
+                    <small>轻薄连体</small><b>WaveDry<br />轻薄速干连体泳衣</b>
+                    <p>连体款式；购买前核对尺码</p><strong>CNY 189</strong>
+                  </article>
+                  <article className="preview-product-card">
+                    <small>耐用定位</small><b>ShopMind模拟<br />泳衣耐用升级款</b>
+                    <p>演示目录款；实际参数待核实</p><strong>CNY 129</strong>
+                  </article>
+                </div>
+              </section>
+              <div className="preview-confirm">
+                <div><small>04 · 方案确认</small><b>待确认候选 CNY 159 · 预算 CNY 300</b></div>
+                <span>方案待确认</span>
+                <p>演示到采购方案确认；真实购物车、订单与支付尚未接入。</p>
+              </div>
             </div>
             <div className="console-glow" />
           </div>
         </section>
-
-        <LiveChat />
 
         <section className="value-section">
           <div className="section-heading"><p className="eyebrow">WHY SHOPMIND</p><h2>你缺的不是商品，<span>而是做决定的把握。</span></h2></div>
@@ -245,8 +100,8 @@ export default function Landing() {
             </article>
             <article className="mode-card">
               <div className="mode-top"><span>02 / CONVERSATION</span><b>问答对话模式</b></div>
-              <div className="mode-dialog user">周末去海边，不知道要准备什么</div><div className="mode-dialog ai">先问活动场景，再区分已有、必需、可选与不建议购买。</div>
-              <p className="mode-copy chat-copy">用户先看清任务清单，再表达偏好；商品卡片解释选择理由和取舍。</p><div className="mode-line" /><strong>Scene → List → Preference → Products</strong>
+              <div className="mode-dialog user">第一次租房入住，房间提供情况还不确定。</div><div className="mode-dialog ai">先按睡眠照明、入住清洁、收纳日常分组；未知项保持“还不确定”，不默认已有。</div>
+              <p className="mode-copy chat-copy">必备与按需分开，逐项确认状态；只为明确待购项检索商品。</p><div className="mode-line" /><strong>Scene → Checklist → Confirm → Search</strong>
             </article>
           </div>
         </section>
@@ -261,48 +116,10 @@ export default function Landing() {
           <p className="orchestration-note">反馈可以让选择回到追问或检索环节；用户没说的已有物品保持待确认。当前比较基于模拟商品目录，不提供全网实时比价，也不执行真实交易。</p>
         </section>
 
-        <section className="demo-section" id="demo">
-          <div className="section-heading split-heading"><div><p className="eyebrow">SCENARIO DEMO</p><h2>场景演示</h2></div><p>预设示例对话 · 商品与价格均为模拟数据</p></div>
-          <div className="demo-grid">
-            <aside className="prompt-list">
-              <p>CHOOSE A SCENARIO</p>
-              {demoScenarios.map((item, index) => <button key={item.id} className={scenario.id === item.id ? "prompt-option active" : "prompt-option"} type="button" onClick={() => runDemo(item.prompt)}><span>0{index + 1}</span><b>{item.prompt}</b><small>{item.category}</small><i>↗</i></button>)}
-              <div className="signal-card"><span className="online-dot" /><p>SIMULATED AGENT</p><strong>商品、价格与结果均为演示数据</strong></div>
-            </aside>
-            <div className="demo-console">
-              <div className="demo-console-head"><div><span className="assistant-avatar">S</span><b>ShopMind Assistant</b></div><span className="case-disclaimer">预设案例输入 · 非默认库存</span><span className="processing-state">预设对话</span></div>
-              <div className="demo-stream">
-                <div className="demo-stage-label">01 · 承接任务与基础需求收敛</div>
-                <div className="message-wrap user-wrap"><span>YOU</span><div className="demo-message user">{query}</div></div>
-                <div className="message-wrap ai-wrap"><span>SHOPMIND · 只问关键条件</span><div className="demo-message ai">{scenario.question}</div></div>
-                <div className="message-wrap user-wrap"><span>YOU · 场景补充</span><div className="demo-message user">{scenario.answer}</div></div>
-                <div className="demo-stage-label">02 · 清单框架与最小购买集合</div>
-                <div className="message-wrap ai-wrap"><span>SHOPMIND · 先列品类，不急着推商品</span><div className="demo-message ai">{scenario.planReply}</div></div>
-                <div className="checklist-frame" aria-label="准备品类清单">{scenario.preparation.map((group) => <div key={group.label}><b>{group.label}</b><span>{group.items.join(" · ")}</span></div>)}</div>
-                <div className="demo-stage-label">03 · 清单确认：已有 / 待补缺口 / 按需</div>
-                <div className="message-wrap user-wrap"><span>YOU · 取舍偏好与已有物品</span><div className="demo-message user">{scenario.preferenceAnswer}</div></div>
-                <div className="message-wrap ai-wrap"><span>SHOPMIND · 对齐选型标准</span><div className="demo-message ai">{thinking ? <span className="loading-dots"><i /><i /><i /></span> : typedReply}{typing && <span className="typing-caret">|</span>}</div></div>
-                <div className="plan-status-frame" aria-label="清单状态">
-                  <div><b>已有可复用</b><span>{scenario.reusable.join(" · ") || "尚未确认，不默认已有"}</span></div>
-                  <div><b>待补缺口</b><span>{scenario.products.filter((product) => product.kind === "must").map((product) => product.category).join(" · ") || "暂无"}</span></div>
-                  <div><b>按需准备</b><span>{scenario.optional.join(" · ") || "暂无"}</span></div>
-                </div>
-                {!thinking && typedReply && <>
-                  <div className="demo-stage-label">04 · 只为待补缺口提供商品候选</div>
-                  <div className="insight-chips">{scenario.chips.map((chip) => <span key={chip}>{chip}</span>)}</div>
-                  <p className="candidate-note">以下商品只覆盖待补缺口；已有物品不重复生成商品卡片，可选项不计入最低配置。</p>
-                  {scenario.products.length > 0 ? <div className="demo-product-grid">{scenario.products.map((product) => <ProductCard key={product.name} product={product} />)}</div> : <p className="demo-no-products">目前没有需要补充的商品；先完成任务条件确认。</p>}
-                  <div className="demo-stage-label">05 · 取舍比较与方案确认</div>
-                  <div className="recommendation-block"><div className="recommendation-title"><span>按预算与优先级完成取舍</span><b>确认方案 / 继续调整</b></div><div className="direction-list">{scenario.directions.map((direction) => <span key={direction}>{direction}</span>)}</div><p className="demo-plan-line"><b>本轮决策依据</b>{scenario.preferenceAnswer}</p><p className="demo-plan-line"><b>已有可复用</b>{scenario.reusable.join(" · ") || "尚未确认"}</p><p className="demo-plan-line"><b>不建议购买</b>{scenario.notBuy.join(" · ") || "暂无"}</p><p className="demo-plan-line optional"><b>可选提升项</b>{scenario.optional.join(" · ") || "暂无"}</p><p className="demo-comparison"><b>方案比选</b>{scenario.comparisonSummary}</p><p className="demo-no-buy"><b>不买也能完成：</b>{scenario.noBuyPlan}</p><p className="demo-unknown"><b>待确认：</b>{scenario.openQuestions.join(" · ") || "暂无"}</p><div className="demo-budget"><span>必需采购总价</span><strong>CNY {scenario.requiredPlanTotal}</strong><span>预算上限</span><strong>{scenario.budgetLimit ? `CNY ${scenario.budgetLimit}` : "未提供"}</strong><span>可选项金额</span><strong>CNY {scenario.optionalTotal}</strong></div><p className="demo-summary"><b>方案总结</b>{scenario.summary}</p></div>
-                </>}
-              </div>
-              <a className="secondary-btn" href="#live">用自己的需求开始真实对话 ↗</a>
-            </div>
-          </div>
-        </section>
+        <LiveChat />
       </main>
 
-      <footer className="site-footer"><a className="brand" href="#overview"><span className="brand-symbol">S</span><span>ShopMind <b>AI</b></span></a><p>模拟商品与模拟账户上下文；Product 为真实模型对话，Demo 为预设场景。</p><div><a href="https://github.com/Pyper000/Pyper000.github.io">GitHub</a><a href="#overview">Portfolio</a></div></footer>
+      <footer className="site-footer"><a className="brand" href="#overview"><span className="brand-symbol">S</span><span>ShopMind <b>AI</b></span></a><p>场景演示调用本地 Commerce API；场景清单优先使用模板，商品与价格来自模拟目录，不执行真实交易。</p><div><a href="https://github.com/Pyper000/Pyper000.github.io">GitHub</a><a href="#overview">Portfolio</a></div></footer>
     </div>
   );
 }

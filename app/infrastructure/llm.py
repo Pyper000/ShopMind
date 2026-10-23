@@ -227,9 +227,18 @@ def create_chat_model(
     common = {
         "credential": credential,
         "stream": stream,
+        "parameters": OpenAIChatModel.Parameters(
+            max_tokens=settings.llm_max_tokens,
+            temperature=settings.llm_temperature,
+            thinking_enable=False,
+        ),
         # 上下文窗口：压缩触发阈值（ContextConfig.trigger_ratio）按此值比例计算
         "context_size": settings.context_size,
     }
+    # AgentScope's thinking_enable only controls OpenAI reasoning_effort;
+    # SiliconFlow requires its own field to disable DeepSeek reasoning.
+    if "deepseek" in settings.llm_model.lower():
+        common["extra_body"] = {"enable_thinking": False}
     fallback = (
         OpenAIChatModel(model=settings.llm_fallback_model, **common)
         if settings.llm_fallback_model and settings.llm_fallback_model != settings.llm_model

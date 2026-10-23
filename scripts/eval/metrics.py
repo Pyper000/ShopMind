@@ -50,6 +50,15 @@ def recall_at_k(retrieved: Sequence[str], relevant: Sequence[str], k: int) -> fl
     return len(top_k & rel) / len(rel)
 
 
+def precision_at_k(retrieved: Sequence[str], relevant: Sequence[str], k: int) -> float:
+    """Fraction of returned results within Top-K that are relevant."""
+    if k <= 0:
+        return 0.0
+    rel = set(relevant)
+    top_k = _dedup_keep_order(retrieved)[:k]
+    return len(set(top_k) & rel) / len(top_k) if top_k else 0.0
+
+
 def mrr(retrieved: Sequence[str], relevant: Sequence[str]) -> float:
     """首条相关项的倒数排名；一条都没命中记 0。"""
     rel = set(relevant)
@@ -103,6 +112,7 @@ class Aggregate:
     ndcg: float
     filter_accuracy: float | None = None
     per_query: list[QueryResult] = field(default_factory=list)
+    precision: float = 0.0
 
 
 def evaluate(results: Sequence[QueryResult], k: int) -> Aggregate:
@@ -121,6 +131,7 @@ def evaluate(results: Sequence[QueryResult], k: int) -> Aggregate:
         recall=round(sum(r.recall for r in results) / count, 4),
         mrr=round(sum(r.mrr for r in results) / count, 4),
         ndcg=round(sum(r.ndcg for r in results) / count, 4),
+        precision=round(sum(precision_at_k(r.retrieved, r.relevant, k) for r in results) / count, 4),
         filter_accuracy=None if filter_accuracy is None else round(filter_accuracy, 4),
         per_query=list(results),
     )

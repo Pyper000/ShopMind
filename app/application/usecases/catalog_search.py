@@ -141,6 +141,18 @@ class CatalogSearchUseCase:
             scored = await self._keyword_recall(spec)
             recall_strategy = "keyword_2gram"
 
+        # 清单槽位是明确的商品任务。向量相似度只能召回候选，不能证明品类一致；
+        # 目录未覆盖该槽位时宁可返回空结果，也不把相邻用途的商品伪装成匹配项。
+        if spec.shopping_task:
+            task = spec.shopping_task.casefold().strip()
+            scored = [
+                (score, product)
+                for score, product in scored
+                if task in " ".join(
+                    [product.title, *(highlight.label + " " + highlight.detail for highlight in product.highlights)],
+                ).casefold()
+            ]
+
         # ship_to / 价格硬约束过滤 + top_k 截断（硬约束走结构化过滤，不交给模型）
         filtered: list[tuple[float, Product]] = []
         filtered_out: list[dict] = []

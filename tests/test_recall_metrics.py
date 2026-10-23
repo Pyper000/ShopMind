@@ -14,6 +14,7 @@ from scripts.eval.metrics import (
     gate,
     mrr,
     ndcg_at_k,
+    precision_at_k,
     recall_at_k,
 )
 
@@ -46,6 +47,14 @@ class TestRecallAtK:
     def test_duplicates_do_not_inflate(self):
         """重复 id 不应让 Recall 虚高。"""
         assert recall_at_k(["a", "a", "a"], ["a", "b"], k=3) == 0.5
+
+
+class TestPrecisionAtK:
+    def test_precision_uses_returned_count_and_deduplicates(self):
+        assert precision_at_k(["a", "a", "x"], ["a"], k=3) == 0.5
+
+    def test_empty_results(self):
+        assert precision_at_k([], ["a"], k=3) == 0.0
 
 
 class TestMRR:

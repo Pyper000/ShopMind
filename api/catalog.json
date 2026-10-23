@@ -8277,5 +8277,2795 @@
     "price": 299,
     "currency": "CNY",
     "stock": 50
+  },
+  {
+    "id": "P2001",
+    "title": "ShopMind模拟 产妇卫生巾 日用轻薄款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇卫生巾与产褥垫；核心属性：日用型；独立包装；轻薄便携；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 日用型；独立包装；轻薄便携",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2002",
+    "title": "ShopMind模拟 产妇卫生巾 夜用加长款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇卫生巾与产褥垫；核心属性：夜用型；加长覆盖；多片装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 夜用型；加长覆盖；多片装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2003",
+    "title": "ShopMind模拟 产妇卫生巾 高吸收量款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇卫生巾与产褥垫；核心属性：高吸收量定位；加宽后片；独立包装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 高吸收量定位；加宽后片；独立包装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2004",
+    "title": "ShopMind模拟 产妇卫生巾 柔棉亲肤款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇卫生巾与产褥垫；核心属性：柔棉表层定位；透气背层；不含香型描述；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 柔棉表层定位；透气背层；不含香型描述",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2005",
+    "title": "ShopMind模拟 产妇卫生巾 产褥垫组合装",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇卫生巾与产褥垫；核心属性：产褥垫与卫生巾组合；方便住院收纳；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 产褥垫与卫生巾组合；方便住院收纳",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2006",
+    "title": "ShopMind模拟 产妇一次性内裤 基础棉柔款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇一次性内裤；核心属性：棉柔触感定位；基础腰型；多条装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 棉柔触感定位；基础腰型；多条装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2007",
+    "title": "ShopMind模拟 产妇一次性内裤 高腰包腹款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇一次性内裤；核心属性：高腰版型；弹力腰围；多条装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 高腰版型；弹力腰围；多条装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2008",
+    "title": "ShopMind模拟 产妇一次性内裤 网纱透气款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇一次性内裤；核心属性：网纱透气定位；轻柔弹力；多条装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 网纱透气定位；轻柔弹力；多条装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2009",
+    "title": "ShopMind模拟 产妇一次性内裤 加大尺码款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇一次性内裤；核心属性：加大尺码选项；宽腰围；多条装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 加大尺码选项；宽腰围；多条装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2010",
+    "title": "ShopMind模拟 产妇一次性内裤 独立包装款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇一次性内裤；核心属性：单条独立包装；便于分次收纳；多条装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 单条独立包装；便于分次收纳；多条装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2011",
+    "title": "ShopMind模拟 哺乳文胸 前开扣基础款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：哺乳文胸；核心属性：前开扣；方便哺乳开合；无钢圈定位；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 前开扣；方便哺乳开合；无钢圈定位",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2012",
+    "title": "ShopMind模拟 哺乳文胸 交叉免扣款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：哺乳文胸；核心属性：交叉式前片；单手拉开；无钢圈定位；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 交叉式前片；单手拉开；无钢圈定位",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2013",
+    "title": "ShopMind模拟 哺乳文胸 宽肩带承托款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：哺乳文胸；核心属性：加宽肩带；可调节背扣；尺码需按实际测量；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 加宽肩带；可调节背扣；尺码需按实际测量",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 139,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2014",
+    "title": "ShopMind模拟 哺乳文胸 睡眠舒适款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：哺乳文胸；核心属性：柔软弹力面料定位；无硬质支撑；适合居家比较；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 柔软弹力面料定位；无硬质支撑；适合居家比较",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 119,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2015",
+    "title": "ShopMind模拟 哺乳文胸 可拆卸罩杯款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：哺乳文胸；核心属性：可拆卸罩杯；肩带调节；尺码与材质以实物为准；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 可拆卸罩杯；肩带调节；尺码与材质以实物为准",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 159,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2016",
+    "title": "ShopMind模拟 防溢乳垫 一次性薄款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：防溢乳垫；核心属性：一次性；薄型；独立小包装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 一次性；薄型；独立小包装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 29,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2017",
+    "title": "ShopMind模拟 防溢乳垫 一次性加厚款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：防溢乳垫；核心属性：一次性；加厚吸收层定位；双片包装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 一次性；加厚吸收层定位；双片包装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2018",
+    "title": "ShopMind模拟 防溢乳垫 透气背胶款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：防溢乳垫；核心属性：透气背层定位；固定背胶；独立包装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 透气背层定位；固定背胶；独立包装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2019",
+    "title": "ShopMind模拟 防溢乳垫 可水洗棉柔款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：防溢乳垫；核心属性：可水洗重复使用；棉柔触感定位；需按说明清洁；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 可水洗重复使用；棉柔触感定位；需按说明清洁",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2020",
+    "title": "ShopMind模拟 防溢乳垫 可水洗竹纤维款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：防溢乳垫；核心属性：可水洗重复使用；多层结构定位；材质以商品信息为准；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 可水洗重复使用；多层结构定位；材质以商品信息为准",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2021",
+    "title": "ShopMind模拟 待产前开扣睡衣 纯棉短袖款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：待产睡衣与家居服；核心属性：前开扣；短袖；轻薄棉质定位；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 前开扣；短袖；轻薄棉质定位",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2022",
+    "title": "ShopMind模拟 待产前开扣睡衣 长袖家居款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：待产睡衣与家居服；核心属性：前开扣；长袖；住院与居家两用定位；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 前开扣；长袖；住院与居家两用定位",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 159,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2023",
+    "title": "ShopMind模拟 待产前开扣睡衣 哺乳开口款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：待产睡衣与家居服；核心属性：隐藏哺乳开口；宽松版型；尺码需按个人情况选择；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 隐藏哺乳开口；宽松版型；尺码需按个人情况选择",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 189,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2024",
+    "title": "ShopMind模拟 待产前开扣睡衣 加长睡袍款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：待产睡衣与家居服；核心属性：中长款；腰带闭合；便于病房穿脱；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 中长款；腰带闭合；便于病房穿脱",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2025",
+    "title": "ShopMind模拟 待产前开扣睡衣 可拆分套装款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：待产睡衣与家居服；核心属性：上衣与长裤套装；前开扣；面料参数以实物为准；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 上衣与长裤套装；前开扣；面料参数以实物为准",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 229,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2026",
+    "title": "ShopMind模拟 产妇洗漱包 轻便基础款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇洗漱收纳包；核心属性：轻量收纳；牙刷牙膏分区；可手提；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轻量收纳；牙刷牙膏分区；可手提",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2027",
+    "title": "ShopMind模拟 产妇洗漱包 防泼水分层款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇洗漱收纳包；核心属性：分层收纳；防泼水面料定位；挂钩设计；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 分层收纳；防泼水面料定位；挂钩设计",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2028",
+    "title": "ShopMind模拟 产妇洗漱包 透明易取款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇洗漱收纳包；核心属性：透明分区；便于快速查看；适合短期住院收纳；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 透明分区；便于快速查看；适合短期住院收纳",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2029",
+    "title": "ShopMind模拟 产妇洗漱包 大容量挂式款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇洗漱收纳包；核心属性：挂式展开；多口袋；可收纳洗漱用品；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 挂式展开；多口袋；可收纳洗漱用品",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2030",
+    "title": "ShopMind模拟 产妇洗漱包 母婴双袋组合",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：产妇洗漱收纳包；核心属性：成人与婴儿用品分袋；便于分类；具体尺寸待核实；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 成人与婴儿用品分袋；便于分类；具体尺寸待核实",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 119,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2031",
+    "title": "ShopMind模拟 新生儿连体衣 纯棉和尚服套装",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿衣物；核心属性：和尚服；前系带；尺码按出生体重选择；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 和尚服；前系带；尺码按出生体重选择",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2032",
+    "title": "ShopMind模拟 新生儿连体衣 长袖连体衣",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿衣物；核心属性：长袖；裆部按扣；便于换尿布；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 长袖；裆部按扣；便于换尿布",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2033",
+    "title": "ShopMind模拟 新生儿连体衣 春秋薄绒款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿衣物；核心属性：薄绒保暖定位；连脚设计；按季节选择；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 薄绒保暖定位；连脚设计；按季节选择",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2034",
+    "title": "ShopMind模拟 新生儿连体衣 出院衣物组合",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿衣物；核心属性：连体衣与帽袜组合；适合出院穿着；季节需确认；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 连体衣与帽袜组合；适合出院穿着；季节需确认",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 159,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2035",
+    "title": "ShopMind模拟 新生儿连体衣 多尺码基础装",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿衣物；核心属性：多件组合；基础内衣与连体衣；具体件数以模拟规格为准；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 多件组合；基础内衣与连体衣；具体件数以模拟规格为准",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 189,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2036",
+    "title": "ShopMind模拟 新生儿纸尿裤 NB试用小包装",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿尿布与清洁；核心属性：新生儿NB码；小包装；适合先核对尺码；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 新生儿NB码；小包装；适合先核对尺码",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 29,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2037",
+    "title": "ShopMind模拟 新生儿纸尿裤 NB柔薄日用装",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿尿布与清洁；核心属性：新生儿NB码；日用定位；腰围弹力设计；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 新生儿NB码；日用定位；腰围弹力设计",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2038",
+    "title": "ShopMind模拟 新生儿纸尿裤 S码透气款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿尿布与清洁；核心属性：S码；透气层定位；适用体重需以实物标识为准；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: S码；透气层定位；适用体重需以实物标识为准",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2039",
+    "title": "ShopMind模拟 新生儿纸尿裤 尿布与湿巾组合",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿尿布与清洁；核心属性：纸尿裤与婴儿湿巾组合；外出收纳方便；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 纸尿裤与婴儿湿巾组合；外出收纳方便",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2040",
+    "title": "ShopMind模拟 新生儿纸尿裤 棉柔巾护理组合",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：新生儿尿布与清洁；核心属性：棉柔巾与基础清洁用品组合；使用方式需按产品说明；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 棉柔巾与基础清洁用品组合；使用方式需按产品说明",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2041",
+    "title": "ShopMind模拟 婴儿纱布巾 三层纱布巾",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿纱布巾与包被；核心属性：三层纱布；多用途；多条装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 三层纱布；多用途；多条装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2042",
+    "title": "ShopMind模拟 婴儿纱布巾 六层吸水纱布巾",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿纱布巾与包被；核心属性：六层结构定位；吸水用途；多条装；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 六层结构定位；吸水用途；多条装",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2043",
+    "title": "ShopMind模拟 婴儿纱布巾 纯棉包被",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿纱布巾与包被；核心属性：婴儿包被；纯棉触感定位；厚薄按季节选择；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 婴儿包被；纯棉触感定位；厚薄按季节选择",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2044",
+    "title": "ShopMind模拟 婴儿纱布巾 轻薄出院毯",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿纱布巾与包被；核心属性：轻薄毯；便于包裹与携带；尺寸以商品信息为准；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轻薄毯；便于包裹与携带；尺寸以商品信息为准",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2045",
+    "title": "ShopMind模拟 婴儿纱布巾 纱布巾与包被组合",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿纱布巾与包被；核心属性：纱布巾与婴儿包被组合；收纳方便；组合内容待核实；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 纱布巾与婴儿包被组合；收纳方便；组合内容待核实",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2046",
+    "title": "ShopMind模拟 婴儿汽车安全座椅 提篮式基础款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿汽车安全座椅；核心属性：提篮式；便于新生儿乘车；适用范围与认证待核实；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 提篮式；便于新生儿乘车；适用范围与认证待核实",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 499,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2047",
+    "title": "ShopMind模拟 婴儿汽车安全座椅 提篮式可拆底座款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿汽车安全座椅；核心属性：提篮与底座组合定位；安装方式待核实；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 提篮与底座组合定位；安装方式待核实",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 799,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2048",
+    "title": "ShopMind模拟 婴儿汽车安全座椅 新生儿后向款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿汽车安全座椅；核心属性：后向乘坐定位；适用身高体重及认证待核实；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 后向乘坐定位；适用身高体重及认证待核实",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 999,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2049",
+    "title": "ShopMind模拟 婴儿汽车安全座椅 旋转安装款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿汽车安全座椅；核心属性：旋转结构定位；车辆适配与安全认证待核实；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 旋转结构定位；车辆适配与安全认证待核实",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 1299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2050",
+    "title": "ShopMind模拟 婴儿汽车安全座椅 多阶段成长款",
+    "brand": "ShopMind模拟目录",
+    "category": "母婴用品",
+    "description": "品类：婴儿汽车安全座椅；核心属性：多阶段使用定位；适用范围和当地认证必须核实；场景标签：待产包。来源参考：NHS hospital bag checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 多阶段使用定位；适用范围和当地认证必须核实",
+      "场景标签: 待产包；清单来源: NHS hospital bag checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 1599,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2051",
+    "title": "ShopMind模拟 家庭露营帐篷 双人轻量款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营帐篷；核心属性：双人容量；约2.2kg模拟重量；快速搭建定位；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 双人容量；约2.2kg模拟重量；快速搭建定位",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 399,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2052",
+    "title": "ShopMind模拟 家庭露营帐篷 三人前厅款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营帐篷；核心属性：三人容量；带前厅；适合汽车露营收纳；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 三人容量；带前厅；适合汽车露营收纳",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 599,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2053",
+    "title": "ShopMind模拟 家庭露营帐篷 四人家庭款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营帐篷；核心属性：四人容量；双门设计；尺寸与防水参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 四人容量；双门设计；尺寸与防水参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 899,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2054",
+    "title": "ShopMind模拟 家庭露营帐篷 自动速开款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营帐篷；核心属性：速开结构定位；适合新手搭建；搭建尺寸待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 速开结构定位；适合新手搭建；搭建尺寸待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 699,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2055",
+    "title": "ShopMind模拟 家庭露营帐篷 加大防雨款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营帐篷；核心属性：加大空间；含地布定位；防水等级须以实物参数核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 加大空间；含地布定位；防水等级须以实物参数核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 1299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2056",
+    "title": "ShopMind模拟 露营睡袋 夏季信封款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡袋；核心属性：信封式；适合温暖季节定位；舒适温标待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 信封式；适合温暖季节定位；舒适温标待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2057",
+    "title": "ShopMind模拟 露营睡袋 春秋化纤款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡袋；核心属性：化纤填充定位；春秋使用；舒适温标待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 化纤填充定位；春秋使用；舒适温标待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2058",
+    "title": "ShopMind模拟 露营睡袋 轻量木乃伊款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡袋；核心属性：木乃伊版型；便携压缩；舒适温标待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 木乃伊版型；便携压缩；舒适温标待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 499,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2059",
+    "title": "ShopMind模拟 露营睡袋 家庭双人款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡袋；核心属性：双人尺寸；适合汽车露营；收纳体积待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 双人尺寸；适合汽车露营；收纳体积待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 599,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2060",
+    "title": "ShopMind模拟 露营睡袋 低温保暖款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡袋；核心属性：低温场景定位；填充与温标不可据模拟信息选购；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 低温场景定位；填充与温标不可据模拟信息选购",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 899,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2061",
+    "title": "ShopMind模拟 露营睡垫 泡沫折叠款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡垫；核心属性：泡沫结构；免充气；折叠收纳；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 泡沫结构；免充气；折叠收纳",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2062",
+    "title": "ShopMind模拟 露营睡垫 充气轻量款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡垫；核心属性：充气式；轻量便携定位；保温参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 充气式；轻量便携定位；保温参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2063",
+    "title": "ShopMind模拟 露营睡垫 自动充气款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡垫；核心属性：自动充气定位；适合车露；厚度参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 自动充气定位；适合车露；厚度参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2064",
+    "title": "ShopMind模拟 露营睡垫 加厚舒适款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡垫；核心属性：加厚结构；提高离地舒适度；实际尺寸待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 加厚结构；提高离地舒适度；实际尺寸待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 399,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2065",
+    "title": "ShopMind模拟 露营睡垫 双人拼接款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营睡垫；核心属性：双人宽幅；可拼接固定；适配帐篷尺寸待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 双人宽幅；可拼接固定；适配帐篷尺寸待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 499,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2066",
+    "title": "ShopMind模拟 露营照明灯具 USB头灯基础款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营头灯与营地照明；核心属性：头戴照明；USB充电；亮度与续航待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 头戴照明；USB充电；亮度与续航待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2067",
+    "title": "ShopMind模拟 露营照明灯具 双光源头灯",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营头灯与营地照明；核心属性：白光与红光模式定位；头戴照明；电池规格待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 白光与红光模式定位；头戴照明；电池规格待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2068",
+    "title": "ShopMind模拟 露营照明灯具 磁吸营地灯",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营头灯与营地照明；核心属性：营地悬挂与磁吸定位；多档调光；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 营地悬挂与磁吸定位；多档调光",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2069",
+    "title": "ShopMind模拟 露营照明灯具 便携提灯款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营头灯与营地照明；核心属性：提手与挂钩；营地环境照明；续航参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 提手与挂钩；营地环境照明；续航参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 169,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2070",
+    "title": "ShopMind模拟 露营照明灯具 头灯营地灯组合",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营头灯与营地照明；核心属性：头灯与营地灯组合；覆盖手持与营地照明；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 头灯与营地灯组合；覆盖手持与营地照明",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 229,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2071",
+    "title": "ShopMind模拟 露营炉具 单头气炉",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炉具；核心属性：单头炉；便携收纳；燃料接口需确认；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 单头炉；便携收纳；燃料接口需确认",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2072",
+    "title": "ShopMind模拟 露营炉具 分体防风炉",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炉具；核心属性：分体结构；防风支架定位；燃料另配；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 分体结构；防风支架定位；燃料另配",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2073",
+    "title": "ShopMind模拟 露营炉具 双头家庭炉",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炉具；核心属性：双炉头；适合多人用餐；燃料需另购；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 双炉头；适合多人用餐；燃料需另购",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 399,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2074",
+    "title": "ShopMind模拟 露营炉具 一体式炉锅套装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炉具；核心属性：炉具与锅具组合；套锅嵌套收纳；燃料另配；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 炉具与锅具组合；套锅嵌套收纳；燃料另配",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2075",
+    "title": "ShopMind模拟 露营炉具 柴火炉具款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炉具；核心属性：固体燃料炉具定位；营地明火规定须先确认；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 固体燃料炉具定位；营地明火规定须先确认",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 259,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2076",
+    "title": "ShopMind模拟 露营炊具套装 一人钛锅套装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炊具与餐具；核心属性：单人锅具与餐具；轻量定位；容量待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 单人锅具与餐具；轻量定位；容量待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2077",
+    "title": "ShopMind模拟 露营炊具套装 双人铝锅套装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炊具与餐具；核心属性：双人锅具组合；套锅嵌套；含餐具定位；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 双人锅具组合；套锅嵌套；含餐具定位",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 259,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2078",
+    "title": "ShopMind模拟 露营炊具套装 家庭不粘锅具组",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炊具与餐具；核心属性：多件锅具；家庭车露定位；涂层信息待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 多件锅具；家庭车露定位；涂层信息待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 399,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2079",
+    "title": "ShopMind模拟 露营炊具套装 折叠餐具套装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炊具与餐具；核心属性：折叠碗盘与餐具；多人组合；材质待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 折叠碗盘与餐具；多人组合；材质待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2080",
+    "title": "ShopMind模拟 露营炊具套装 锅具餐具全套",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营炊具与餐具；核心属性：锅、煎盘、餐具组合；适合多人做饭；具体件数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 锅、煎盘、餐具组合；适合多人做饭；具体件数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 499,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2081",
+    "title": "ShopMind模拟 露营水具 不锈钢保温水壶",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营饮水与储水；核心属性：750ml模拟容量；保温水壶；实测保温参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 750ml模拟容量；保温水壶；实测保温参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2082",
+    "title": "ShopMind模拟 露营水具 轻量运动水瓶",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营饮水与储水；核心属性：600ml模拟容量；轻量瓶身；是否保温以实物为准；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 600ml模拟容量；轻量瓶身；是否保温以实物为准",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2083",
+    "title": "ShopMind模拟 露营水具 折叠储水桶",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营饮水与储水；核心属性：10L模拟容量；折叠收纳；装水前需核对材质说明；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 10L模拟容量；折叠收纳；装水前需核对材质说明",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2084",
+    "title": "ShopMind模拟 露营水具 大容量水桶",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营饮水与储水；核心属性：15L模拟容量；提手与出水口；适合车载营地；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 15L模拟容量；提手与出水口；适合车载营地",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 119,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2085",
+    "title": "ShopMind模拟 露营水具 保冷软箱",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营饮水与储水；核心属性：软式保冷箱；便携提带；保冷时长待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 软式保冷箱；便携提带；保冷时长待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2086",
+    "title": "ShopMind模拟 露营防雨外套 轻量防风外套",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营衣物与雨具；核心属性：轻量收纳；防风定位；防水等级待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轻量收纳；防风定位；防水等级待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2087",
+    "title": "ShopMind模拟 露营防雨外套 两层防雨外套",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营衣物与雨具；核心属性：连帽；两层结构定位；透湿防水参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 连帽；两层结构定位；透湿防水参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2088",
+    "title": "ShopMind模拟 露营防雨外套 冲锋衣加雨裤套装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营衣物与雨具；核心属性：上衣与雨裤组合；雨天露营；尺码及参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 上衣与雨裤组合；雨天露营；尺码及参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 499,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2089",
+    "title": "ShopMind模拟 露营防雨外套 保暖抓绒外套",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营衣物与雨具；核心属性：抓绒中层定位；适合凉爽早晚；厚度以实物为准；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 抓绒中层定位；适合凉爽早晚；厚度以实物为准",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 259,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2090",
+    "title": "ShopMind模拟 露营防雨外套 速干衣裤组合",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营衣物与雨具；核心属性：速干上衣与长裤；分层穿着；面料参数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 速干上衣与长裤；分层穿着；面料参数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 229,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2091",
+    "title": "ShopMind模拟 露营洗漱用品 悬挂洗漱包",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营洗漱与快干毛巾；核心属性：分区收纳；悬挂设计；适合营地洗漱；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 分区收纳；悬挂设计；适合营地洗漱",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2092",
+    "title": "ShopMind模拟 露营洗漱用品 旅行牙刷收纳套装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营洗漱与快干毛巾；核心属性：牙刷与旅行牙膏收纳；具体内容待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 牙刷与旅行牙膏收纳；具体内容待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2093",
+    "title": "ShopMind模拟 露营洗漱用品 速干毛巾小号",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营洗漱与快干毛巾；核心属性：小号快干毛巾；轻便收纳；尺寸待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 小号快干毛巾；轻便收纳；尺寸待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2094",
+    "title": "ShopMind模拟 露营洗漱用品 速干浴巾大号",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营洗漱与快干毛巾；核心属性：大号快干浴巾；适合营地淋浴；尺寸待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 大号快干浴巾；适合营地淋浴；尺寸待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2095",
+    "title": "ShopMind模拟 露营洗漱用品 洗漱包毛巾组合",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营洗漱与快干毛巾；核心属性：洗漱包与快干毛巾组合；适合短途营地准备；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 洗漱包与快干毛巾组合；适合短途营地准备",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2096",
+    "title": "ShopMind模拟 露营防晒用品 SPF30防晒乳",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营防晒与驱虫；核心属性：SPF30标注为模拟属性；实际防护与使用说明待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: SPF30标注为模拟属性；实际防护与使用说明待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2097",
+    "title": "ShopMind模拟 露营防晒用品 户外防晒喷雾",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营防晒与驱虫；核心属性：喷雾剂型定位；防护参数与适用人群待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 喷雾剂型定位；防护参数与适用人群待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2098",
+    "title": "ShopMind模拟 露营防晒用品 宽檐遮阳帽",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营防晒与驱虫；核心属性：宽檐遮阳；可调节帽围；防护效果以实物为准；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 宽檐遮阳；可调节帽围；防护效果以实物为准",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2099",
+    "title": "ShopMind模拟 露营防晒用品 驱蚊液随身装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营防晒与驱虫；核心属性：便携装；有效成分及适用年龄待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 便携装；有效成分及适用年龄待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2100",
+    "title": "ShopMind模拟 露营防晒用品 防晒帽与驱蚊组合",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营防晒与驱虫；核心属性：遮阳帽与驱蚊用品组合；使用前核对成分说明；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 遮阳帽与驱蚊用品组合；使用前核对成分说明",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2101",
+    "title": "ShopMind模拟 户外急救包 个人基础急救包",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营急救包；核心属性：基础包扎用品定位；清单内容待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 基础包扎用品定位；清单内容待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2102",
+    "title": "ShopMind模拟 户外急救包 家庭多人急救包",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营急救包；核心属性：多人份收纳定位；具体用品与有效期需核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 多人份收纳定位；具体用品与有效期需核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2103",
+    "title": "ShopMind模拟 户外急救包 防水急救收纳包",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营急救包；核心属性：防泼水收纳定位；不替代专业医疗建议；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 防泼水收纳定位；不替代专业医疗建议",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 159,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2104",
+    "title": "ShopMind模拟 户外急救包 轻量随身急救包",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营急救包；核心属性：轻量小包；适合短途活动；具体用品待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轻量小包；适合短途活动；具体用品待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2105",
+    "title": "ShopMind模拟 户外急救包 急救包与应急毯组合",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营急救包；核心属性：急救用品与应急毯组合；用途和说明待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 急救用品与应急毯组合；用途和说明待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 189,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2106",
+    "title": "ShopMind模拟 露营维修工具 帐篷补修套装",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营工具与维修；核心属性：补片与修补贴定位；需与装备材质匹配；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 补片与修补贴定位；需与装备材质匹配",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2107",
+    "title": "ShopMind模拟 露营维修工具 多功能工具钳",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营工具与维修；核心属性：折叠工具定位；功能清单需按实物核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 折叠工具定位；功能清单需按实物核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2108",
+    "title": "ShopMind模拟 露营维修工具 户外修补胶带",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营工具与维修；核心属性：耐磨修补胶带；适配材料与使用方法待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 耐磨修补胶带；适配材料与使用方法待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 29,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2109",
+    "title": "ShopMind模拟 露营维修工具 帐杆修复套管",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营工具与维修；核心属性：帐杆临时修复套管；直径需与帐杆匹配；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 帐杆临时修复套管；直径需与帐杆匹配",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2110",
+    "title": "ShopMind模拟 露营维修工具 露营维修组合包",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营工具与维修；核心属性：补修贴、扎带与工具组合；具体件数待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 补修贴、扎带与工具组合；具体件数待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2111",
+    "title": "ShopMind模拟 露营移动电源 10000mAh便携款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营移动电源；核心属性：10000mAh模拟容量；USB输出；航空携带规则待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 10000mAh模拟容量；USB输出；航空携带规则待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2112",
+    "title": "ShopMind模拟 露营移动电源 20000mAh大容量款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营移动电源；核心属性：20000mAh模拟容量；多设备充电定位；实际输出待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 20000mAh模拟容量；多设备充电定位；实际输出待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2113",
+    "title": "ShopMind模拟 露营移动电源 太阳能补电组合",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营移动电源；核心属性：移动电源与小型太阳能板组合；天气影响充电效率；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 移动电源与小型太阳能板组合；天气影响充电效率",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2114",
+    "title": "ShopMind模拟 露营移动电源 多口快充款",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营移动电源；核心属性：多设备接口定位；功率与兼容性待核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 多设备接口定位；功率与兼容性待核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 259,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2115",
+    "title": "ShopMind模拟 露营移动电源 营地电源站",
+    "brand": "ShopMind模拟目录",
+    "category": "户外运动",
+    "description": "品类：露营移动电源；核心属性：大容量电源站定位；容量、输出及运输限制须核实；场景标签：露营。来源参考：REI Camping Essentials Checklist。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 大容量电源站定位；容量、输出及运输限制须核实",
+      "场景标签: 露营；清单来源: REI Camping Essentials Checklist",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 899,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2116",
+    "title": "ShopMind模拟 猫咪航空箱 基础硬壳款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪外出航空箱；核心属性：硬壳结构定位；尺寸需匹配猫咪体型；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 硬壳结构定位；尺寸需匹配猫咪体型",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2117",
+    "title": "ShopMind模拟 猫咪航空箱 顶部开门款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪外出航空箱；核心属性：顶部开门；便于放入与清洁；尺寸待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 顶部开门；便于放入与清洁；尺寸待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 159,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2118",
+    "title": "ShopMind模拟 猫咪航空箱 双开门稳固款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪外出航空箱；核心属性：前门与顶部开门；卡扣结构；承重参数待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 前门与顶部开门；卡扣结构；承重参数待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 199,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2119",
+    "title": "ShopMind模拟 猫咪航空箱 折叠软包款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪外出航空箱；核心属性：软包折叠；便于收纳；需确认猫咪是否适应；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 软包折叠；便于收纳；需确认猫咪是否适应",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 169,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2120",
+    "title": "ShopMind模拟 猫咪航空箱 加固可清洗款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪外出航空箱；核心属性：可拆洗内垫；加固结构定位；实际牢固度需核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 可拆洗内垫；加固结构定位；实际牢固度需核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 259,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2121",
+    "title": "ShopMind模拟 猫咪食盆 不锈钢基础双碗",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪食盆与水碗；核心属性：食盆与水碗组合；防滑底座定位；容量待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 食盆与水碗组合；防滑底座定位；容量待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2122",
+    "title": "ShopMind模拟 猫咪食盆 陶瓷浅口碗",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪食盆与水碗；核心属性：浅口设计；陶瓷材质定位；重量与清洁要求待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 浅口设计；陶瓷材质定位；重量与清洁要求待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2123",
+    "title": "ShopMind模拟 猫咪食盆 高脚慢食碗",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪食盆与水碗；核心属性：抬高支架与慢食纹路；高度需按猫咪情况选择；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 抬高支架与慢食纹路；高度需按猫咪情况选择",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2124",
+    "title": "ShopMind模拟 猫咪食盆 饮水机组合",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪食盆与水碗；核心属性：水碗与循环饮水机组合；滤芯耗材需另行确认；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 水碗与循环饮水机组合；滤芯耗材需另行确认",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 159,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2125",
+    "title": "ShopMind模拟 猫咪食盆 宽口防滑碗",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪食盆与水碗；核心属性：宽口浅碗；防滑底座；材质以实物为准；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 宽口浅碗；防滑底座；材质以实物为准",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2126",
+    "title": "ShopMind模拟 猫粮 幼猫试吃小包装",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫粮；核心属性：幼猫阶段定位；小包装；年龄与配方需核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 幼猫阶段定位；小包装；年龄与配方需核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2127",
+    "title": "ShopMind模拟 猫粮 成猫主食小包装",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫粮；核心属性：成猫阶段定位；小包装；配方适配需核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 成猫阶段定位；小包装；配方适配需核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2128",
+    "title": "ShopMind模拟 猫粮 干粮基础装",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫粮；核心属性：干粮；日常喂养定位；营养标签需核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 干粮；日常喂养定位；营养标签需核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2129",
+    "title": "ShopMind模拟 猫粮 主食湿粮组合",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫粮；核心属性：多口味湿粮组合；配方与喂食建议需核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 多口味湿粮组合；配方与喂食建议需核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2130",
+    "title": "ShopMind模拟 猫粮 原住猫同款过渡装",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫粮；核心属性：模拟为过渡期小包装；应优先询问原照护者沿用食物；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 模拟为过渡期小包装；应优先询问原照护者沿用食物",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2131",
+    "title": "ShopMind模拟 猫砂盆 开放式基础猫砂盆",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫砂盆与猫砂；核心属性：开放式；低入口定位；尺寸需匹配猫咪；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 开放式；低入口定位；尺寸需匹配猫咪",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2132",
+    "title": "ShopMind模拟 猫砂盆 加高防外溅猫砂盆",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫砂盆与猫砂；核心属性：加高围边；防外溅定位；入口高度需确认；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 加高围边；防外溅定位；入口高度需确认",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2133",
+    "title": "ShopMind模拟 猫砂盆 带盖除味猫砂盆",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫砂盆与猫砂；核心属性：带盖结构；空间与猫咪接受度需考虑；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 带盖结构；空间与猫咪接受度需考虑",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2134",
+    "title": "ShopMind模拟 猫砂盆 无香豆腐猫砂",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫砂盆与猫砂；核心属性：豆腐砂；无香型定位；颗粒偏好需观察；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 豆腐砂；无香型定位；颗粒偏好需观察",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2135",
+    "title": "ShopMind模拟 猫砂盆 低尘矿砂组合",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫砂盆与猫砂；核心属性：矿砂；低尘为模拟定位；实际粉尘参数待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 矿砂；低尘为模拟定位；实际粉尘参数待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2136",
+    "title": "ShopMind模拟 猫抓板 瓦楞纸平面款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫抓板与猫抓柱；核心属性：平面瓦楞纸；占地小；可替换抓面定位；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 平面瓦楞纸；占地小；可替换抓面定位",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 29,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2137",
+    "title": "ShopMind模拟 猫抓板 斜坡抓板款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫抓板与猫抓柱；核心属性：斜坡结构；横向抓挠；摆放空间需确认；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 斜坡结构；横向抓挠；摆放空间需确认",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2138",
+    "title": "ShopMind模拟 猫抓板 麻绳立柱款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫抓板与猫抓柱；核心属性：立式麻绳抓柱；底座稳定性需核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 立式麻绳抓柱；底座稳定性需核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 99,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2139",
+    "title": "ShopMind模拟 猫抓板 组合猫爬架款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫抓板与猫抓柱；核心属性：抓柱与休息平台组合；高度及稳固性待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 抓柱与休息平台组合；高度及稳固性待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 299,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2140",
+    "title": "ShopMind模拟 猫抓板 双面可用抓板",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫抓板与猫抓柱；核心属性：双面抓面；可更换；具体材质待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 双面抓面；可更换；具体材质待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2141",
+    "title": "ShopMind模拟 猫窝 开放软垫窝",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫窝与躲藏空间；核心属性：开放式软垫；可拆洗定位；尺寸需匹配猫咪；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 开放式软垫；可拆洗定位；尺寸需匹配猫咪",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2142",
+    "title": "ShopMind模拟 猫窝 半封闭洞穴窝",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫窝与躲藏空间；核心属性：半封闭躲藏空间；适合安静角落摆放；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 半封闭躲藏空间；适合安静角落摆放",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 129,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2143",
+    "title": "ShopMind模拟 猫窝 纸箱躲藏屋",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫窝与躲藏空间；核心属性：轻量躲藏屋；可替代纸箱空间；需保持干燥；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轻量躲藏屋；可替代纸箱空间；需保持干燥",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2144",
+    "title": "ShopMind模拟 猫窝 可拆洗垫窝组合",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫窝与躲藏空间；核心属性：窝体与可拆洗垫；清洁方式待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 窝体与可拆洗垫；清洁方式待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 159,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2145",
+    "title": "ShopMind模拟 猫窝 高位休息平台",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫窝与躲藏空间；核心属性：高位休息位；安装与承重需核实，稳定家具也可替代；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 高位休息位；安装与承重需核实，稳定家具也可替代",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 229,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2146",
+    "title": "ShopMind模拟 猫咪玩具 软球组合",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪玩具；核心属性：轻量滚动玩具；多件组合；玩耍需看护；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轻量滚动玩具；多件组合；玩耍需看护",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 29,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2147",
+    "title": "ShopMind模拟 猫咪玩具 逗猫杆基础款",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪玩具；核心属性：手持逗猫杆；互动玩耍；使用后收纳；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 手持逗猫杆；互动玩耍；使用后收纳",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2148",
+    "title": "ShopMind模拟 猫咪玩具 轨道滚珠玩具",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪玩具；核心属性：轨道滚珠；自主玩耍定位；结构需定期检查；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轨道滚珠；自主玩耍定位；结构需定期检查",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2149",
+    "title": "ShopMind模拟 猫咪玩具 嗅闻藏食玩具",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪玩具；核心属性：藏食互动；食物类型应与原有饮食一致；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 藏食互动；食物类型应与原有饮食一致",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 79,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2150",
+    "title": "ShopMind模拟 猫咪玩具 安静布艺玩具组",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪玩具；核心属性：布艺玩具组合；尺寸与填充物需核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 布艺玩具组合；尺寸与填充物需核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2151",
+    "title": "ShopMind模拟 猫咪安置毯 轻薄可洗毯",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪安置毯与垫子；核心属性：轻薄毯；可机洗定位；尺寸待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 轻薄毯；可机洗定位；尺寸待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 39,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2152",
+    "title": "ShopMind模拟 猫咪安置毯 柔软窝垫",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪安置毯与垫子；核心属性：柔软垫面；可放入航空箱；清洁方式待核实；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 柔软垫面；可放入航空箱；清洁方式待核实",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 59,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2153",
+    "title": "ShopMind模拟 猫咪安置毯 保暖绒毯",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪安置毯与垫子；核心属性：绒面保暖定位；季节与室温需考虑；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 绒面保暖定位；季节与室温需考虑",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 69,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2154",
+    "title": "ShopMind模拟 猫咪安置毯 防水底层垫",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪安置毯与垫子；核心属性：防水底层；可与现有毯子搭配使用；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 防水底层；可与现有毯子搭配使用",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 89,
+    "currency": "CNY",
+    "stock": 50
+  },
+  {
+    "id": "P2155",
+    "title": "ShopMind模拟 猫咪安置毯 气味过渡小毯",
+    "brand": "ShopMind模拟目录",
+    "category": "宠物用品",
+    "description": "品类：猫咪安置毯与垫子；核心属性：小尺寸便携毯；可先沾熟悉气味；旧衣物也可替代；场景标签：新猫到家。来源参考：Cats Protection Bringing a Cat Home。参考项供核对，不代表所有人必须购买；请先确认用户需要。本条为模拟商品与模拟价格，不代表真实在售商品；规格、材质、安全认证、适用性、库存及售后均须以真实商品信息为准。",
+    "highlights": [
+      "核心属性: 小尺寸便携毯；可先沾熟悉气味；旧衣物也可替代",
+      "场景标签: 新猫到家；清单来源: Cats Protection Bringing a Cat Home",
+      "模拟商品与模拟价格；非真实在售商品，参数不可作为安全或购买依据"
+    ],
+    "ships_to": [
+      "CN"
+    ],
+    "price": 49,
+    "currency": "CNY",
+    "stock": 50
   }
 ]

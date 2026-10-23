@@ -28,6 +28,26 @@ test('simulated catalog covers core categories and every mapped subcategory', ()
   assert.equal(assigned.size, catalog.length, 'every product must have a secondary category');
 });
 
+test('checklist scene candidates are simulated and grouped in five-item evaluation pools', () => {
+  const examples = [
+    ['母婴用品', '产妇卫生巾与产褥垫', 'NHS hospital bag checklist'],
+    ['户外运动', '露营帐篷', 'REI Camping Essentials Checklist'],
+    ['宠物用品', '猫咪外出航空箱', 'Cats Protection Bringing a Cat Home'],
+  ];
+  for (const [category, subcategory, source] of examples) {
+    const ids = taxonomy[category][subcategory];
+    assert.equal(ids.length, 5);
+    for (const id of ids) {
+      const product = catalog.find(item => item.id === id);
+      assert(product, `${id} should exist`);
+      assert(product.description.includes(source));
+      assert(product.description.includes('不代表所有人必须购买'));
+      assert(product.description.includes('不代表真实在售商品'));
+      assert(product.highlights.some(item => item.startsWith('核心属性:')));
+    }
+  }
+});
+
 test('budget, destination and rejection are enforced before model selection', async () => {
   const plan = { goal: 'gift', stage: 'search', budget: 150, destination: 'CN', excludes: [], tasks: ['茶点礼盒'], must_buy: ['茶点礼盒'], directions: [] };
   const eligible = filterCatalog(plan);

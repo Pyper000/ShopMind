@@ -18,6 +18,8 @@ class ShoppingContextSnapshot:
     buyer_id: str
     locale: str
     currency: str
+    raw_query: str = ""
+    checklist_selection: Optional[dict] = None
 
 
 _current_snapshot: ContextVar[Optional[ShoppingContextSnapshot]] = ContextVar(

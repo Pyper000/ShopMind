@@ -143,6 +143,7 @@ def build_app() -> FastAPI:
             locale=body.locale,
             currency=body.currency,
             raw_query=body.raw_query,
+            checklist_selection=body.checklist_selection.model_dump() if body.checklist_selection else None,
         )
         if c.task_queue is None:
             now = time.monotonic()
@@ -160,11 +161,11 @@ def build_app() -> FastAPI:
             active_sessions.add(session_id)
             trace = c.bus.subscribe(session_id)
             try:
-                result = await asyncio.wait_for(c.orchestrator.handle_intent(intent), timeout=150)
+                result = await asyncio.wait_for(c.orchestrator.handle_intent(intent), timeout=240)
                 events = []
                 while not trace.empty():
                     event = trace.get_nowait()
-                    if event.type in {"plan.update", "tool.invoke", "tool.result", "agent.dispatch", "agent.result", "error"}:
+                    if event.type in {"plan.preview", "plan.update", "model.call", "tool.invoke", "tool.result", "agent.dispatch", "agent.result", "error"}:
                         events.append({"type": event.type, "payload": event.payload, "occurred_at": event.occurred_at})
                 return SubmitIntentResponse(
                     shopping_session_id=result.shopping_session_id, final_text=result.final_text, events=events,
@@ -206,11 +207,12 @@ def build_app() -> FastAPI:
             locale=body.locale,
             currency=body.currency,
             raw_query=body.raw_query,
+            checklist_selection=body.checklist_selection.model_dump() if body.checklist_selection else None,
         )
 
         async def process_turn() -> None:
             try:
-                await asyncio.wait_for(c.orchestrator.handle_intent(intent), timeout=150)
+                await asyncio.wait_for(c.orchestrator.handle_intent(intent), timeout=240)
             except asyncio.TimeoutError:
                 c.bus.publish(session_id, "error", {"message": "处理超时，请稍后重试"})
             except Exception as err:  # noqa: BLE001
@@ -258,6 +260,7 @@ def build_app() -> FastAPI:
             locale=body.locale,
             currency=body.currency,
             raw_query=body.raw_query,
+            checklist_selection=body.checklist_selection.model_dump() if body.checklist_selection else None,
         )
         if c.task_queue is None:
             raise HTTPException(status_code=503, detail="队列未启用，请使用 /commerce/intents")

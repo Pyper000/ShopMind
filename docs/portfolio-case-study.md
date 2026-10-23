@@ -1,4 +1,6 @@
-# Ecommerce 跨境购物搜索与决策 Agent
+# 历史案例：Ecommerce 跨境购物搜索与决策 Agent
+
+> 历史材料：本文描述的是早期跨境购物 Agent 方向，不是当前 ShopMind 的产品方案或验收证据。当前作品集入口见 [ShopMind 产品案例](shopmind-portfolio-case-study.md)。
 
 > 个人作品集｜模拟商品与模拟账户上下文｜不接真实支付、订单、物流或企业搜索日志
 

@@ -23,6 +23,8 @@ class ProductSearchSpec:
     price_max_major: Optional[float] = None
     # 增量重排时只从已保存的候选池恢复，不触发全目录召回
     candidate_ids: Optional[list[str]] = None
+    # 清单槽位搜索时，避免把语义相近但用途不同的商品当作候选
+    shopping_task: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.normalized_query or not self.normalized_query.strip():

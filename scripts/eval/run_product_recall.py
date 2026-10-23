@@ -51,6 +51,7 @@ from scripts.eval.metrics import (  # noqa: E402
     gate,
     mrr,
     ndcg_at_k,
+    precision_at_k,
     recall_at_k,
 )
 
@@ -134,6 +135,7 @@ def check_filter(
 
 async def run_dataset(
     usecase: CatalogSearchUseCase, repo: InMemoryProductRepository, cases: list[dict], top_k: int,
+    apply_task_filter: bool = True,
 ) -> Aggregate:
     products = {p.product_id: p for p in await repo.list_all()}
     results: list[QueryResult] = []
@@ -144,6 +146,7 @@ async def run_dataset(
             top_k=top_k,
             price_max_major=case.get("price_max_major"),
             ship_to=case.get("ship_to"),
+            shopping_task=case.get("shopping_task") if apply_task_filter else None,
         )
         payload = await usecase.execute(spec)
         hits = payload.get("hits", [])
@@ -185,7 +188,7 @@ def print_summary(label: str, agg: Aggregate) -> None:
     filt = "n/a" if agg.filter_accuracy is None else f"{agg.filter_accuracy:.3f}"
     print(
         f"  {label:<18} Recall@{agg.k}={agg.recall:.3f}  MRR={agg.mrr:.3f}  "
-        f"NDCG@{agg.k}={agg.ndcg:.3f}  过滤准确率={filt}",
+        f"NDCG@{agg.k}={agg.ndcg:.3f}  Precision@{agg.k}={agg.precision:.3f}  过滤准确率={filt}",
     )
     for kind, sub in by_kind(agg).items():
         print(
@@ -195,23 +198,23 @@ def print_summary(label: str, agg: Aggregate) -> None:
 
 
 def render_report(
-    per_strategy: dict[str, Aggregate], thresholds: Thresholds, top_k: int,
+    per_strategy: dict[str, Aggregate], thresholds: Thresholds, top_k: int, dataset: Path,
 ) -> str:
     lines = [
         f"# 商品检索召回评测报告（{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}）",
         "",
-        f"标注集 `{_DATASET}`，K={top_k}。",
+        f"标注集 `{dataset}`，K={top_k}。Precision@K 按实际返回候选数作分母；空结果记为 0。",
         "",
         "## 指标总览",
         "",
-        f"| 档位 | Recall@{top_k} | MRR | NDCG@{top_k} | 过滤准确率 | 门禁 |",
-        "|---|---|---|---|---|---|",
+        f"| 档位 | Recall@{top_k} | Precision@{top_k} | MRR | NDCG@{top_k} | 过滤准确率 | 门禁 |",
+        "|---|---|---|---|---|---|---|",
     ]
     for name, agg in per_strategy.items():
         verdict, _ = gate(agg, thresholds)
         filt = "n/a" if agg.filter_accuracy is None else f"{agg.filter_accuracy:.3f}"
         lines.append(
-            f"| {name} | {agg.recall:.3f} | {agg.mrr:.3f} | {agg.ndcg:.3f} | {filt} | {verdict} |",
+            f"| {name} | {agg.recall:.3f} | {agg.precision:.3f} | {agg.mrr:.3f} | {agg.ndcg:.3f} | {filt} | {verdict} |",
         )
 
     lines += ["", f"门禁阈值：Recall ≥ {thresholds.recall}（阻断）、MRR ≥ {thresholds.mrr}"
@@ -220,12 +223,12 @@ def render_report(
     lines += ["## 按 query 类型拆分", "",
               "字面类（lexical）query 与语料共享词汇，关键词召回天然占优；"
               "语义类（semantic）query 刻意不含商品字面，是向量召回真正创造价值的地方。", "",
-              f"| 档位 | 类型 | 条数 | Recall@{top_k} | MRR | NDCG@{top_k} |",
-              "|---|---|---|---|---|---|"]
+              f"| 档位 | 类型 | 条数 | Recall@{top_k} | Precision@{top_k} | MRR | NDCG@{top_k} |",
+              "|---|---|---|---|---|---|---|"]
     for name, agg in per_strategy.items():
         for kind, sub in by_kind(agg).items():
             lines.append(
-                f"| {name} | {kind} | {sub.count} | {sub.recall:.3f} | "
+                f"| {name} | {kind} | {sub.count} | {sub.recall:.3f} | {sub.precision:.3f} | "
                 f"{sub.mrr:.3f} | {sub.ndcg:.3f} |",
             )
     lines.append("")
@@ -235,12 +238,13 @@ def render_report(
         lines += [f"## {name}（{verdict}，{agg.count} 条）", ""]
         if reasons:
             lines += ["未达标项：", *[f"- {r}" for r in reasons], ""]
-        lines += ["| query | 类型 | Recall | MRR | NDCG | 召回序 | 标注 | 过滤 |",
-                  "|---|---|---|---|---|---|---|---|"]
+        lines += [f"| query | 类型 | Recall | Precision@{top_k} | MRR | NDCG | 召回序 | 标注 | 过滤 |",
+                  "|---|---|---|---|---|---|---|---|---|"]
         for r in agg.per_query:
             filt = "-" if r.filter_ok is None else ("OK" if r.filter_ok else f"FAIL {r.note}")
             lines.append(
-                f"| {r.query} | {r.kind} | {r.recall:.2f} | {r.mrr:.2f} | {r.ndcg:.2f} | "
+                f"| {r.query} | {r.kind} | {r.recall:.2f} | "
+                f"{precision_at_k(r.retrieved, r.relevant, top_k):.2f} | {r.mrr:.2f} | {r.ndcg:.2f} | "
                 f"{','.join(r.retrieved) or '（空）'} | {','.join(r.relevant)} | {filt} |",
             )
         lines.append("")
@@ -253,6 +257,10 @@ async def main() -> None:
     parser.add_argument("--top-k", type=int, default=8, help="默认 8：向量召回深度上限即 8")
     parser.add_argument("--strategy", choices=_STRATEGIES, default="embedding_rerank")
     parser.add_argument("--compare-strategies", action="store_true", help="三档降级链对比")
+    parser.add_argument(
+        "--compare-task-filter", action="store_true",
+        help="对照相同召回结果启用/关闭清单槽位硬过滤（数据集需提供 shopping_task）",
+    )
     parser.add_argument("--min-recall", type=float, default=0.75)
     parser.add_argument("--min-mrr", type=float, default=0.65)
     parser.add_argument("--min-ndcg", type=float, default=0.70)
@@ -260,6 +268,8 @@ async def main() -> None:
     args = parser.parse_args()
 
     cases = load_dataset(Path(args.dataset))
+    if args.compare_task_filter and any(not case.get("shopping_task") for case in cases):
+        raise SystemExit("--compare-task-filter requires shopping_task on every dataset row")
     print(f"标注集 {args.dataset}：{len(cases)} 条，K={args.top_k}")
 
     targets = list(_STRATEGIES) if args.compare_strategies else [args.strategy]
@@ -269,14 +279,19 @@ async def main() -> None:
     for strategy in targets:
         print(f"\n[{strategy}] 装配中…")
         usecase, repo, actual = await build_usecase(strategy)
-        agg = await run_dataset(usecase, repo, cases, args.top_k)
-        per_strategy[strategy] = agg
-        print_summary(strategy, agg)
+        filters = [("no_task_filter", False), ("task_filter", True)] if args.compare_task_filter else [("default", True)]
+        for filter_name, apply_task_filter in filters:
+            agg = await run_dataset(usecase, repo, cases, args.top_k, apply_task_filter)
+            label = f"{strategy}/{filter_name}" if args.compare_task_filter else strategy
+            per_strategy[label] = agg
+            print_summary(label, agg)
 
     report_dir = Path(args.report_dir)
     report_dir.mkdir(parents=True, exist_ok=True)
     report_path = report_dir / f"recall-report-{datetime.now().strftime('%Y%m%d-%H%M%S')}.md"
-    report_path.write_text(render_report(per_strategy, thresholds, args.top_k), encoding="utf-8")
+    report_path.write_text(
+        render_report(per_strategy, thresholds, args.top_k, Path(args.dataset)), encoding="utf-8",
+    )
     print(f"\n报告已写入 {report_path}")
 
     # 任一档位被阻断即以非零码退出，便于直接接 CI

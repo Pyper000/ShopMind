@@ -74,8 +74,48 @@ class TestToolsDirectInvoke:
 
     async def test_shopping_plan_limits_scene_scope(self):
         tool = build_update_shopping_plan_tool(TradeEventBus())
-        response = await tool(goal="准备露营", tasks=["1", "2", "3", "4", "5"])
-        assert response.content[0].text.startswith("[error] 首期购物计划最多包含 4 个任务")
+        response = await tool(goal="准备露营", tasks=[str(n) for n in range(25)])
+        assert response.content[0].text.startswith("[error] 单份清单最多包含 24 件具体物品")
+
+    @pytest.mark.parametrize("slot", ["游泳装备", "防晒用品", "换洗衣物", "应急物品", "应急药品"])
+    async def test_plan_rejects_umbrella_categories_without_committing(self, slot):
+        bus = TradeEventBus()
+        queue = bus.subscribe("s1")
+        tool = build_update_shopping_plan_tool(bus)
+        token = ShoppingContext.set(ShoppingContextSnapshot(
+            shopping_session_id="s1", buyer_id="b1", locale="zh-CN", currency="CNY",
+        ))
+        try:
+            response = await tool(goal="海边游泳", tasks=[slot])
+        finally:
+            ShoppingContext.reset(token)
+        assert "清单项过于概括" in response.content[0].text
+        assert queue.empty()
+
+    async def test_plan_supports_atomic_items_with_independent_inventory(self):
+        from app.application.agents.scheme_state import CandidatePool, SchemeStateRegistry
+        states = SchemeStateRegistry()
+        tool = build_update_shopping_plan_tool(TradeEventBus(), states, CandidatePool())
+        token = ShoppingContext.set(ShoppingContextSnapshot(
+            shopping_session_id="s1", buyer_id="b1", locale="zh-CN", currency="CNY",
+        ))
+        try:
+            response = await tool(
+                goal="海边游泳", tasks=["泳衣", "泳镜", "防晒霜", "毛巾", "拖鞋", "换洗上衣"],
+                reusable=["泳镜"], must_buy=["泳衣"], unknowns=["毛巾"],
+                optional=["创可贴"], prep=["自行核对个人常用药"],
+            )
+        finally:
+            ShoppingContext.reset(token)
+        payload = json.loads(response.content[0].text)
+        assert len(payload["tasks"]) == 6
+        assert payload["reusable"] == ["泳镜"]
+        assert payload["must_buy"] == ["泳衣"]
+        assert payload["unknowns"] == ["毛巾"]
+        statuses = {item["name"]: item["status"] for item in payload["mutation"]["target_slots"]}
+        assert statuses["泳镜"] == "have"
+        assert statuses["泳衣"] == "must_buy"
+        assert statuses["毛巾"] == "pending"
 
     async def test_product_search_tool(self):
         bus = TradeEventBus()

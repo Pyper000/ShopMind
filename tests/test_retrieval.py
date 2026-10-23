@@ -71,6 +71,25 @@ async def indexed(tmp_path):
 
 
 class TestTwoStageRecall:
+    async def test_checklist_slot_does_not_show_semantically_similar_wrong_category(self, indexed):
+        repo, embedder, index = indexed
+        usecase = CatalogSearchUseCase(repo, embedder=embedder, vector_index=index)
+        result = await usecase.execute(ProductSearchSpec(
+            normalized_query="手冲咖啡滤杯", shopping_task="手冲咖啡滤杯",
+        ))
+        assert result["hits"] == []
+        assert result["candidate_ids"] == []
+
+    async def test_checklist_slot_keeps_exact_matching_product(self, indexed):
+        repo, embedder, index = indexed
+        usecase = CatalogSearchUseCase(repo, embedder=embedder, vector_index=index)
+        result = await usecase.execute(ProductSearchSpec(
+            normalized_query="露营灯", shopping_task="露营灯",
+        ))
+        assert result["hits"]
+        assert all("露营灯" in hit["title"] or "露营灯" in " ".join(hit["highlights"])
+                   for hit in result["hits"])
+
     async def test_embedding_recall_ranks_camping_light_first(self, indexed):
         repo, embedder, index = indexed
         usecase = CatalogSearchUseCase(repo, embedder=embedder, vector_index=index)

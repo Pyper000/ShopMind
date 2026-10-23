@@ -79,8 +79,22 @@ def build_product_search_tool(
                     state=ToolResultState.ERROR,
                 )
         session_id = ShoppingContext.current_session_id()
-        task = shopping_task or category or normalized_query
         request = scheme_states.get(session_id) if scheme_states else None
+        # Bind retrieval to a committed slot even if the model paraphrases the
+        # task label. Otherwise one user slot creates several candidate pools.
+        if request:
+            active_slots = list(dict.fromkeys([
+                *request.scheme.must_buy,
+                *request.scheme.optional,
+            ]))
+            if shopping_task not in active_slots:
+                query_text = f"{normalized_query} {category or ''}".casefold()
+                matched = next(
+                    (slot for slot in active_slots if slot.casefold() in query_text),
+                    active_slots[0] if len(active_slots) == 1 else None,
+                )
+                shopping_task = matched or shopping_task
+        task = shopping_task or category or normalized_query
         cached_ids = candidate_pool.get(session_id, task) if candidate_pool else []
         cached_count = candidate_pool.result_count(session_id, task) if candidate_pool else None
         retrieval_action, retrieval_explanation = choose_retrieval_action(
@@ -109,6 +123,7 @@ def build_product_search_tool(
                 price_max_major=price_max_major,
                 target_currency=target_currency,
                 candidate_ids=cached_ids if retrieval_action == "filter_and_rerank" else None,
+                shopping_task=shopping_task,
             )
             result = await usecase.execute(spec)
         except ValueError as err:
@@ -127,6 +142,17 @@ def build_product_search_tool(
             )
         result["retrieval_action"] = retrieval_action
         result["retrieval_explanation"] = retrieval_explanation
+        if shopping_task and not result.get("hits"):
+            if not result.get("candidate_ids"):
+                result["catalog_gap"] = {
+                    "status": "not_in_demo_catalog",
+                    "message": f"模拟商品目录暂未收录“{shopping_task}”，该品类待补充/待入驻；未用相邻品类替代。",
+                }
+            else:
+                result["catalog_gap"] = {
+                    "status": "filtered_by_constraints",
+                    "message": f"目录有“{shopping_task}”相关商品，但没有候选满足当前预算或配送条件。",
+                }
         if request:
             result["state_version"] = request.scheme.state_version
         bus.publish(
@@ -144,6 +170,7 @@ def build_product_search_tool(
                 "rerank_applied": result["rerank_applied"],
                 "retrieval_action": retrieval_action,
                 "retrieval_explanation": retrieval_explanation,
+                "catalog_gap": result.get("catalog_gap"),
                 "state_version": result.get("state_version"),
             },
         )

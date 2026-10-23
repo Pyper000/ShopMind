@@ -10,6 +10,7 @@ Presentation 层按 shopping_session_id 订阅后推送给前端 WebSocket。
     tool.invoke         工具开始执行
     tool.result         工具执行完成
     token.delta         流式 token 增量
+    model.call          一次模型调用的耗时与 token 计数
     plan.update         Task 计划变更
     context.compressed  上下文压缩发生（三期：Context 工程）
     model.fallback      主模型限流重试用尽，已回退到备用模型（四期）
@@ -34,6 +35,8 @@ EVENT_TYPES = (
     "tool.invoke",
     "tool.result",
     "token.delta",
+    "model.call",
+    "plan.preview",
     "plan.update",
     "context.compressed",
     "model.fallback",

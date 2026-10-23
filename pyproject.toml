@@ -29,6 +29,13 @@ members = []
 [tool.setuptools.packages.find]
 include = ["app*"]
 
+[tool.setuptools.package-data]
+app = [
+    "infrastructure/persistence/scene_templates.json",
+    "infrastructure/persistence/beach_products.json",
+    "infrastructure/persistence/catalog.json",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"

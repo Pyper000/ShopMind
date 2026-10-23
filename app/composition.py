@@ -47,6 +47,7 @@ from app.infrastructure.persistence.json_file_stores import (
     JsonFilePreferenceStore,
     JsonFileSessionStore,
 )
+from app.infrastructure.persistence.scene_template_store import SceneTemplateStore
 from app.infrastructure.persistence.sql.repositories import (
     SqlConversationStore,
     SqlOrderRepository,
@@ -117,8 +118,10 @@ class Container:
                 await self.task_queue.ensure_group()
             except Exception as err:  # noqa: BLE001
                 logger.warning("队列消费者组创建失败：%s", err)
-        await bootstrap_product_index(self.product_repo, self.embedder, self.vector_index)
-        await bootstrap_category_knowledge(self.knowledge_base)
+        if self.settings.vector_bootstrap_enabled:
+            await bootstrap_product_index(self.product_repo, self.embedder, self.vector_index)
+        if self.knowledge_base is not None:
+            await bootstrap_category_knowledge(self.knowledge_base)
 
     async def shutdown(self) -> None:
         await self.vector_index.close()
@@ -152,7 +155,9 @@ async def build_container() -> Container:
         # 模型名 + 提示词指纹入 key：改 prompt 或换模型后旧回复自动失效
         namespace=f"{settings.llm_model}:{_prompt_fingerprint()}",
     )
-    knowledge_base = build_category_knowledge_base(settings)
+    # 服务端无持久磁盘时，冷启动重建 480 个向量会占满首轮时延。
+    # 关闭建库时一并关闭依赖该索引的检索和品类 RAG，直接走关键词召回。
+    knowledge_base = build_category_knowledge_base(settings) if settings.vector_bootstrap_enabled else None
 
     # 队列与事件背板都依赖 Redis：没有 Redis 就退回单进程直跑
     task_queue: Optional[TaskQueue] = None
@@ -209,7 +214,10 @@ async def build_container() -> Container:
 
     # ---- Application ----
     catalog_search = CatalogSearchUseCase(
-        product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
+        product_repo,
+        embedder=embedder if settings.vector_bootstrap_enabled else None,
+        vector_index=vector_index if settings.vector_bootstrap_enabled else None,
+        reranker=reranker,
     )
     place_order = PlaceOrderUseCase(product_repo, order_repo)
     query_order = QueryOrderUseCase(order_repo)
@@ -249,6 +257,10 @@ async def build_container() -> Container:
         drift_detector=drift_detector,
         preference_selector=preference_selector,
         preference_top_k=settings.preference_top_k,
+        scheme_states=scheme_states,
+        scene_templates=SceneTemplateStore(),
+        candidate_pool=candidate_pool,
+        confirmed_search=main_factory.dispatch_committed_search,
     )
 
     return Container(

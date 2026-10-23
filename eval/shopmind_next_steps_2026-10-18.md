@@ -1,5 +1,7 @@
 # ShopMind 下一步（2026-10-18）
 
+> 历史方案快照：本文记录 2026-10-18 的链路判断与待办，部分内容已被后续模板优先与本地实测更新；当前实现和数据边界以 [2026-10-23 数据证据评测](../docs/aipm-data-evidence-review-20261023.md) 为准。
+
 ## 当前模型选择
 
 原 Ecommerce Agent 已有一套检索增强链路：SearchAgent 调用商品检索工具；`CatalogSearchUseCase` 按 embedding 向量召回，Qdrant 返回候选，再用可选 reranker 精排；服务异常时退化为中文关键词 2-gram。MainAgent 负责理解与调度，TradeAgent 负责订单操作，不是推荐排序器。

@@ -16,11 +16,14 @@ AgentState 每轮落盘 DATA_DIR/sessions/，服务重启后恢复多轮对话�
 from __future__ import annotations
 
 import logging
+import asyncio
+import json
 from typing import Optional
 
 from agentscope.agent import Agent, ReActConfig
+from agentscope.middleware import MiddlewareBase
 from agentscope.state import AgentState
-from agentscope.tool import FunctionTool, Toolkit
+from agentscope.tool import FunctionTool, Toolkit, ToolChoice
 
 from app.application.agents.context_policy import build_context_config
 from app.application.agents.permissions import allow_business_tools
@@ -51,6 +54,32 @@ from app.infrastructure.tracing import build_agent_middlewares
 logger = logging.getLogger(__name__)
 
 
+def _first_json(text: str) -> dict:
+    """Decode the leading JSON object, ignoring harness notices appended after it."""
+    decoder = json.JSONDecoder()
+    start = text.find("{")
+    if start < 0:
+        raise ValueError("no JSON object in tool output")
+    value, _ = decoder.raw_decode(text, start)
+    if not isinstance(value, dict):
+        raise ValueError("tool output is not an object")
+    return value
+
+
+class RequirePlanOnFirstCall(MiddlewareBase):
+    """Make the MainAgent submit its structured plan before prose on each turn."""
+
+    async def on_reasoning(self, agent, input_kwargs, next_handler):
+        if agent.state.cur_iter == 0 and input_kwargs.get("tool_choice") is None:
+            async for event in next_handler(
+                tool_choice=ToolChoice(mode="update_shopping_plan_tool"),
+            ):
+                yield event
+            return
+        async for event in next_handler(**input_kwargs):
+            yield event
+
+
 class MainAgentFactory:
     def __init__(
         self,
@@ -78,6 +107,7 @@ class MainAgentFactory:
         self._preference_selector = preference_selector or PreferenceSelector()
         self._scheme_states = scheme_states
         self._candidate_pool = candidate_pool
+        self._dispatch_tool: Optional[FunctionTool] = None
         # 护栏判定器按会话累积状态，须跨 Agent 实例共享（与熔断注册表同理）
         self._sequencing = sequencing or SequencingTracker()
         self._loop_detector = loop_detector or LoopDetector(
@@ -104,31 +134,35 @@ class MainAgentFactory:
 
     def build(self, restored_state: Optional[AgentState] = None) -> Agent:
         prompts = load_prompts()["main_agent"]
+        dispatch = FunctionTool(
+            build_task_dispatch_tool(
+                self._search_factory, self._trade_factory, self._bus,
+                preference_store=self._preference_store,
+                preference_selector=self._preference_selector,
+                preference_top_k=self._settings.preference_top_k,
+                subagent_inject=self._settings.preference_subagent_inject,
+                enable_trade=False, scheme_states=self._scheme_states,
+            ),
+            is_concurrency_safe=True, middlewares=self._resilience(),
+        )
+        self._dispatch_tool = dispatch
+
+        async def dispatch_search() -> list[dict]:
+            return await self.dispatch_committed_search()
 
         tools = [
             # MainAgent 只提交完整购物方案；商品检索必须经 SearchAgent 子代理。
             FunctionTool(
-                build_update_shopping_plan_tool(self._bus, self._scheme_states, self._candidate_pool),
-                middlewares=self._resilience(),
+                build_update_shopping_plan_tool(self._bus, self._scheme_states, self._candidate_pool, dispatch_search),
+                middlewares=[ToolResilienceMiddleware(
+                    self._circuit_registry, self._bus,
+                    timeouts={"update_shopping_plan_tool": 200.0},
+                )],
             ),
             # SubAgent as Tool 调度；多个商品槽位可并行搜索。
             # is_concurrency_safe 默认为 True，
             #    主 Agent 同一轮发起的多个派发会被 2.0 并发批执行）
-            FunctionTool(
-                build_task_dispatch_tool(
-                    self._search_factory,
-                    self._trade_factory,
-                    self._bus,
-                    preference_store=self._preference_store,
-                    preference_selector=self._preference_selector,
-                    preference_top_k=self._settings.preference_top_k,
-                    subagent_inject=self._settings.preference_subagent_inject,
-                    enable_trade=False,
-                    scheme_states=self._scheme_states,
-                ),
-                is_concurrency_safe=True,
-                middlewares=self._resilience(),
-            ),
+            dispatch,
             # 长期偏好仅作为 ShopMind 的用户偏好信号，不改写本轮购物事实。
             FunctionTool(
                 build_remember_preference_tool(self._preference_store, self._bus),
@@ -146,15 +180,61 @@ class MainAgentFactory:
                 system_prompt=prompts["system_prompt"],
                 model=create_chat_model(self._settings, throttle=self._throttle, bus=self._bus),
                 toolkit=Toolkit(tools=tools),
-                middlewares=build_agent_middlewares(self._settings),
+                middlewares=[*build_agent_middlewares(self._settings), RequirePlanOnFirstCall()],
                 context_config=build_context_config(
                     self._settings.context_size,
                     self._settings.tool_result_limit,
                 ),
                 state=restored_state,
-                react_config=ReActConfig(max_iters=15),
+                # plan update -> optional sub-agent dispatch -> final reply
+                react_config=ReActConfig(max_iters=3),
             ),
         )
+
+    async def dispatch_committed_search(self, slots: Optional[list[str]] = None) -> list[dict]:
+        """Send explicit pending purchase slots through task_dispatch/SearchAgent.
+
+        ``slots`` narrows the dispatch to the slots this turn actually changed;
+        a follow-up that adds one item must not re-run the other seventeen.
+        """
+        from app.infrastructure.context import ShoppingContext
+
+        if self._dispatch_tool is None or self._scheme_states is None:
+            return []
+        session_id = ShoppingContext.current_session_id()
+        request = self._scheme_states.get(session_id)
+        if request is None:
+            return []
+        plan = request.scheme
+        excluded = set(plan.reusable + plan.not_buy + plan.unknowns)
+        # Optional items are searched only after the buyer explicitly selects "buy".
+        wanted = [slot for slot in dict.fromkeys(plan.must_buy + plan.optional) if slot not in excluded]
+        if slots:
+            allowed = set(slots)
+            scoped = [slot for slot in wanted if slot in allowed]
+            if scoped:
+                wanted = scoped
+        slots = wanted
+
+        async def run(slot: str) -> dict:
+            result = await self._dispatch_tool(
+                subagent_type="search_agent",
+                demands=f"只处理待购槽位「{slot}」，结合完整方案和本轮变更召回、过滤并排序；只返回最多3个候选及简短取舍。",
+            )
+            chunks = [chunk async for chunk in result] if hasattr(result, "__aiter__") else [result]
+            text = "\n".join(
+                block.text for chunk in chunks for block in chunk.content if hasattr(block, "text")
+            )
+            try:
+                return {"slot": slot, "result": _first_json(text)}
+            except ValueError:
+                return {"slot": slot, "error": text}
+
+        results = await asyncio.gather(*(run(slot) for slot in slots), return_exceptions=True)
+        return [
+            {"slot": slot, "error": str(result)} if isinstance(result, Exception) else result
+            for slot, result in zip(slots, results)
+        ]
 
 
 class SessionRegistry:

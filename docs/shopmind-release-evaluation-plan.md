@@ -2,6 +2,8 @@
 
 更新时间：2026-10-21
 
+> 历史计划快照：本文记录 2026-10-21 的公网验收状态，不代表当前实现或服务状态。当前本地验收与证据边界以 [2026-10-23 数据证据评测](aipm-data-evidence-review-20261023.md) 和 [本地租房/场景演示验收](local-rental-demo-acceptance-20261023.md) 为准。本文不应被当作已上线或已完成的证明。
+
 ## 验收目标
 
 用户看到的 ShopMind 页面使用 `MainAgent -> task_dispatch(SearchAgent)` 购物方案链路；`TradeAgent` 保持未激活。MainAgent 负责从自然语言更新版本化方案，SearchAgent 按本轮变更做候选过滤重排、局部召回或全量重召回。前端需显示多轮方案变化和搜索过程。公网场景评测必须请求这套 Python AgentScope API，不能把旧的 JS 演示 API 结果混算。

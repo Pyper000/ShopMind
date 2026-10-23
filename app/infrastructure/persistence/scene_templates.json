@@ -1,0 +1,187 @@
+{
+  "version": 2,
+  "modules": [
+    {
+      "id": "beach_clothing", "title": "换洗衣物", "required": [
+        {"name":"T恤","quantity_rule":"days_plus_extra","unit":"件","extra":1,"per_person":true,"note":"按天数估算；有洗衣条件可减少"},
+        {"name":"短裤","quantity_rule":"days_plus_extra","unit":"条","extra":0,"per_person":true,"note":"按天数与活动安排估算"},
+        {"name":"内衣","quantity_rule":"days_plus_extra","unit":"件","extra":1,"per_person":true},
+        {"name":"袜子","quantity_rule":"days_plus_extra","unit":"双","extra":1,"per_person":true},
+        {"name":"毛巾","quantity":"1条/人"}
+      ], "optional": [
+        {"name":"沙滩拖鞋","condition":"计划去沙滩或礁石区域时"}
+      ], "reference": {"title":"ShopMind 出行估算规则","note":"衣物数量是可调整的默认估算，不是统一行业标准。"}
+    },
+    {
+      "id": "beach_swimming", "title": "游泳与海边活动", "required": [
+        {"name":"泳衣","quantity":"1-2套","note":"根据计划游泳次数与晾晒条件调整"},
+        {"name":"防晒霜","quantity":"1支","note":"按个人肤质和产品说明选择"},
+        {"name":"遮阳帽","quantity":"1顶"}
+      ], "optional": [
+        {"name":"泳镜","condition":"计划游泳时"},
+        {"name":"泳帽","condition":"泳池有要求或个人需要时"},
+        {"name":"手机防水袋","condition":"计划把手机带到水边时"},
+        {"name":"沙滩垫","condition":"计划在沙滩停留较久时"},
+        {"name":"饮用水","condition":"根据天气、活动与个人需要准备"}
+      ]
+    },
+    {
+      "id": "beach_safety", "title": "安全与行前核对", "required": [], "optional": [
+        {"name":"创可贴","condition":"按个人需要准备小型应急用品"},
+        {"name":"消毒湿巾","condition":"按个人需要准备"}
+      ], "reference": {"title":"行前提醒","note":"核对天气、潮汐和海滩安全提示；个人常用药仅按本人医嘱自备，不自动推荐药物。"}
+    },
+    {
+      "id": "school_learning", "title": "学习与随身用品", "required": [
+        {"name":"书包","quantity":"1个"},
+        {"name":"学习文具","quantity":"1套","note":"按课程与学校通知补齐基础款"}
+      ], "optional": [
+        {"name":"台灯","condition":"宿舍或书桌照明不足时，先核对学校用电规则"}
+      ]
+    },
+    {
+      "id": "school_dorm", "title": "住宿与宿舍", "required": [], "optional": [
+        {"name":"床品套件","condition":"住校且学校未提供时；先确认床铺尺寸"},
+        {"name":"收纳箱","condition":"确认宿舍有收纳空间后再决定"},
+        {"name":"耳塞","condition":"对宿舍噪音敏感时"}
+      ], "reference": {"title":"入学准备核对","note":"先确认住校情况、宿舍尺寸和学校禁用物品，避免重复购买。"}
+    },
+    {
+      "id": "rental_sleep", "title": "睡眠与照明", "required": [], "optional": [
+        {"name":"床品套件（床单/被套/枕套）","quantity":"1套","condition":"房间未提供可用床品时","note":"先量床垫尺寸；核对套件是否含被芯及枕套数量"},
+        {"name":"被芯或毯子","quantity":"1床","condition":"房间未提供且现有被褥不适合季节时","note":"按季节、室温和收纳空间决定"},
+        {"name":"台灯","quantity":"1盏","condition":"现有照明不足且租房规则允许时"}
+      ]
+    },
+    {
+      "id": "rental_cleaning", "title": "入住清洁", "required": [
+        {"name":"地面清洁工具（扫把/拖把）","quantity":"按房间面积备1套","condition":"入住前地面未清洁且房东未提供可用工具时","note":"按地面材质选择；小房间可先用扫把或刮水器"},
+        {"name":"清洁布","quantity":"2-3块","condition":"房间未提供可复用清洁布时","note":"厨房与卫生间分开使用"}
+      ], "optional": [
+        {"name":"垃圾桶","quantity":"按主要使用区域准备","condition":"房间未提供且确有独立收纳需求时"},
+        {"name":"垃圾袋","quantity":"先备1卷","condition":"按垃圾桶口径/尺寸选购"},
+        {"name":"马桶刷","quantity":"独立卫生间1把","condition":"房间配独立卫生间且未提供时"}
+      ]
+    },
+    {
+      "id": "rental_storage", "title": "收纳与日常", "required": [], "optional": [
+        {"name":"衣架","quantity":"先备5-10个","condition":"衣柜内现有衣架不足时","note":"按衣物数量和衣柜挂杆长度调整"},
+        {"name":"衣物收纳箱/收纳篮","quantity":"先备1-2个","condition":"衣柜或抽屉不足且已量过可用空间时","note":"先量柜体宽、深、高再选"},
+        {"name":"洗衣篮","quantity":"1个","condition":"没有可用容器且房间有收纳位置时"},
+        {"name":"烧水壶","quantity":"1台","condition":"房间未提供且租房规则、电源与使用区域允许时"}
+      ]
+    },
+    {
+      "id": "travel_documents", "title": "证件与电子设备", "required": [
+        {"name":"身份证件","quantity":"每人1份","per_person":true},
+        {"name":"手机与充电器","quantity":"每人1套","per_person":true}
+      ], "optional": [
+        {"name":"旅行背包","condition":"现有背包不适合本次行程时"},
+        {"name":"证件收纳包","condition":"需要集中收纳证件时"}
+      ]
+    },
+    {
+      "id": "travel_clothing", "title": "衣物与洗漱", "required": [
+        {"name":"换洗上衣","quantity_rule":"days_plus_extra","unit":"件","extra":1,"per_person":true,"note":"默认每天一件并留一件备用；可洗衣时调整"},
+        {"name":"内衣","quantity_rule":"days_plus_extra","unit":"件","extra":1,"per_person":true},
+        {"name":"袜子","quantity_rule":"days_plus_extra","unit":"双","extra":1,"per_person":true},
+        {"name":"洗漱用品","quantity":"每人1套","per_person":true}
+      ], "optional": [
+        {"name":"行李箱","condition":"现有收纳容量不足时"},
+        {"name":"旅行收纳袋","condition":"需要分区收纳时"},
+        {"name":"颈枕","condition":"长途乘车且个人需要时"}
+      ], "reference": {"title":"ShopMind 出行估算规则","note":"数量根据天数和人数估算；衣物可按天气、活动及洗衣条件手动调整。"}
+    },
+    {
+      "id": "maternity_mother", "title": "孕妇", "required": [
+        {"name":"产检与入院资料","quantity":"按医院要求准备1份","note":"以就诊医院通知为准"},
+        {"name":"待产宽松舒适衣物","quantity":"参考1套","note":"数量为打包参考，按个人舒适度和本院要求调整"},
+        {"name":"睡衣/睡袍","quantity":"参考1-2套","note":"按预计住院时长调整；NHS 未规定固定数量"},
+        {"name":"浴袍/宽松开衫","quantity":"参考1件","note":"是否需要按个人习惯和医院环境决定"},
+        {"name":"拖鞋/便鞋","quantity":"参考1双","note":"按医院地面、淋浴和防滑要求选择"},
+        {"name":"袜子","quantity":"参考1-2双"},
+        {"name":"毛巾","quantity":"参考1-2条","note":"先确认医院是否提供"},
+        {"name":"换洗衣物","quantity":"参考3套","note":"参考 NHS 清单；按预计住院时长和本院建议调整"},
+        {"name":"内裤","quantity":"参考5-6条","note":"可按住院时长调整"},
+        {"name":"舒适/哺乳内衣","quantity":"参考2-3件","note":"是否需要哺乳款由个人选择"},
+        {"name":"产妇卫生巾","quantity":"参考2包","note":"核对医院是否提供及具体要求"},
+        {"name":"洗漱用品","quantity":"1套"},
+        {"name":"孕妇手机与充电器","quantity":"1套"},
+        {"name":"本人正在使用的处方药","quantity":"按本人处方","note":"只核对本人已有处方药；不构成用药建议"}
+      ], "optional": [
+        {"name":"孕妇饮水瓶","condition":"按个人需要并遵循医院/医护人员要求"},
+        {"name":"零食","condition":"按个人需要及医院规定；不是所有人都必须准备"},
+        {"name":"哺乳垫","condition":"计划哺乳且认为会用到时；按个人需要准备"}
+      ], "reference": {"title":"NHS Hospital bag checklist（英国参考）","url":"https://www.nhs.uk/best-start-in-life/pregnancy/preparing-for-labour-and-birth/hospital-bag-checklist/","note":"数量仅作清单参考；不同国家、医院和预计住院时长要求不同，请以本院清单和医护人员说明为准。"}
+    },
+    {
+      "id": "maternity_baby", "title": "宝宝", "required": [
+        {"name":"婴儿纸尿裤","quantity":"准备一小包并核对医院是否提供"},
+        {"name":"新生儿连体衣/包屁衣","quantity":"参考3-5套","note":"参考 NHS 提到的 bodysuits/vests/sleepsuits；按住院天数、季节与医院要求调整"},
+        {"name":"宝宝出院衣物","quantity":"1套"},
+        {"name":"帽子与袜子","quantity":"各1件/双"},
+        {"name":"棉柔巾或湿巾","quantity":"1包","note":"按医院要求选择"},
+        {"name":"包被或毯子","quantity":"1条","note":"按季节调整"}
+      ], "optional": [
+        {"name":"配方喂养用品","condition":"计划配方喂养时，并先确认医院具体要求"},
+        {"name":"婴儿汽车安全座椅","condition":"开车接宝宝回家时；按所在地法规和产品说明使用"}
+      ], "reference": {"title":"NHS 与 NHS 医院待产包清单（数量因院而异）","url":"https://thh.nhs.uk/packing-your-hospital-bag","note":"不同医院对婴儿衣物、喂养用品及是否提供物品的要求不同。"}
+    },
+    {
+      "id": "maternity_companion", "title": "陪护人", "required": [
+        {"name":"陪护人换洗衣物","quantity":"1套"},
+        {"name":"陪护人手机与充电器","quantity":"1套"},
+        {"name":"基础洗漱用品","quantity":"1套"}
+      ], "optional": [
+        {"name":"陪护人证件/入院凭证","condition":"医院要求陪护人登记或核验身份时；按本院规定准备"},
+        {"name":"陪护人零食与饮水","condition":"按陪护时长、医院规定与现场供应情况决定"}
+      ], "reference": {"title":"NHS Hospital bag checklist（陪护人项目，英国参考）","url":"https://www.nhs.uk/best-start-in-life/pregnancy/preparing-for-labour-and-birth/hospital-bag-checklist/","note":"NHS 提及陪护人换洗衣物、洗漱用品、手机与充电器；证件和入院凭证是否需要以本院规定为准。"}
+    },
+    {
+      "id": "cat_food", "title": "吃喝", "required": [
+        {"name":"猫粮","quantity":"先准备短期用量","note":"先确认原主人/救助机构正在喂的品牌与喂法，避免突然更换"},
+        {"name":"食盆","quantity":"1个"},
+        {"name":"水碗","quantity":"1个"}
+      ], "optional": [
+        {"name":"饮水机","condition":"猫咪饮水习惯或家庭安排需要时"}
+      ]
+    },
+    {
+      "id": "cat_toilet", "title": "如厕", "required": [
+        {"name":"猫砂盆","quantity":"至少1个","note":"放在安静且远离食水的位置"},
+        {"name":"猫砂","quantity":"1份","note":"初期尽量沿用猫咪熟悉的类型"},
+        {"name":"猫砂铲","quantity":"1把"}
+      ], "optional": [
+        {"name":"猫砂垫","condition":"猫砂容易被带出时"}
+      ]
+    },
+    {
+      "id": "cat_transport", "title": "安全与外出", "required": [
+        {"name":"猫咪航空箱/外出箱","quantity":"1个","note":"选择稳固、通风且尺寸合适的箱体"}
+      ], "optional": [
+        {"name":"窗户防护网","condition":"高层住宅或猫咪可接触开启的窗户时"}
+      ]
+    },
+    {
+      "id": "cat_home", "title": "休息与抓挠", "required": [
+        {"name":"猫抓板或抓挠柱","quantity":"至少1处","note":"需提供安全的抓挠位置；具体形式可替代"}
+      ], "optional": [
+        {"name":"猫窝","condition":"家里没有安静、温暖的休息位置时；毯子或纸箱可替代"},
+        {"name":"猫咪玩具","condition":"按猫咪年龄、性格与看护情况选择"}
+      ]
+    },
+    {
+      "id": "cat_care", "title": "护理与健康记录", "required": [], "optional": [
+        {"name":"梳毛刷","condition":"长毛猫或确有梳理需要时"}
+      ], "reference": {"title":"Cats Protection: Preparing for a cat","url":"https://www.cats.org.uk/help-and-advice/getting-a-cat/preparing-for-a-cat","note":"用品仅作迎新准备参考；疫苗、驱虫和健康安排请核对原有记录并咨询兽医。"}
+    }
+  ],
+  "scenes": [
+    {"id":"beach_weekend","name":"海边出行","match_terms":["海边","沙滩","海岛"],"core_use":"海边休闲与游泳","module_ids":["beach_clothing","beach_swimming","beach_safety"],"prep":["核对天气、潮汐和海滩安全提示","个人常用药仅按本人医嘱自备；ShopMind 不提供具体用药建议"]},
+    {"id":"school_start","name":"开学准备","match_terms":["开学","新学期","返校"],"core_use":"学习与校园生活","module_ids":["school_learning","school_dorm"],"prep":["先确认住校情况、宿舍尺寸和学校电器规则"]},
+    {"id":"rental_move_in","name":"租房入住","match_terms":["租房","出租屋","搬家入住","新家入住"],"core_use":"租房基础生活与收纳","module_ids":["rental_sleep","rental_cleaning","rental_storage"],"prep":["先看租赁合同和房东交付清单，核对床、床垫、衣柜、照明和清洁工具是否已提供","确认独立卫浴、厨房和电器使用规则；先量床垫、衣柜及可用收纳空间","按房间实际清洁状态补工具；尺寸或提供情况不确定的项目先保持待确认"]},
+    {"id":"general_travel","name":"出行准备","match_terms":["出行","旅行","旅游","出差"],"core_use":"短途出行与随身装备","module_ids":["travel_documents","travel_clothing"],"prep":["出发前核对证件、天气、交通和行李限制"]},
+    {"id":"maternity_hospital_bag","name":"待产住院准备","match_terms":["待产住院包","待产包","待产","生产住院","生孩子住院"],"core_use":"准备孕妇、宝宝与陪护人的住院物品","module_ids":["maternity_mother","maternity_baby","maternity_companion"],"prep":["这是一份准备清单，不替代产科医护人员建议；请以生产医院的入院清单为准","NHS 是英国参考来源，清单和数量应按当地医院、住院时长和个人计划确认"]},
+    {"id":"first_cat_home","name":"第一次养猫","match_terms":["第一次养猫","新手养猫","第一次接猫","接猫回家","新猫到家"],"core_use":"为新猫准备安全、吃喝、如厕与日常照护","module_ids":["cat_food","cat_toilet","cat_transport","cat_home","cat_care"],"prep":["先准备一间安静、安全的适应空间和可躲藏处","接猫前向原主人/救助机构核对饮食、健康与疫苗记录；健康问题咨询兽医"]}
+  ]
+}

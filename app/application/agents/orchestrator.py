@@ -21,20 +21,29 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import json
 import logging
+import re
 import time
-from dataclasses import dataclass
-from typing import Any, Optional
+from dataclasses import dataclass, replace
+from typing import Any, Awaitable, Callable, Optional
 
 from agentscope.agent import Agent
 from agentscope.event import (
+    ModelCallEndEvent,
+    ModelCallStartEvent,
     TextBlockDeltaEvent,
+    ToolCallDeltaEvent,
     ToolCallStartEvent,
+    ToolResultTextDeltaEvent,
     ToolResultEndEvent,
 )
-from agentscope.message import Msg, UserMsg
+from agentscope.message import Msg, TextBlock, UserMsg
 
 from app.application.agents.main_agent import SessionRegistry
+from app.application.agents.scheme_state import CandidatePool, SchemeStateRegistry
+from app.application.agents.intent_router import EditRoute, route_direct_item, route_edit
+from app.application.tools.shopping_plan_tool import commit_checklist_selection
 from app.application.harness.drift_detector import DriftDetector
 from app.application.harness.loop_detector import LoopDetector
 from app.application.memory.preference_selector import (
@@ -52,9 +61,11 @@ from app.domain.session.ports.session_store import SessionStore  # noqa: F401 �
 from app.infrastructure.cache.semantic_cache import SemanticCache
 from app.infrastructure.context import ShoppingContext, ShoppingContextSnapshot
 from app.infrastructure.eventbus import TradeEventBus
+from app.infrastructure.persistence.scene_template_store import SceneTemplateStore
 from app.infrastructure.budget import init_budget
 from app.infrastructure.security.output_guard import audit_output
 from app.infrastructure.transient import is_transient_error
+from app.domain.session.shopping_plan import ShoppingPlan
 
 logger = logging.getLogger(__name__)
 
@@ -64,8 +75,60 @@ _TASK_TOOL_NAMES = {"TaskCreate", "TaskUpdate", "TaskList", "TaskGet"}
 # 上游瞬时故障判据与模型层共用同一份（app/infrastructure/transient.py），避免两处标记表漂移。
 # 模型层已做一轮退避重试 + 备用模型回退，这里是最外层兜底：覆盖模型层之外
 # （工具、子 Agent 调度、事件消费）招致的瞬时失败。
-_MAX_TURN_RETRIES = 2
-_RETRY_BASE_SECONDS = 6.0
+_MAX_TURN_RETRIES = 1
+_RETRY_BASE_SECONDS = 3.0
+
+
+def _partial_checklist(arguments: str) -> Optional[dict]:
+    """Return only complete task names from a streaming plan-tool argument."""
+    decoder = json.JSONDecoder()
+    def read_strings(field: str) -> list[str]:
+        match = re.search(rf'"{field}"\s*:\s*\[', arguments)
+        if match is None:
+            return []
+        cursor = match.end()
+        values: list[str] = []
+        while cursor < len(arguments):
+            while cursor < len(arguments) and arguments[cursor].isspace():
+                cursor += 1
+            if cursor >= len(arguments) or arguments[cursor] == "]":
+                break
+            try:
+                value, end = decoder.raw_decode(arguments, cursor)
+            except json.JSONDecodeError:
+                break
+            if not isinstance(value, str):
+                break
+            values.append(value)
+            cursor = end
+            while cursor < len(arguments) and arguments[cursor].isspace():
+                cursor += 1
+            if cursor < len(arguments) and arguments[cursor] == ",":
+                cursor += 1
+            else:
+                break
+        return values
+
+    tasks = list(dict.fromkeys(
+        item for field in ("tasks", "must_buy", "optional", "unknowns", "reusable", "not_buy")
+        for item in read_strings(field)
+    ))
+    if len(tasks) < 3:
+        return None
+    goal = ""
+    goal_match = re.search(r'"goal"\s*:\s*', arguments)
+    if goal_match:
+        try:
+            goal, _ = decoder.raw_decode(arguments, goal_match.end())
+        except json.JSONDecodeError:
+            pass
+    return {
+        "goal": goal if isinstance(goal, str) else "正在整理本次任务",
+        "stage": "explore",
+        "tasks": tasks,
+        "optional": [],
+        "prep": [],
+    }
 
 
 @dataclass(frozen=True)
@@ -75,6 +138,7 @@ class SubmitIntentInput:
     locale: str
     currency: str
     raw_query: str
+    checklist_selection: Optional[dict] = None
 
 
 @dataclass(frozen=True)
@@ -93,6 +157,127 @@ def _tasks_snapshot(agent: Agent) -> dict:
     }
 
 
+def _plan_ack_text(payload: dict) -> str:
+    """Render the short acknowledgement after an explore/clarify plan commit.
+
+    The MainAgent has already done the expensive work here: intent parsing and
+    structured state submission.  A second LLM turn that merely says “please
+    check the list” adds latency without changing the plan.  Keep this renderer
+    deliberately factual; search/compare turns still go through the model so
+    SearchAgent evidence and trade-offs can be explained in context.
+    """
+    goal = str(payload.get("goal") or "这次任务")
+    items = list(dict.fromkeys([
+        *(payload.get("tasks") or []),
+        *(payload.get("optional") or []),
+    ]))
+    shown = "、".join(str(item) for item in items[:8])
+    if len(items) > 8:
+        shown += f"等 {len(items)} 项"
+    if not shown:
+        shown = "待确认项目"
+    return (
+        f"我先按“{goal}”整理了清单：{shown}。"
+        "请在下方逐项标记已有、需要购买或还没确认；我只会为明确要买的项目找商品。"
+    )
+
+
+def _search_ack_text(payload: dict) -> str:
+    """Render a factual receipt after SearchAgent has returned candidates."""
+    results = payload.get("search_results") or []
+    searched: list[str] = []
+    candidate_count = 0
+    failed: list[str] = []
+    for entry in results:
+        if not isinstance(entry, dict):
+            continue
+        slot = str(entry.get("slot") or "待购项目")
+        result = entry.get("result")
+        if isinstance(result, dict):
+            hits = result.get("hits") or []
+            candidate_count += len(hits)
+            searched.append(slot)
+        elif entry.get("error"):
+            failed.append(slot)
+    if searched:
+        slots = "、".join(searched[:6])
+        suffix = f"；{slots}共返回 {candidate_count} 个候选。"
+    else:
+        suffix = "本轮没有拿到可展示的候选。"
+    if failed:
+        suffix += "未完成检索：" + "、".join(failed[:4]) + "。"
+    return "已按确认的待购项完成检索" + suffix + "请直接比较商品卡；已有和待确认项目未参与推荐。"
+
+
+def _edit_ack_text(route: EditRoute, plan) -> str:
+    """One short factual receipt for a deterministic edit turn."""
+    if route.kind == "buy_item":
+        return f"已加上「{route.added[0]}」，只为这一项找商品；其余清单和已确认状态不变。"
+    if route.kind == "set_buy":
+        return f"已把「{route.slots[0]}」记为这次要买，只重新匹配这一项。"
+    if route.kind == "set_have":
+        return f"已把「{route.slots[0]}」记为已有，不再为它推荐商品；合计已更新。"
+    if route.kind == "set_skip":
+        return f"已把「{route.slots[0]}」记为这次不买，不再为它推荐商品。"
+    if route.kind == "budget":
+        return f"预算按 {route.budget_major:g} 元执行，正在同一批候选中重新过滤排序，不会重开清单。"
+    if route.kind == "preference":
+        return "已按新的偏好重排当前候选，清单事实不变。"
+    if route.kind == "people":
+        return f"人数按 {route.people} 人更新，正在重算受影响的项目。"
+    return "已更新方案。"
+
+
+def _apply_edit(plan, route: EditRoute):
+    """Return a new immutable plan with exactly one edit applied."""
+    tasks = list(plan.tasks)
+    must_buy = list(plan.must_buy)
+    optional = list(plan.optional)
+    reusable = list(plan.reusable)
+    not_buy = list(plan.not_buy)
+    unknowns = list(plan.unknowns)
+
+    def bucket(remove: str, target: list[str]) -> None:
+        for pool in (must_buy, optional, reusable, not_buy, unknowns):
+            while remove in pool:
+                pool.remove(remove)
+        if remove not in target:
+            target.append(remove)
+
+    if route.kind == "buy_item":
+        slot = route.added[0]
+        if slot not in tasks:
+            tasks.append(slot)
+        bucket(slot, must_buy)
+    elif route.kind == "set_buy":
+        bucket(route.slots[0], must_buy)
+    elif route.kind == "set_have":
+        bucket(route.slots[0], reusable)
+    elif route.kind == "set_skip":
+        bucket(route.slots[0], not_buy)
+
+    has_purchase = bool(must_buy)
+    if route.kind in {"budget", "preference"}:
+        stage = "search" if has_purchase else plan.stage
+    elif must_buy:
+        stage = "search"
+    else:
+        stage = "confirm"
+    return replace(
+        plan,
+        tasks=tasks,
+        must_buy=must_buy,
+        optional=optional,
+        reusable=reusable,
+        not_buy=not_buy,
+        unknowns=unknowns,
+        stage=stage,
+        budget_major=route.budget_major if route.kind == "budget" else plan.budget_major,
+        preferences=route.preferences or plan.preferences,
+        people=route.people if route.kind == "people" else plan.people,
+    )
+
+
 class MainAgentOrchestrator:
     def __init__(
         self,
@@ -107,6 +292,10 @@ class MainAgentOrchestrator:
         drift_detector: Optional[DriftDetector] = None,
         preference_selector: Optional[PreferenceSelector] = None,
         preference_top_k: int = 5,
+        scheme_states: Optional[SchemeStateRegistry] = None,
+        scene_templates: Optional[SceneTemplateStore] = None,
+        candidate_pool: Optional[CandidatePool] = None,
+        confirmed_search: Optional[Callable[..., Awaitable[list[dict]]]] = None,
     ) -> None:
         self._sessions = sessions
         self._bus = bus
@@ -120,6 +309,10 @@ class MainAgentOrchestrator:
         # 默认 selector 不带 embedder，退化为“按时间倒序取 top_k”，单测与无凭据环境可直接跑
         self._preference_selector = preference_selector or PreferenceSelector()
         self._preference_top_k = preference_top_k
+        self._scheme_states = scheme_states
+        self._scene_templates = scene_templates
+        self._candidate_pool = candidate_pool
+        self._confirmed_search = confirmed_search
         # 会话内已注入的偏好快照，变化时才重新注入，避免每轮重复填充上下文
         self._injected_preferences: dict[str, str] = {}
 
@@ -144,6 +337,8 @@ class MainAgentOrchestrator:
             buyer_id=intent.buyer_id,
             locale=intent.locale,
             currency=intent.currency,
+            raw_query=intent.raw_query,
+            checklist_selection=intent.checklist_selection,
         )
         token = ShoppingContext.set(snapshot)
         started_at = time.monotonic()
@@ -157,8 +352,163 @@ class MainAgentOrchestrator:
         try:
             agent = await self._sessions.get_or_create(session_id)
             summary_before = agent.state.summary
-            # 语义缓存：仅首轮（无历史上下文）且非写操作意图时尝试命中，命中则零模型调用
             has_history = bool(agent.state.context)
+            saved_scheme = self._scheme_states.get(session_id) if self._scheme_states else None
+            matched_scene = self._scene_templates.match(intent.raw_query) if self._scene_templates else None
+            direct_item = route_direct_item(intent.raw_query)
+            if (
+                saved_scheme is None
+                and not intent.checklist_selection
+                and self._scheme_states is not None
+                and self._confirmed_search is not None
+                and direct_item.kind == "direct_item"
+            ):
+                # A first-turn, explicit category is a one-slot shopping task,
+                # not a reason to generate an unrelated full-scene checklist.
+                item = direct_item.added[0]
+                request = self._scheme_states.update(session_id, ShoppingPlan(
+                    goal=f"购买{item}", core_use=item, stage="search",
+                    tasks=[item], must_buy=[item], currency=intent.currency,
+                ))
+                self._bus.publish(
+                    session_id,
+                    "plan.update",
+                    {
+                        "shopping_plan": request.scheme.to_dict(),
+                        "mutation": request.mutation.to_dict(),
+                        "search_request": request.to_dict(),
+                        "route": "direct_item",
+                    },
+                )
+                results = await self._confirmed_search([item])
+                final_text = self._guard_final_text(
+                    session_id, _search_ack_text({"search_results": results}),
+                )
+                agent.state.context.append(UserMsg(intent.buyer_id, intent.raw_query))
+                agent.state.context.append(Msg(
+                    name=agent.name,
+                    content=[TextBlock(type="text", text=final_text)],
+                    role="assistant",
+                ))
+                self._bus.publish(session_id, "final.result", {"text": final_text})
+                return SubmitIntentOutput(shopping_session_id=session_id, final_text=final_text)
+            if (
+                matched_scene is not None
+                and (saved_scheme is None or saved_scheme.scheme.template_id != matched_scene["id"])
+                and not intent.checklist_selection
+                and self._scheme_states is not None
+                and self._scene_templates is not None
+            ):
+                plan = self._scene_templates.build_plan(intent.raw_query, matched_scene)
+                request = self._scheme_states.update(session_id, plan)
+                # A newly matched scene replaces an old scene deterministically.
+                # No LLM round-trip is needed to repeat a known checklist.
+                agent.state.context.append(UserMsg(intent.buyer_id, intent.raw_query))
+                final_text = self._guard_final_text(
+                    session_id, _plan_ack_text(request.scheme.to_dict()),
+                )
+                agent.state.context.append(Msg(
+                    name=agent.name,
+                    content=[TextBlock(type="text", text=final_text)],
+                    role="assistant",
+                ))
+                self._bus.publish(
+                    session_id,
+                    "plan.update",
+                    {
+                        "shopping_plan": request.scheme.to_dict(),
+                        "mutation": request.mutation.to_dict(),
+                        "search_request": request.to_dict(),
+                    },
+                )
+                self._bus.publish(session_id, "final.result", {"text": final_text})
+                return SubmitIntentOutput(shopping_session_id=session_id, final_text=final_text)
+            if (
+                intent.checklist_selection
+                and saved_scheme is not None
+                and self._scheme_states is not None
+                and self._confirmed_search is not None
+            ):
+                try:
+                    request = commit_checklist_selection(
+                        self._bus, self._scheme_states, self._candidate_pool,
+                        session_id, intent.checklist_selection,
+                    )
+                except ValueError as err:
+                    final_text = f"[error] {err}"
+                    self._bus.publish(session_id, "error", {"message": str(err)})
+                else:
+                    if request.scheme.stage in {"search", "compare"}:
+                        search_results = await self._confirmed_search()
+                        final_text = _search_ack_text({"search_results": search_results})
+                    else:
+                        final_text = "已记录清单状态；目前没有明确待购项目，暂未启动商品搜索。"
+                final_text = self._guard_final_text(session_id, final_text)
+                selection_text = intent.raw_query + "\n<shopmind-checklist-selection>" + json.dumps(
+                    intent.checklist_selection, ensure_ascii=False,
+                ) + "</shopmind-checklist-selection>"
+                agent.state.context.append(UserMsg(intent.buyer_id, selection_text))
+                agent.state.context.append(Msg(
+                    name=agent.name,
+                    content=[TextBlock(type="text", text=final_text)],
+                    role="assistant",
+                ))
+                self._bus.publish(session_id, "final.result", {"text": final_text})
+                return SubmitIntentOutput(shopping_session_id=session_id, final_text=final_text)
+            # Deterministic edit path: a follow-up that names an item, a budget,
+            # or an ownership change must not re-run full scene planning.  The
+            # MainAgent still owns the state; only the expensive round-trip is
+            # skipped.  Anything ambiguous falls through to the model below.
+            if (
+                saved_scheme is not None
+                and not intent.checklist_selection
+                and self._scheme_states is not None
+            ):
+                route = route_edit(intent.raw_query, saved_scheme.scheme)
+                if route.kind in {
+                    "buy_item", "set_buy", "set_have", "set_skip",
+                    "budget", "preference", "people",
+                }:
+                    plan = _apply_edit(saved_scheme.scheme, route)
+                    request = self._scheme_states.update(session_id, plan)
+                    if self._candidate_pool is not None:
+                        self._candidate_pool.apply(session_id, request.mutation)
+                    self._bus.publish(
+                        session_id,
+                        "plan.update",
+                        {
+                            "shopping_plan": request.scheme.to_dict(),
+                            "mutation": request.mutation.to_dict(),
+                            "search_request": request.to_dict(),
+                            "route": route.kind,
+                        },
+                    )
+                    if route.kind in {"set_have", "set_skip"}:
+                        # Dropping a slot never needs retrieval; its candidates
+                        # were already removed from the pool by CandidatePool.apply.
+                        final_text = _edit_ack_text(route, request.scheme)
+                    elif (
+                        request.scheme.stage in {"search", "compare"}
+                        and self._confirmed_search is not None
+                    ):
+                        touched = [*route.slots, *route.added] if route.kind in {"buy_item", "set_buy"} else None
+                        results = await self._confirmed_search(touched)
+                        final_text = _search_ack_text({"search_results": results})
+                    else:
+                        final_text = _edit_ack_text(route, request.scheme)
+                    final_text = self._guard_final_text(session_id, final_text)
+                    agent.state.context.append(UserMsg(
+                        intent.buyer_id,
+                        intent.raw_query + "\n<shopmind-route>" + route.kind + "</shopmind-route>",
+                    ))
+                    agent.state.context.append(Msg(
+                        name=agent.name,
+                        content=[TextBlock(type="text", text=final_text)],
+                        role="assistant",
+                    ))
+                    self._bus.publish(session_id, "final.result", {"text": final_text})
+                    return SubmitIntentOutput(shopping_session_id=session_id, final_text=final_text)
+            # 语义缓存：仅首轮（无历史上下文）且非写操作意图时尝试命中，命中则零模型调用
             cached = await self._lookup_cache(intent, has_history)
             if cached is not None:
                 final_text = self._guard_final_text(session_id, cached)
@@ -330,23 +680,94 @@ class MainAgentOrchestrator:
         final_text = ""
         # tool_call_id → 工具名，用于把 ToolResultEndEvent 关联回 Task 工具
         call_names: dict[str, str] = {}
-        async for event in agent.reply_stream(inputs or None, yield_final_msg=True):
-            if isinstance(event, Msg):
-                final_text = event.get_text_content() or ""
-            elif isinstance(event, TextBlockDeltaEvent):
-                if event.delta:
+        call_arguments: dict[str, str] = {}
+        tool_result_text: dict[str, str] = {}
+        preview_counts: dict[str, int] = {}
+        model_call_started: dict[str, float] = {}
+        stream = agent.reply_stream(inputs or None, yield_final_msg=True)
+        early_final = False
+        try:
+            async for event in stream:
+                if isinstance(event, Msg):
+                    final_text = event.get_text_content() or ""
+                elif isinstance(event, TextBlockDeltaEvent):
+                    if event.delta:
+                        self._bus.publish(
+                            session_id,
+                            "token.delta",
+                            {"name": agent.name, "token": event.delta},
+                        )
+                elif isinstance(event, ModelCallStartEvent):
+                    model_call_started[event.reply_id] = (time.monotonic(), event.model_name)
+                elif isinstance(event, ModelCallEndEvent):
+                    call = model_call_started.pop(event.reply_id, None)
                     self._bus.publish(
                         session_id,
-                        "token.delta",
-                        {"name": agent.name, "token": event.delta},
+                        "model.call",
+                        {
+                            "agent": agent.name,
+                            "model": call[1] if call else "",
+                            "elapsed_ms": round((time.monotonic() - call[0]) * 1000) if call else None,
+                            "input_tokens": event.input_tokens,
+                            "output_tokens": event.output_tokens,
+                            "finished_reason": str(event.finished_reason),
+                        },
                     )
-            elif isinstance(event, ToolCallStartEvent):
-                call_names[event.tool_call_id] = event.tool_call_name
-            elif isinstance(event, ToolResultEndEvent):
-                tool_name = call_names.get(event.tool_call_id)
-                if tool_name in _TASK_TOOL_NAMES:
-                    self._bus.publish(session_id, "plan.update", _tasks_snapshot(agent))
-                self._observe_for_drift(session_id, tool_name, event)
+                elif isinstance(event, ToolCallStartEvent):
+                    call_names[event.tool_call_id] = event.tool_call_name
+                elif isinstance(event, ToolCallDeltaEvent):
+                    if call_names.get(event.tool_call_id) == "update_shopping_plan_tool":
+                        arguments = call_arguments.get(event.tool_call_id, "") + event.delta
+                        call_arguments[event.tool_call_id] = arguments
+                        preview = _partial_checklist(arguments)
+                        count = len(preview["tasks"]) if preview else 0
+                        previous_count = preview_counts.get(event.tool_call_id, 0)
+                        if preview and (previous_count == 0 or count >= previous_count + 2):
+                            preview_counts[event.tool_call_id] = count
+                            self._bus.publish(
+                                session_id,
+                                "plan.preview",
+                                {"shopping_plan": preview, "provisional": True},
+                            )
+                elif isinstance(event, ToolResultTextDeltaEvent):
+                    tool_result_text[event.tool_call_id] = (
+                        tool_result_text.get(event.tool_call_id, "") + event.delta
+                    )
+                elif isinstance(event, ToolResultEndEvent):
+                    tool_name = call_names.get(event.tool_call_id)
+                    tool_text = tool_result_text.pop(event.tool_call_id, "")
+                    if tool_text.startswith("[error]"):
+                        self._bus.publish(
+                            session_id,
+                            "error",
+                            {"message": tool_text, "tool": tool_name, "retrying": False},
+                        )
+                    if tool_name in _TASK_TOOL_NAMES:
+                        self._bus.publish(session_id, "plan.update", _tasks_snapshot(agent))
+                    self._observe_for_drift(session_id, tool_name, event)
+
+                    # For a plan-only turn the structured tool result is the
+                    # authoritative MainAgent output.  Stop before a redundant
+                    # prose-only model call; this is the main first-turn latency
+                    # win.  Search/compare turns must continue for evidence-based
+                    # synthesis, so they are intentionally excluded.
+                    if tool_name == "update_shopping_plan_tool" and not tool_text.startswith("[error]"):
+                        try:
+                            committed = json.loads(tool_text.split("\n", 1)[0])
+                        except (TypeError, ValueError):
+                            committed = {}
+                        stage = committed.get("stage")
+                        if stage in {"explore", "clarify"} and "search_results" not in committed:
+                            final_text = _plan_ack_text(committed)
+                            early_final = True
+                            break
+                        if stage in {"search", "compare"} and "search_results" in committed:
+                            final_text = _search_ack_text(committed)
+                            early_final = True
+                            break
+        finally:
+            if early_final and hasattr(stream, "aclose"):
+                await stream.aclose()
         return final_text
 
     def _observe_for_drift(self, session_id: str, tool_name: Optional[str], event: Any) -> None:
@@ -410,7 +831,17 @@ class MainAgentOrchestrator:
 
     async def _build_inputs(self, intent: SubmitIntentInput, session_id: str) -> list[Msg]:
         """长期记忆读路径：偏好有变化时随本轮输入注入 hint 消息。"""
-        user_msg = UserMsg(intent.buyer_id, intent.raw_query)
+        content = intent.raw_query
+        request = self._scheme_states.get(session_id) if self._scheme_states else None
+        if request is not None:
+            content += "\n<shopmind-current-plan>" + json.dumps(
+                request.to_dict(), ensure_ascii=False,
+            ) + "</shopmind-current-plan>"
+        if intent.checklist_selection:
+            content += "\n<shopmind-checklist-selection>" + json.dumps(
+                intent.checklist_selection, ensure_ascii=False,
+            ) + "</shopmind-checklist-selection>"
+        user_msg = UserMsg(intent.buyer_id, content)
         try:
             preferences = await self._preference_store.list_by_buyer(intent.buyer_id)
         except Exception as err:  # noqa: BLE001 —— 记忆读取失败不阻断对话

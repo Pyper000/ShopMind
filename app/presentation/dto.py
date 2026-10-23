@@ -10,12 +10,23 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
+class ChecklistSelectionRequest(BaseModel):
+    have: list[str] = Field(default_factory=list, max_length=24)
+    must_buy: list[str] = Field(default_factory=list, max_length=24)
+    optional_buy: list[str] = Field(default_factory=list, max_length=24)
+    deferred: list[str] = Field(default_factory=list, max_length=24)
+    unknown: list[str] = Field(default_factory=list, max_length=24)
+    budget_major: Optional[float] = Field(default=None, gt=0)
+    priority: str = Field(default="", pattern=r"^(|lightweight|value|quality|complete|appearance)$")
+
+
 class SubmitIntentRequest(BaseModel):
     shopping_session_id: Optional[str] = Field(default=None, max_length=100, pattern=r"^[A-Za-z0-9_-]+$", description="会话 ID，缺省则新建会话")
     buyer_id: str = Field(min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_-]+$", description="买家 ID")
     locale: str = Field(default="zh-CN")
     currency: str = Field(default="CNY")
     raw_query: str = Field(min_length=1, max_length=3000, description="买家自然语言购物意图")
+    checklist_selection: Optional[ChecklistSelectionRequest] = None
 
 
 class SubmitIntentResponse(BaseModel):

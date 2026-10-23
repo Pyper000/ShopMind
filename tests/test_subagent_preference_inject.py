@@ -33,7 +33,7 @@ class RecordingWorker:
     def __init__(self, seen: list) -> None:
         self._seen = seen
 
-    async def reply(self, inputs):
+    async def reply(self, inputs, structured_schema=None):
         messages = inputs if isinstance(inputs, list) else [inputs]
         self._seen.extend(messages)
         return AssistantMsg("worker", '{"hits": []}')
@@ -42,8 +42,10 @@ class RecordingWorker:
 class RecordingFactory:
     def __init__(self) -> None:
         self.seen: list = []
+        self.build_count = 0
 
     def build(self) -> RecordingWorker:
+        self.build_count += 1
         return RecordingWorker(self.seen)
 
 
@@ -99,6 +101,41 @@ class TestSearchAgentInjection:
         result_event = events.get_nowait()
         assert result_event.type == "agent.result"
         assert result_event.payload["agent"] == "search_agent"
+
+    async def test_repeated_dispatch_reuses_result_within_same_user_turn(self):
+        search, trade = RecordingFactory(), RecordingFactory()
+        states = SchemeStateRegistry()
+        states.update("s1", ShoppingPlan(
+            goal="海边出行", stage="search", tasks=["手机防水袋"], must_buy=["手机防水袋"],
+        ))
+        bus = TradeEventBus()
+        events = bus.subscribe("s1")
+        tool = build_task_dispatch_tool(search, trade, bus, scheme_states=states)
+        snapshot = ShoppingContextSnapshot(
+            shopping_session_id="s1", buyer_id="buyer-001", locale="zh-CN",
+            currency="CNY", raw_query="只找手机防水袋",
+        )
+
+        token = ShoppingContext.set(snapshot)
+        try:
+            first = await tool(subagent_type="search_agent", demands="只搜索手机防水袋")
+            second = await tool(subagent_type="search_agent", demands="只搜索手机防水袋")
+        finally:
+            ShoppingContext.reset(token)
+
+        assert search.build_count == 1
+        assert first.content[0].text == second.content[0].text
+        assert [events.get_nowait().type, events.get_nowait().type] == ["agent.dispatch", "agent.result"]
+
+        token = ShoppingContext.set(ShoppingContextSnapshot(
+            shopping_session_id="s1", buyer_id="buyer-001", locale="zh-CN",
+            currency="CNY", raw_query="换一个轻便的手机防水袋",
+        ))
+        try:
+            await tool(subagent_type="search_agent", demands="重新搜索手机防水袋，优先轻便")
+        finally:
+            ShoppingContext.reset(token)
+        assert search.build_count == 2
 
     async def test_search_agent_receives_preferences(self, tmp_path):
         search, trade = RecordingFactory(), RecordingFactory()

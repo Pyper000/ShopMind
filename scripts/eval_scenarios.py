@@ -186,7 +186,7 @@ async def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     results = []
-    async with httpx.AsyncClient(timeout=180) as client:
+    async with httpx.AsyncClient(timeout=300) as client:
         for case in cases:
             print(f"== {case['id']} ({len(case['turns'])} turns)", flush=True)
             result = await run_scenario(client, args.base_url, case)

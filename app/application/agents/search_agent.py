@@ -11,7 +11,10 @@
 """
 from __future__ import annotations
 
+import json
+
 from agentscope.agent import Agent, ReActConfig
+from agentscope.message import TextBlock
 from agentscope.rag import KnowledgeBase
 from agentscope.tool import FunctionTool, Toolkit
 
@@ -39,7 +42,7 @@ class SearchAgentFactory:
         settings: Settings,
         catalog_search: CatalogSearchUseCase,
         bus: TradeEventBus,
-        knowledge_base: KnowledgeBase,
+        knowledge_base: KnowledgeBase | None,
         circuit_registry: CircuitBreakerRegistry,
         throttle: GatewayThrottle,
         scheme_states: SchemeStateRegistry | None = None,
@@ -54,6 +57,58 @@ class SearchAgentFactory:
         self._throttle = throttle
         self._scheme_states = scheme_states
         self._candidate_pool = candidate_pool
+
+    async def run_fast(self, session_id: str, shopping_task: str) -> dict:
+        """Run the deterministic catalog path for a committed atomic slot.
+
+        MainAgent has already classified the slot and ``task_dispatch`` has
+        already selected SearchAgent.  For this common MVP path there is no
+        value in spending two more LLM turns to paraphrase the slot and then
+        paraphrase the catalog JSON.  The SearchAgent still owns the path:
+        ``product_search_tool`` receives the complete versioned SearchRequest,
+        chooses recall vs cached rerank, and emits the normal retrieval trace.
+        A model-backed ``build()`` remains available for nuanced “how to choose”
+        requests that need category knowledge or a prose explanation.
+        """
+        request = self._scheme_states.get(session_id) if self._scheme_states else None
+        if request is None:
+            return {"hits": [], "notes": "缺少版本化方案，未执行商品召回。"}
+        plan = request.scheme
+        query_parts = [shopping_task, *plan.preferences]
+        tool = build_product_search_tool(
+            self._catalog_search, self._bus, self._scheme_states, self._candidate_pool,
+        )
+        chunk = await tool(
+            normalized_query=" ".join(part for part in query_parts if part),
+            category=None,
+            ship_to=plan.destination,
+            top_k=3,
+            price_max_major=plan.budget_major,
+            target_currency=plan.currency,
+            shopping_task=shopping_task,
+        )
+        text = "\n".join(
+            block.text for block in chunk.content if isinstance(block, TextBlock) and block.text
+        )
+        if text.startswith("[error]"):
+            return {"hits": [], "notes": text}
+        try:
+            result = json.loads(text)
+        except (TypeError, ValueError):
+            return {"hits": [], "notes": "商品检索返回格式异常，未把非结构化内容当作商品事实。"}
+        hits = []
+        for hit in result.get("hits", []):
+            highlights = hit.get("highlights") or []
+            fact = str(highlights[0]) if highlights else "商品卡命中该任务"
+            hits.append({
+                "product_id": hit.get("product_id", ""),
+                "reason": f"{shopping_task}：{fact}"[:30],
+                "tradeoff": "价格、库存与规格以商品卡为准"[:30],
+            })
+        action = result.get("retrieval_action", "recall_local")
+        explanation = result.get("retrieval_explanation", "按当前方案执行检索")
+        notes = f"{explanation} 检索策略：{action}；返回 {len(hits)} 个候选。"
+        return {"hits": hits, "notes": notes[:120]}
 
     def _resilience(self) -> list:
         return [ToolResilienceMiddleware(self._circuit_registry, self._bus)]
@@ -71,12 +126,15 @@ class SearchAgentFactory:
                 is_read_only=True,
                 middlewares=self._resilience(),
             ),
-            FunctionTool(
-                build_category_insight_tool(self._knowledge_base, self._bus),
-                is_read_only=True,
-                middlewares=self._resilience(),
-            ),
         ]
+        if self._knowledge_base is not None:
+            tools.append(
+                FunctionTool(
+                    build_category_insight_tool(self._knowledge_base, self._bus),
+                    is_read_only=True,
+                    middlewares=self._resilience(),
+                ),
+            )
         if self._settings.tavily_api_key:
             tools.append(
                 FunctionTool(
@@ -99,5 +157,8 @@ class SearchAgentFactory:
                 self._settings.context_size,
                 self._settings.tool_result_limit,
             ),
-            react_config=ReActConfig(max_iters=6),
+            # Enough for optional category insight, one product retrieval, and a final answer.
+            # One retrieval call plus structured output; keep room for one
+            # repair step, not the SDK's five extra grace iterations.
+            react_config=ReActConfig(max_iters=3, structured_output_grace_iters=2),
         )
