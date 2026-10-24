@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./landing.css";
 import LiveChat from "./components/LiveChat";
+import ChatAvatar from "./components/ChatAvatar";
 
 export default function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,11 +32,11 @@ export default function Landing() {
             <p className="preview-slogan">列清单我来，标记已有 / 要买你来；商品只为缺的推荐。</p>
             <div className="preview-journey">
               <div className="preview-query">
-                <small>01 · 你的需求</small>
+                <small><ChatAvatar role="user" />01 · 你的需求</small>
                 <p>周末去海边两天，一个人，预算 300 元，想轻便，帮我准备清单。</p>
               </div>
               <div className="preview-reply">
-                <small>02 · ShopMind 整理清单</small>
+                <small><ChatAvatar role="assistant" />02 · ShopMind 整理清单</small>
                 <p>按场景拆出 16 项，分组逐项确认；没标记的不会默认已有。下方预览 2 项。</p>
               </div>
               <section className="preview-checklist" aria-label="海边清单状态预览">
@@ -43,13 +44,13 @@ export default function Landing() {
                 <article className="preview-item required">
                   <div className="preview-item-meta"><b>泳衣 <em>必备</em></b><small>1–2 套 · 按行程和晾晒条件调整</small></div>
                   <div className="preview-status" role="group" aria-label="泳衣状态示意">
-                    <span>已有</span><span className="selected required">✓ 需要购买</span><span>还没确认</span>
+                    <span>已有</span><span className="selected required">✓ 需要购买</span><span>还没确认</span><span>不需要</span>
                   </div>
                 </article>
                 <article className="preview-item optional">
                   <div className="preview-item-meta"><b>泳镜 <em>按需</em></b><small>计划游泳时</small></div>
                   <div className="preview-status" role="group" aria-label="泳镜状态示意">
-                    <span className="selected optional">✓ 已有</span><span>这次要买</span><span>不需要</span><span>还不确定</span>
+                    <span className="selected optional">✓ 已有</span><span>需要购买</span><span>还没确认</span><span>不需要</span>
                   </div>
                 </article>
               </section>
@@ -83,7 +84,7 @@ export default function Landing() {
         <section className="value-section">
           <div className="section-heading"><p className="eyebrow">WHY SHOPMIND</p><h2>你缺的不是商品，<span>而是做决定的把握。</span></h2></div>
           <div className="value-grid">
-            {[["01", "⌁", "怕漏买，也怕买多", "面对一次旅行、入住或送礼任务，用户往往不是找不到商品，而是不确定到底要准备哪些、哪些已有、哪些其实不用买。"], ["02", "⌘", "目标不是多推荐，而是刚好完成", "平台可以继续给出更多单品；ShopMind 先控制采购范围，优先生成完成任务所需的最小购买集合。"], ["03", "✦", "把选择依据交还给用户", "每个候选都说明为什么选、放弃了什么、还缺什么信息；用户调整预算或优先级后，方案跟着变化。"]].map(([index, icon, title, text]) => (
+            {[["01", "⌁", "怕漏买，也怕买多", "面对出行、开学、租房入住、待产或第一次养猫等任务，用户往往不是找不到商品，而是不确定到底要准备哪些、哪些已有、哪些其实不用买。"], ["02", "⌘", "目标不是多推荐，而是刚好完成", "平台可以继续给出更多单品；ShopMind 先控制采购范围，优先生成完成任务所需的最小购买集合。"], ["03", "✦", "把选择依据交还给用户", "每个候选都说明为什么选、放弃了什么、还缺什么信息；用户调整预算或优先级后，方案跟着变化。"]].map(([index, icon, title, text]) => (
               <article className="value-card" key={title}><span className="value-index">{index}</span><div className="value-icon">{icon}</div><h3>{title}</h3><p>{text}</p></article>
             ))}
           </div>
@@ -100,7 +101,7 @@ export default function Landing() {
             </article>
             <article className="mode-card">
               <div className="mode-top"><span>02 / CONVERSATION</span><b>问答对话模式</b></div>
-              <div className="mode-dialog user">第一次租房入住，房间提供情况还不确定。</div><div className="mode-dialog ai">先按睡眠照明、入住清洁、收纳日常分组；未知项保持“还不确定”，不默认已有。</div>
+              <div className="mode-dialog user">第一次租房入住，房间提供情况还不确定。</div><div className="mode-dialog ai">先按睡眠照明、入住清洁、收纳日常分组；未知项保持“还没确认”，不默认已有。</div>
               <p className="mode-copy chat-copy">必备与按需分开，逐项确认状态；只为明确待购项检索商品。</p><div className="mode-line" /><strong>Scene → Checklist → Confirm → Search</strong>
             </article>
           </div>
@@ -119,7 +120,7 @@ export default function Landing() {
         <LiveChat />
       </main>
 
-      <footer className="site-footer"><a className="brand" href="#overview"><span className="brand-symbol">S</span><span>ShopMind <b>AI</b></span></a><p>场景演示调用本地 Commerce API；场景清单优先使用模板，商品与价格来自模拟目录，不执行真实交易。</p><div><a href="https://github.com/Pyper000/Pyper000.github.io">GitHub</a><a href="#overview">Portfolio</a></div></footer>
+      <footer className="site-footer"><a className="brand" href="#overview"><span className="brand-symbol">S</span><span>ShopMind <b>AI</b></span></a><p>场景演示调用本地 Commerce API；场景清单优先使用模板，商品与价格来自模拟目录，不执行真实交易。</p><div><a href="https://github.com/Pyper000/ShopMind" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://shopmind-phi.vercel.app/" target="_blank" rel="noopener noreferrer">Portfolio</a></div></footer>
     </div>
   );
 }
