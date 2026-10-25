@@ -35,6 +35,16 @@ def build_remember_preference_tool(store: PreferenceStore, bus: TradeEventBus):
         snapshot = ShoppingContext.current()
         buyer_id = snapshot.buyer_id if snapshot else "anonymous"
         session_id = ShoppingContext.current_session_id()
+        if not snapshot or not snapshot.memory_consent:
+            bus.publish(
+                session_id,
+                "tool.result",
+                {"tool": "remember_preference_tool", "error": "用户尚未授权跨会话记忆"},
+            )
+            return ToolChunk(
+                content=[TextBlock(type="text", text="用户尚未授权跨会话记忆；本轮不保存偏好。")],
+                state=ToolResultState.ERROR,
+            )
         bus.publish(
             session_id,
             "tool.invoke",

@@ -59,6 +59,24 @@ def test_unrelated_text_stays_on_model_path():
     assert route_edit("给我讲讲怎么挑防晒霜", beach()).kind == "none"
 
 
+def test_request_to_buy_identity_document_is_recorded_as_preparation():
+    from app.application.agents.orchestrator import _apply_edit
+
+    plan = ShoppingPlan(
+        goal="出行准备", stage="confirm", tasks=["身份证件"], unknowns=["身份证件"],
+        checklist_sections=[{"id": "docs", "title": "证件", "required": [
+            {"name": "身份证件", "purchasable": False},
+        ], "optional": []}],
+    )
+    route = route_edit("身份证件没有，需要购买", plan)
+
+    assert route.kind == "set_buy"
+    updated = _apply_edit(plan, route)
+    assert updated.prepared == ["身份证件"]
+    assert updated.must_buy == []
+    assert updated.stage == "confirm"
+
+
 def test_direct_named_product_is_single_item_route_not_scene_planning():
     direct = route_direct_item("我想买一个旅行背包")
     assert direct.kind == "direct_item"

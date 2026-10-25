@@ -1,0 +1,39 @@
+{
+  "dataset": "shopmind-mvp-regression-v1",
+  "purpose": "Template routing, paraphrase, entity-conflict, and open-scene checklist regression cases.",
+  "cases": [
+    {
+      "id": "known_beach_template",
+      "query": "周末去海边两天，帮我准备购物清单",
+      "route": "keyword",
+      "template_id": "beach_weekend",
+      "min_modules": 3,
+      "required_anchors": ["泳衣", "防晒霜", "毛巾"]
+    },
+    {
+      "id": "semantic_adult_cat_rewrite",
+      "query": "我第一次养一只健康成年猫",
+      "route": "semantic",
+      "template_id": "first_cat_home",
+      "min_modules": 5,
+      "required_anchors": ["猫粮", "猫砂", "猫咪航空箱/外出箱"]
+    },
+    {
+      "id": "dog_conflicts_with_cat_template",
+      "query": "我第一次养一只健康成年狗，想准备狗到家物品",
+      "route": "open_scene",
+      "forbidden_template_id": "first_cat_home",
+      "min_modules": 2,
+      "required_anchors": []
+    },
+    {
+      "id": "new_community_used_goods_fair",
+      "query": "我第一次组织社区旧物义卖活动，帮我准备一份采购清单，尽量具体到单项，考虑前期准备、现场售卖和收尾。",
+      "route": "open_scene",
+      "template_id": null,
+      "min_modules": 2,
+      "max_modules": 6,
+      "required_anchors": []
+    }
+  ]
+}

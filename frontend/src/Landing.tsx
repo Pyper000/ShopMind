@@ -23,13 +23,13 @@ export default function Landing() {
             <p className="eyebrow">CONVERSATIONAL COMMERCE / 01</p>
             <h1>ShopMind AI</h1>
             <h2 className="hero-subtitle">大概知道买什么，却怕漏了关键？</h2>
-            <p className="hero-text">ShopMind 把生活任务拆成完整采购方案，核对已有与缺项，再按预算比较候选，讲清该买、可不买和每项取舍。</p>
+            <p className="hero-text">ShopMind 把生活任务拆成准备清单，核对已有与待准备事项；证件等非商品只记录携带，可购买的物品再按预算比较候选。</p>
             <div className="hero-actions"><a className="primary-btn" href="#live">开始购物对话 <span>↗</span></a><a className="secondary-btn" href="#orchestration">查看能力 <span>↓</span></a></div>
             <div className="capability-tags"><span>Intent Understanding</span><span>Tool Calling</span><span>Explainable Recommendations</span></div>
           </div>
           <div className="hero-console reveal delayed" aria-label="ShopMind 从生活任务到采购方案的流程动画">
             <div className="console-header"><div>ShopMind · 决策预览</div><span>模拟商品 · 不实际下单</span></div>
-            <p className="preview-slogan">列清单我来，标记已有 / 要买你来；商品只为缺的推荐。</p>
+            <p className="preview-slogan">列清单我来，标记已有 / 需要准备你来；证件等非商品只记录准备。</p>
             <div className="preview-journey">
               <div className="preview-query">
                 <small><ChatAvatar role="user" />01 · 你的需求</small>
@@ -44,18 +44,18 @@ export default function Landing() {
                 <article className="preview-item required">
                   <div className="preview-item-meta"><b>泳衣 <em>必备</em></b><small>1–2 套 · 按行程和晾晒条件调整</small></div>
                   <div className="preview-status" role="group" aria-label="泳衣状态示意">
-                    <span>已有</span><span className="selected required">✓ 需要购买</span><span>还没确认</span><span>不需要</span>
+                    <span>已有</span><span className="selected required">✓ 需要准备</span><span>还没确认</span><span>不需要</span>
                   </div>
                 </article>
                 <article className="preview-item optional">
                   <div className="preview-item-meta"><b>泳镜 <em>按需</em></b><small>计划游泳时</small></div>
                   <div className="preview-status" role="group" aria-label="泳镜状态示意">
-                    <span className="selected optional">✓ 已有</span><span>需要购买</span><span>还没确认</span><span>不需要</span>
+                    <span className="selected optional">✓ 已有</span><span>需要准备</span><span>还没确认</span><span>不需要</span>
                   </div>
                 </article>
               </section>
-              <section className="preview-candidate" aria-label="只为步骤 02 中标记待购的泳衣推荐模拟商品">
-                <div className="preview-candidate-head"><small>03 · 商品候选</small><span>对应步骤 02：泳衣 · 需要购买</span></div>
+              <section className="preview-candidate" aria-label="只为步骤 02 中需要准备的可购买物品推荐模拟商品">
+                <div className="preview-candidate-head"><small>03 · 商品候选</small><span>对应步骤 02：泳衣 · 需要准备</span></div>
                 <div className="preview-products">
                   <article className="preview-product-card featured">
                     <small>轻便首选</small><b>SwimEase<br />轻便速干泳衣</b>

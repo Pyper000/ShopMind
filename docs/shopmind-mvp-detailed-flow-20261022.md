@@ -1,5 +1,7 @@
 # ShopMind MVP：端到端细化流程
 
+> 历史材料说明（2026-10-25）：本文保留早期方向/时点，当前产品定义、实现状态与验收边界请看[作品集总目录](portfolio/README.md)与[最新PRD](shopmind-task-to-plan-prd.md)。其中旧流程、旧指标及订单描述不能直接作为当前ShopMind能力结论。
+
 状态：按 2026-10-22 已确认的架构实现；此文描述本地代码目标，未代表 GitHub / 公网部署状态。MainAgent 持有方案和用户状态，SearchAgent 只召回、过滤、排序；TradeAgent 仍关闭。MVP 终点是用户确认“这套采购方案”，不是创建真实订单。
 
 ## 1. 从输入到商品方案：前端和 MainAgent 的分支

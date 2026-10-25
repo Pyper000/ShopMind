@@ -29,6 +29,7 @@ class IntentTask:
     currency: str
     raw_query: str
     enqueued_at: str = field(default_factory=_now_iso)
+    memory_consent: bool = False
     # 优先级：0 = 正常请求（1 以上 = 大请求，走低优先队列）。
     # 长会话（轮数多、上下文大）单次耗时明显更长，
     # 把它们分到单独队列，避免把短平快的新会话堵在后面。
@@ -43,6 +44,7 @@ class IntentTask:
             "currency": self.currency,
             "raw_query": self.raw_query,
             "enqueued_at": self.enqueued_at,
+            "memory_consent": self.memory_consent,
             "priority": self.priority,
         }
 
@@ -56,6 +58,7 @@ class IntentTask:
             currency=raw.get("currency", "CNY"),
             raw_query=raw.get("raw_query", ""),
             enqueued_at=raw.get("enqueued_at", ""),
+            memory_consent=bool(raw.get("memory_consent", False)),
             priority=int(raw.get("priority", 0)),
         )
 

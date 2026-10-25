@@ -48,6 +48,7 @@ from app.infrastructure.persistence.json_file_stores import (
     JsonFileSessionStore,
 )
 from app.infrastructure.persistence.scene_template_store import SceneTemplateStore
+from app.infrastructure.persistence.shopmind_mvp_store import ShopMindMvpStore
 from app.infrastructure.persistence.sql.repositories import (
     SqlConversationStore,
     SqlOrderRepository,
@@ -70,6 +71,7 @@ from app.infrastructure.settings import Settings, load_settings
 from app.infrastructure.shared_breaker import SharedCircuitBreakerRegistry
 from app.infrastructure.throttle import GatewayThrottle
 from app.infrastructure.tracing import setup_tracing
+from app.infrastructure.weather import OpenMeteoWeatherClient
 from app.infrastructure.vector.index_bootstrap import bootstrap_product_index
 from app.infrastructure.vector.qdrant_product_index import QdrantProductIndex
 
@@ -105,6 +107,9 @@ class Container:
     vector_index: QdrantProductIndex
     knowledge_base: Any
     db_engine: Any
+    mvp_store: Optional[ShopMindMvpStore] = None
+    scene_templates: Optional[SceneTemplateStore] = None
+    preference_store: Any = None
 
     async def startup(self) -> None:
         """建表 / 建向量库 / 建知识库。任一失败只告警，对应能力降级但服务可用。"""
@@ -247,6 +252,11 @@ async def build_container() -> Container:
         candidate_pool=candidate_pool,
     )
     sessions = SessionRegistry(main_factory, session_store)
+    scene_templates = SceneTemplateStore(
+        embedder=embedder,
+        published_path=settings.data_dir / "published_scene_templates.json",
+    )
+    mvp_store = ShopMindMvpStore(settings.data_dir)
     orchestrator = MainAgentOrchestrator(
         sessions, bus, preference_store, conversation_store,
         # Stateful ShopMind turns must reach MainAgent to commit a fresh SchemeMutation.
@@ -258,9 +268,11 @@ async def build_container() -> Container:
         preference_selector=preference_selector,
         preference_top_k=settings.preference_top_k,
         scheme_states=scheme_states,
-        scene_templates=SceneTemplateStore(),
+        scene_templates=scene_templates,
         candidate_pool=candidate_pool,
         confirmed_search=main_factory.dispatch_committed_search,
+        inventory_store=mvp_store,
+        weather_client=OpenMeteoWeatherClient(),
     )
 
     return Container(
@@ -278,4 +290,7 @@ async def build_container() -> Container:
         vector_index=vector_index,
         knowledge_base=knowledge_base,
         db_engine=db_engine,
+        mvp_store=mvp_store,
+        scene_templates=scene_templates,
+        preference_store=preference_store,
     )

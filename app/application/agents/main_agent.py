@@ -36,7 +36,7 @@ from app.application.memory.preference_selector import PreferenceSelector
 from app.application.prompts.loader import load_prompts
 from app.application.tools.forget_preference_tool import build_forget_preference_tool
 from app.application.tools.remember_preference_tool import build_remember_preference_tool
-from app.application.tools.shopping_plan_tool import build_update_shopping_plan_tool
+from app.application.tools.shopping_plan_tool import build_update_shopping_plan_tool, _is_non_purchasable_slot
 from app.application.tools.task_dispatch_tool import build_task_dispatch_tool
 from app.domain.buyer.preference import PreferenceStore
 from app.domain.session.ports.session_store import SessionStore
@@ -206,9 +206,10 @@ class MainAgentFactory:
         if request is None:
             return []
         plan = request.scheme
-        excluded = set(plan.reusable + plan.not_buy + plan.unknowns)
+        excluded = set(plan.reusable + plan.prepared + plan.not_buy + plan.unknowns)
         # Optional items are searched only after the buyer explicitly selects "buy".
-        wanted = [slot for slot in dict.fromkeys(plan.must_buy + plan.optional) if slot not in excluded]
+        wanted = [slot for slot in dict.fromkeys(plan.must_buy + plan.optional)
+                  if slot not in excluded and not _is_non_purchasable_slot(plan, slot)]
         if slots:
             allowed = set(slots)
             scoped = [slot for slot in wanted if slot in allowed]

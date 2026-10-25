@@ -299,3 +299,45 @@ section { scroll-margin-top: 90px; }
   .hero-console.reveal, .hero-console.reveal.delayed { animation: none; opacity: 1; transform: none; }
   .preview-query, .preview-reply, .preview-checklist, .preview-item, .preview-status .selected, .preview-candidate, .preview-confirm { animation: none; opacity: 1; transform: none; }
 }
+
+.account-panel,.review-panel,.quick-feedback { margin: 14px 0; padding: 13px 15px; border: 1px solid rgba(111,133,172,.28); border-radius: 9px; background: rgba(255,255,255,.035); color: #dfe5f2; }
+.account-panel > summary,.review-panel > summary { cursor: pointer; color: #dce7f3; font-size: 12px; font-weight: 700; }
+.account-controls,.memory-manager,.review-panel-body { display: grid; gap: 11px; margin-top: 13px; }
+.account-controls { grid-template-columns: repeat(2,minmax(0,1fr)) auto auto; align-items: end; }
+.account-controls label,.review-fields label { display: grid; gap: 5px; color: #a5b1c4; font-size: 10px; }
+.account-controls input,.memory-manager input,.memory-manager select,.review-fields input { min-width: 0; width: 100%; padding: 8px 9px; border: 1px solid rgba(160,177,211,.26); border-radius: 6px; background: rgba(6,12,20,.65); color: #e5eaf4; font-size: 11px; }
+.account-controls button,.memory-manager button,.review-panel button,.quick-feedback button,.candidate-share button { padding: 8px 11px; border: 1px solid rgba(137,155,204,.36); border-radius: 6px; background: rgba(108,124,255,.14); color: #d8ddff; font-size: 10px; font-weight: 700; }
+.account-controls button:disabled,.memory-manager button:disabled,.quick-feedback button:disabled { opacity: .45; }
+.memory-consent-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 13px; color: #c4cee0; font-size: 11px; }
+.memory-consent-row label { display: flex; align-items: center; gap: 7px; }
+.account-note,.review-panel-body > p,.candidate-share p { color: #9eabc0; font-size: 10px; line-height: 1.6; }
+.memory-manager form { display: grid; grid-template-columns: 120px minmax(0,1fr) auto; gap: 8px; }
+.memory-manager form:nth-child(2) { grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; }
+.memory-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.memory-columns > div,.review-candidate { padding: 10px; border: 1px solid rgba(145,164,203,.2); border-radius: 7px; background: rgba(0,0,0,.13); }
+.memory-columns p,.review-candidate p { color: #b5c0d2; font-size: 10px; line-height: 1.55; }
+.memory-columns p button { margin-left: 8px; padding: 2px 5px; }
+.memory-manager .memory-clear { justify-self: start; background: rgba(166,72,72,.12); border-color: rgba(215,118,118,.3); color: #ffbaba; }
+.quick-feedback { display: grid; gap: 12px; }
+.quick-feedback-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 9px 16px; }
+.quick-feedback-row > div:first-child { display: grid; gap: 3px; }
+.quick-feedback-row strong { font-size: 12px; }
+.quick-feedback-row small { color: #98a6bd; font-size: 10px; }
+.feedback-options { display: flex; flex-wrap: wrap; gap: 6px; }
+.feedback-options button[aria-pressed="true"] { border-color: rgba(113,213,185,.8); background: rgba(43,153,124,.25); color: #d6fff2; }
+.candidate-share { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding-top: 10px; border-top: 1px solid rgba(145,164,203,.17); }
+.candidate-share p { flex: 1 1 420px; margin: 0; }
+.review-candidate { display: grid; gap: 7px; }
+.review-candidate h3 { margin: 0; font-size: 12px; }
+.review-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.review-panel-body > button { justify-self: start; }
+.published-candidates { display: grid; gap: 7px; }
+.published-candidates article { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 9px; border: 1px solid rgba(113,213,185,.2); border-radius: 6px; color: #bac6d8; font-size: 10px; }
+@media (max-width: 760px) {
+  .account-controls { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .memory-manager form,.memory-manager form:nth-child(2) { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 520px) {
+  .account-controls,.memory-columns,.review-fields { grid-template-columns: minmax(0,1fr); }
+  .memory-consent-row { align-items: start; }
+}

@@ -24,10 +24,12 @@ class ShoppingPlan:
     state_version: int = 0
     template_id: Optional[str] = None
     template_version: Optional[int] = None
+    weather_context: Optional[dict] = None
     checklist_sections: list[dict] = field(default_factory=list)
     must_buy: list[str] = field(default_factory=list)
     optional: list[str] = field(default_factory=list)
     reusable: list[str] = field(default_factory=list)
+    prepared: list[str] = field(default_factory=list)
     not_buy: list[str] = field(default_factory=list)
     unknowns: list[str] = field(default_factory=list)
     excludes: list[str] = field(default_factory=list)

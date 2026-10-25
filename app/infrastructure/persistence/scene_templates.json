@@ -14,7 +14,7 @@
     },
     {
       "id": "beach_swimming", "title": "游泳与海边活动", "required": [
-        {"name":"泳衣","quantity":"1-2套","note":"根据计划游泳次数与晾晒条件调整"},
+        {"name":"泳衣","quantity":"1-2套","condition":"计划下水游泳时；按游泳次数、出行天数和晾晒条件调整"},
         {"name":"防晒霜","quantity":"1支","note":"按个人肤质和产品说明选择"},
         {"name":"遮阳帽","quantity":"1顶"}
       ], "optional": [
@@ -73,7 +73,7 @@
     },
     {
       "id": "travel_documents", "title": "证件与电子设备", "required": [
-        {"name":"身份证件","quantity":"每人1份","per_person":true},
+        {"name":"身份证件","quantity":"每人1份","per_person":true,"purchasable":false},
         {"name":"手机与充电器","quantity":"每人1套","per_person":true}
       ], "optional": [
         {"name":"旅行背包","condition":"现有背包不适合本次行程时"},
@@ -94,7 +94,7 @@
     },
     {
       "id": "maternity_mother", "title": "孕妇", "required": [
-        {"name":"产检与入院资料","quantity":"按医院要求准备1份","note":"以就诊医院通知为准"},
+        {"name":"产检与入院资料","quantity":"按医院要求准备1份","note":"以就诊医院通知为准","purchasable":false},
         {"name":"待产宽松舒适衣物","quantity":"参考1套","note":"数量为打包参考，按个人舒适度和本院要求调整"},
         {"name":"睡衣/睡袍","quantity":"参考1-2套","note":"按预计住院时长调整；NHS 未规定固定数量"},
         {"name":"浴袍/宽松开衫","quantity":"参考1件","note":"是否需要按个人习惯和医院环境决定"},
@@ -107,7 +107,7 @@
         {"name":"产妇卫生巾","quantity":"参考2包","note":"核对医院是否提供及具体要求"},
         {"name":"洗漱用品","quantity":"1套"},
         {"name":"孕妇手机与充电器","quantity":"1套"},
-        {"name":"本人正在使用的处方药","quantity":"按本人处方","note":"只核对本人已有处方药；不构成用药建议"}
+        {"name":"本人正在使用的处方药","quantity":"按本人处方","note":"只核对本人已有处方药；不构成用药建议","purchasable":false}
       ], "optional": [
         {"name":"孕妇饮水瓶","condition":"按个人需要并遵循医院/医护人员要求"},
         {"name":"零食","condition":"按个人需要及医院规定；不是所有人都必须准备"},
@@ -133,7 +133,7 @@
         {"name":"陪护人手机与充电器","quantity":"1套"},
         {"name":"基础洗漱用品","quantity":"1套"}
       ], "optional": [
-        {"name":"陪护人证件/入院凭证","condition":"医院要求陪护人登记或核验身份时；按本院规定准备"},
+        {"name":"陪护人证件/入院凭证","condition":"医院要求陪护人登记或核验身份时；按本院规定准备","purchasable":false},
         {"name":"陪护人零食与饮水","condition":"按陪护时长、医院规定与现场供应情况决定"}
       ], "reference": {"title":"NHS Hospital bag checklist（陪护人项目，英国参考）","url":"https://www.nhs.uk/best-start-in-life/pregnancy/preparing-for-labour-and-birth/hospital-bag-checklist/","note":"NHS 提及陪护人换洗衣物、洗漱用品、手机与充电器；证件和入院凭证是否需要以本院规定为准。"}
     },
@@ -177,11 +177,11 @@
     }
   ],
   "scenes": [
-    {"id":"beach_weekend","name":"海边出行","match_terms":["海边","沙滩","海岛"],"core_use":"海边休闲与游泳","module_ids":["beach_clothing","beach_swimming","beach_safety"],"prep":["核对天气、潮汐和海滩安全提示","个人常用药仅按本人医嘱自备；ShopMind 不提供具体用药建议"]},
-    {"id":"school_start","name":"开学准备","match_terms":["开学","新学期","返校"],"core_use":"学习与校园生活","module_ids":["school_learning","school_dorm"],"prep":["先确认住校情况、宿舍尺寸和学校电器规则"]},
-    {"id":"rental_move_in","name":"租房入住","match_terms":["租房","出租屋","搬家入住","新家入住"],"core_use":"租房基础生活与收纳","module_ids":["rental_sleep","rental_cleaning","rental_storage"],"prep":["先看租赁合同和房东交付清单，核对床、床垫、衣柜、照明和清洁工具是否已提供","确认独立卫浴、厨房和电器使用规则；先量床垫、衣柜及可用收纳空间","按房间实际清洁状态补工具；尺寸或提供情况不确定的项目先保持待确认"]},
-    {"id":"general_travel","name":"出行准备","match_terms":["出行","旅行","旅游","出差"],"core_use":"短途出行与随身装备","module_ids":["travel_documents","travel_clothing"],"prep":["出发前核对证件、天气、交通和行李限制"]},
-    {"id":"maternity_hospital_bag","name":"待产住院准备","match_terms":["待产住院包","待产包","待产","生产住院","生孩子住院"],"core_use":"准备孕妇、宝宝与陪护人的住院物品","module_ids":["maternity_mother","maternity_baby","maternity_companion"],"prep":["这是一份准备清单，不替代产科医护人员建议；请以生产医院的入院清单为准","NHS 是英国参考来源，清单和数量应按当地医院、住院时长和个人计划确认"]},
-    {"id":"first_cat_home","name":"第一次养猫","match_terms":["第一次养猫","新手养猫","第一次接猫","接猫回家","新猫到家"],"core_use":"为新猫准备安全、吃喝、如厕与日常照护","module_ids":["cat_food","cat_toilet","cat_transport","cat_home","cat_care"],"prep":["先准备一间安静、安全的适应空间和可躲藏处","接猫前向原主人/救助机构核对饮食、健康与疫苗记录；健康问题咨询兽医"]}
+    {"id":"beach_weekend","name":"海边出行","match_terms":["海边","沙滩","海岛"],"semantic_description":"周末海滩度假、海岛游泳或去海边玩几天的行前准备；按衣物、游泳活动、安全提醒分组核对物品。","core_use":"海边休闲与游泳","module_ids":["beach_clothing","beach_swimming","beach_safety"],"prep":["核对天气、潮汐和海滩安全提示","个人常用药仅按本人医嘱自备；ShopMind 不提供具体用药建议"]},
+    {"id":"school_start","name":"开学准备","match_terms":["开学","新学期","返校"],"semantic_description":"准备入学、返校或开始新学期的学习和住宿用品；根据课程、是否住校与学校规定分组整理。","core_use":"学习与校园生活","module_ids":["school_learning","school_dorm"],"prep":["先确认住校情况、宿舍尺寸和学校电器规则"]},
+    {"id":"rental_move_in","name":"租房入住","match_terms":["租房","出租屋","搬家入住","新家入住"],"semantic_description":"搬进出租屋、刚拿到新房钥匙或第一次独立居住时，盘点房间已有物品并准备睡眠、清洁、收纳用品。","core_use":"租房基础生活与收纳","module_ids":["rental_sleep","rental_cleaning","rental_storage"],"prep":["先看租赁合同和房东交付清单，核对床、床垫、衣柜、照明和清洁工具是否已提供","确认独立卫浴、厨房和电器使用规则；先量床垫、衣柜及可用收纳空间","按房间实际清洁状态补工具；尺寸或提供情况不确定的项目先保持待确认"]},
+    {"id":"general_travel","name":"出行准备","match_terms":["出行","旅行","旅游","出差"],"semantic_description":"为周末短途游、商务差旅或一般旅行收拾行李，按证件电子设备、衣物洗漱等模块检查。","core_use":"短途出行与随身装备","module_ids":["travel_documents","travel_clothing"],"prep":["出发前核对证件、天气、交通和行李限制"]},
+    {"id":"maternity_hospital_bag","name":"待产住院准备","match_terms":["待产住院包","待产包","待产","生产住院","生孩子住院"],"semantic_description":"准备分娩、生产前后去医院住院的物品，分别为孕妇、新生儿和陪护人员整理行李与入院材料。","core_use":"准备孕妇、宝宝与陪护人的住院物品","module_ids":["maternity_mother","maternity_baby","maternity_companion"],"prep":["这是一份准备清单，不替代产科医护人员建议；请以生产医院的入院清单为准","NHS 是英国参考来源，清单和数量应按当地医院、住院时长和个人计划确认"]},
+    {"id":"first_cat_home","name":"第一次养猫","match_terms":["第一次养猫","新手养猫","第一次接猫","接猫回家","新猫到家"],"semantic_description":"第一次开始养猫或领养一只猫回家，包括健康成年猫；在猫到家前后准备喂养、如厕、安全运输、适应空间和日常照护用品。","semantic_examples":["第一次养一只健康成年猫，准备猫到家前的物品清单。","刚领养一只成年猫，猫咪这周就到家，需要准备哪些东西？","从未养过猫，准备把成年猫接回家，想了解喂养、如厕和安全用品。"],"incompatible_terms":["狗","犬"],"core_use":"为新猫准备安全、吃喝、如厕与日常照护","module_ids":["cat_food","cat_toilet","cat_transport","cat_home","cat_care"],"prep":["先准备一间安静、安全的适应空间和可躲藏处","接猫前向原主人/救助机构核对饮食、健康与疫苗记录；健康问题咨询兽医"]}
   ]
 }

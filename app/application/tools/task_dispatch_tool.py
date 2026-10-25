@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field
 from app.application.agents.search_agent import SearchAgentFactory
 from app.application.agents.scheme_state import SchemeStateRegistry
 from app.application.agents.trade_agent import TradeAgentFactory
+from app.application.tools.shopping_plan_tool import _is_non_purchasable_slot
 from app.application.memory.preference_selector import (
     PreferenceSelector,
     render_preference_hint,
@@ -80,6 +81,8 @@ def build_task_dispatch_tool(
         if not (subagent_inject and preference_store and subagent_type == "search_agent"):
             return None
         snapshot = ShoppingContext.current()
+        if not snapshot or not snapshot.memory_consent:
+            return None
         buyer_id = snapshot.buyer_id if snapshot else ""
         if not buyer_id:
             return None
@@ -123,11 +126,21 @@ def build_task_dispatch_tool(
             plan = request.scheme.to_dict()
             plan.pop("state_version", None)
             plan_signature = json.dumps(plan, ensure_ascii=False, sort_keys=True)
-            requested_slots = list(dict.fromkeys([*request.scheme.must_buy, *request.scheme.optional]))
+            requested_slots = [
+                slot for slot in dict.fromkeys([*request.scheme.must_buy, *request.scheme.optional])
+                if not _is_non_purchasable_slot(request.scheme, slot)
+            ]
         matched_slot = next(
             (slot for slot in requested_slots if slot.casefold() in demands.casefold()),
             requested_slots[0] if len(requested_slots) == 1 else "",
         )
+        if request and subagent_type == "search_agent" and not matched_slot:
+            message = "当前没有明确且可购买的待准备项目，不能启动商品搜索。"
+            bus.publish(session_id, "error", {"message": message})
+            return ToolChunk(
+                content=[TextBlock(type="text", text=f"[error] {message}")],
+                state=ToolResultState.ERROR,
+            )
         cache_key = (session_id, subagent_type, matched_slot or demands.strip().casefold(), plan_signature)
         if raw_query:
             if cached_query_by_session.get(session_id) != raw_query:

@@ -24,6 +24,7 @@ from app.infrastructure.persistence.json_file_stores import JsonFilePreferenceSt
 
 SNAPSHOT = ShoppingContextSnapshot(
     shopping_session_id="s1", buyer_id="buyer-001", locale="zh-CN", currency="CNY",
+    memory_consent=True,
 )
 
 
@@ -72,6 +73,20 @@ def _tool(search_factory, trade_factory, store, **kwargs):
 
 
 class TestSearchAgentInjection:
+    async def test_without_explicit_consent_no_preference_is_injected(self, tmp_path):
+        search, trade = RecordingFactory(), RecordingFactory()
+        store = await _seeded_store(tmp_path, ("dislike", "不要塑料材质"))
+        tool = _tool(search, trade, store)
+        no_consent = ShoppingContextSnapshot(
+            shopping_session_id="s1", buyer_id="buyer-001", locale="zh-CN", currency="CNY",
+        )
+        token = ShoppingContext.set(no_consent)
+        try:
+            await tool(subagent_type="search_agent", demands="找旅行三件套")
+        finally:
+            ShoppingContext.reset(token)
+        assert "<buyer-preferences>" not in _texts(search.seen)
+
     async def test_search_agent_receives_full_scheme_and_current_mutation(self):
         search, trade = RecordingFactory(), RecordingFactory()
         states = SchemeStateRegistry()
@@ -101,6 +116,28 @@ class TestSearchAgentInjection:
         result_event = events.get_nowait()
         assert result_event.type == "agent.result"
         assert result_event.payload["agent"] == "search_agent"
+
+    async def test_non_purchasable_document_cannot_dispatch_search(self):
+        search, trade = RecordingFactory(), RecordingFactory()
+        states = SchemeStateRegistry()
+        states.update("s1", ShoppingPlan(
+            goal="出行准备", stage="search", tasks=["身份证件"], must_buy=["身份证件"],
+            checklist_sections=[{"id": "documents", "title": "证件", "required": [
+                {"name": "身份证件", "purchasable": False},
+            ], "optional": []}],
+        ))
+        bus = TradeEventBus()
+        events = bus.subscribe("s1")
+        tool = build_task_dispatch_tool(search, trade, bus, scheme_states=states)
+        token = ShoppingContext.set(SNAPSHOT)
+        try:
+            result = await tool(subagent_type="search_agent", demands="只搜索身份证件")
+        finally:
+            ShoppingContext.reset(token)
+
+        assert result.content[0].text.startswith("[error]")
+        assert search.build_count == 0
+        assert events.get_nowait().type == "error"
 
     async def test_repeated_dispatch_reuses_result_within_same_user_turn(self):
         search, trade = RecordingFactory(), RecordingFactory()

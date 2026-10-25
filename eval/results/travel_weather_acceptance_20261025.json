@@ -1,0 +1,152 @@
+{
+  "acceptance": "travel_weather_local_mvp",
+  "tested_at": "2026-10-25 Asia/Shanghai",
+  "workspace": "F:\\徐嘉铭\\产品学习\\ecommerce-public-deploy",
+  "result": "passed",
+  "services": {
+    "frontend": {
+      "url": "http://127.0.0.1:5190/",
+      "pid": 147984,
+      "http_status": 200,
+      "title": "ShopMind AI | 对话式购物助手",
+      "live_chat_module_url": "http://127.0.0.1:5190/src/components/LiveChat.tsx",
+      "live_chat_module_http_status": 200,
+      "weather_prep_render_hook_present": true,
+      "checklist_section_render_hook_present": true
+    },
+    "backend": {
+      "url": "http://127.0.0.1:8014",
+      "pid": 54252,
+      "launcher_pid": 132228,
+      "command": "uvicorn app.presentation.server:app --env-file ..\\ecommerce-agent\\.env --host 127.0.0.1 --port 8014",
+      "health_status": 200,
+      "health_body": {
+        "status": "ok",
+        "model": "deepseek-ai/DeepSeek-V3.2",
+        "database": "sqlite",
+        "redis": "disabled",
+        "semantic_cache": false,
+        "queue": "disabled",
+        "queue_depth": 0
+      },
+      "data_dir": "C:\\Users\\16427\\AppData\\Local\\Temp\\shopmind-stage1-verify-data",
+      "live_session_persisted": true
+    },
+    "legacy_services": {
+      "backend_8013": { "pid": 200512, "state": "listening", "modified_or_stopped": false },
+      "frontend_5185": { "pid": 75344, "state": "listening", "modified_or_stopped": false }
+    }
+  },
+  "provider": {
+    "name": "Open-Meteo",
+    "geocoding_forecast_and_historical_archive_live_requests": true,
+    "commercial_use_note": "Free API is for non-commercial use and requires CC BY 4.0 attribution; public/commercial use needs an appropriate license.",
+    "historical_archive_plan_note": "The live long-range climate-reference check used the historical archive endpoint; Open-Meteo currently states historical weather data requires Professional or higher. Do not enable this path in public use without an eligible plan.",
+    "terms_url": "https://open-meteo.com/en/terms",
+    "pricing_url": "https://open-meteo.com/en/pricing"
+  },
+  "sse_checks": [
+    {
+      "case": "long_range_historical_climate_reference",
+      "session_id": "weather-climate-final-20261025-v2",
+      "query": "2027年11月10日去上海旅行，帮我准备清单",
+      "http_status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "elapsed_seconds": 7.04,
+      "events": ["plan.update", "final.result"],
+      "template_id": "general_travel",
+      "weather_mode": "climate_reference",
+      "weather_location": "上海，上海市，中国",
+      "travel_dates": ["2027-11-10", "2027-11-10"],
+      "historical_sample_years": [2025, 2024, 2023],
+      "temperature_c_min_max": [13.8, 17.9],
+      "precipitation_probability_max_pct": null,
+      "checklist_additions": [
+        {
+          "name": "薄外套",
+          "bucket": "optional",
+          "condition": "本次行程气温约 13.8–17.9℃；早晚或长时间户外时分层穿着"
+        }
+      ],
+      "labeled_as_historical_not_forecast": true,
+      "weather_source_and_fetched_at_in_prep": true,
+      "module_count": 3,
+      "task_count": 12,
+      "tasks_match_module_items": true
+    },
+    {
+      "case": "dated_destination_forecast",
+      "session_id": "weather-forecast-final-20261025-v2",
+      "query": "2026年10月28日至30日去上海旅行，帮我准备清单",
+      "http_status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "elapsed_seconds": 6.57,
+      "events": ["plan.update", "final.result"],
+      "template_id": "general_travel",
+      "weather_mode": "forecast",
+      "weather_location": "上海，上海市，中国",
+      "travel_dates": ["2026-10-28", "2026-10-30"],
+      "temperature_c_min_max": [12.9, 22.7],
+      "precipitation_probability_max_pct": 47.0,
+      "checklist_additions": [
+        {
+          "name": "折叠雨伞",
+          "bucket": "optional",
+          "condition": "本次行程降水概率最高 47%；如计划户外活动可携带"
+        },
+        {
+          "name": "薄外套",
+          "bucket": "optional",
+          "condition": "本次行程气温约 12.9–22.7℃；早晚或长时间户外时分层穿着"
+        }
+      ],
+      "weather_source_and_fetched_at_in_prep": true,
+      "module_count": 3,
+      "module_names": ["证件与电子设备", "衣物与洗漱", "天气与衣物准备"],
+      "task_count": 13,
+      "tasks_match_module_items": true
+    },
+    {
+      "case": "destination_known_date_missing",
+      "session_id": "weather-missing-final-20261025-v2",
+      "query": "下周去东京旅行，帮我准备清单",
+      "http_status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "elapsed_seconds": 1.47,
+      "events": ["plan.update", "final.result"],
+      "template_id": "general_travel",
+      "weather_mode": "needs_details",
+      "missing": ["travel_dates"],
+      "weather_invented": false,
+      "asks_for_missing_date": true,
+      "module_count": 2
+    }
+  ],
+  "automated_checks": {
+    "targeted_pytest": {
+      "command": ".venv\\Scripts\\python.exe -m pytest -q tests\\test_travel_weather.py tests\\test_scene_templates.py",
+      "result": "23 passed"
+    },
+    "full_pytest": {
+      "command": ".venv\\Scripts\\python.exe -m pytest -q",
+      "result": "388 passed, 1 warning",
+      "warning": "Starlette/httpx TestClient deprecation warning"
+    },
+    "frontend_build": {
+      "command": "npm run build (frontend)",
+      "result": "passed; Vite 5.4.21; 33 modules transformed"
+    },
+    "unit_coverage": [
+      "explicit trip parsing, destination/date required, and non-trip product-query exclusion",
+      "forecast extraction, cache reuse, rain/cold-weather suggestions, and task/module consistency",
+      "long-range historical climate reference clearly distinguished from a forecast (mocked provider)",
+      "missing dates, ambiguous city names, and provider failures degrade without blocking checklist generation"
+    ]
+  },
+  "safety": {
+    "public_deployment": false,
+    "git_push": false,
+    "old_8013_5185_stopped": false,
+    "weather_is_best_effort_with_10_second_orchestrator_timeout": true
+  }
+}

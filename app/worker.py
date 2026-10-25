@@ -61,6 +61,7 @@ async def main() -> None:
                     locale=task.locale,
                     currency=task.currency,
                     raw_query=task.raw_query,
+                    memory_consent=task.memory_consent,
                 ),
             )
             await container.task_queue.set_status(

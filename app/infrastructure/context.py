@@ -20,6 +20,8 @@ class ShoppingContextSnapshot:
     currency: str
     raw_query: str = ""
     checklist_selection: Optional[dict] = None
+    memory_consent: bool = False
+    weather_context: Optional[dict] = None
 
 
 _current_snapshot: ContextVar[Optional[ShoppingContextSnapshot]] = ContextVar(

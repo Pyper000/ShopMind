@@ -1,0 +1,140 @@
+{
+  "acceptance": "travel_clothing_weather_local_mvp",
+  "tested_at": "2026-10-25 Asia/Shanghai",
+  "result": "passed",
+  "services": {
+    "frontend": {
+      "url": "http://127.0.0.1:5190/",
+      "pid": 147984,
+      "http_status": 200,
+      "health_url": "http://127.0.0.1:5190/health",
+      "health_status": 200,
+      "live_chat_module_http_status": 200,
+      "renders_quantity_and_condition": true
+    },
+    "backend": {
+      "url": "http://127.0.0.1:8014",
+      "pid": 172536,
+      "command": "uvicorn app.presentation.server:app --env-file ..\\ecommerce-agent\\.env --host 127.0.0.1 --port 8014",
+      "health_status": 200,
+      "data_dir": "C:\\Users\\16427\\AppData\\Local\\Temp\\shopmind-stage1-verify-data"
+    },
+    "legacy_services_untouched": {
+      "backend_8013_pid": 200512,
+      "frontend_5185_pid": 75344
+    }
+  },
+  "live_sse_via_frontend_proxy": [
+    {
+      "session_id": "weather-tokyo-clothing-live-final",
+      "query": "2026年10月28日至30日去东京旅行，按天气给我准备衣物清单",
+      "url": "http://127.0.0.1:5190/commerce/intents/stream",
+      "http_status": 200,
+      "events": ["plan.update", "final.result"],
+      "template_id": "general_travel",
+      "weather_mode": "forecast",
+      "location": "Tokyo，Tokyo，Japan",
+      "travel_dates": ["2026-10-28", "2026-10-30"],
+      "temperature_min_max_c": [10.3, 18.0],
+      "rain_days": 1,
+      "rainfall_mm": 5.1,
+      "snow_days": 0,
+      "snowfall_cm": 0.0,
+      "weather_prep_explicitly_says_no_snow": true,
+      "module_count": 2,
+      "clothing_items": [
+        {"name": "长袖上衣", "bucket": "required", "quantity": "4件/人（3套日常穿搭+1件备用上衣）"},
+        {"name": "长裤", "bucket": "required", "quantity": "2条/人（约每2天轮换1条；每天更换则准备3条）"},
+        {"name": "轻薄外套", "bucket": "optional", "quantity": "1件/人"},
+        {"name": "折叠雨伞", "bucket": "optional", "quantity": "1把", "condition": "预报约 1个雨天、累计降雨 5.1mm；已有雨具可直接带上"}
+      ],
+      "tasks_match_checklist_sections": true,
+      "assistant_ack_mentions_clothing_and_quantity": true,
+      "weather_not_invented": false,
+      "session_persisted_in_isolated_data_dir": true
+    },
+    {
+      "session_id": "weather-clothing-forecast-20261025",
+      "query": "2026年10月28日至30日去上海旅行，帮我按天气给穿搭清单",
+      "url": "http://127.0.0.1:5190/commerce/intents/stream",
+      "http_status": 200,
+      "events": ["plan.update", "final.result"],
+      "template_id": "general_travel",
+      "weather_mode": "forecast",
+      "temperature_min_max_c": [12.9, 22.7],
+      "rain_days": 1,
+      "rainfall_mm": 2.7,
+      "snow_days": 0,
+      "checklist_modules": 2,
+      "clothing_items": [
+        {
+          "name": "长袖上衣",
+          "bucket": "required",
+          "quantity": "4件/人（3天×每天1件+1件备用）",
+          "condition": "行程气温约 12.9–22.7℃；按每天1套并留1套备用估算，可洗衣时减少"
+        },
+        {
+          "name": "长裤",
+          "bucket": "required",
+          "quantity": "2条/人（约每2天轮换1条；每天更换则准备3条）",
+          "condition": "行程气温约 12.9–22.7℃；下装按轮换穿着估算，若每天更换则按行程天数准备"
+        },
+        {
+          "name": "轻薄外套",
+          "bucket": "optional",
+          "quantity": "1件/人",
+          "condition": "行程气温约 12.9–22.7℃；早晚或户外时分层穿着，按个人体感调整"
+        },
+        {
+          "name": "折叠雨伞",
+          "bucket": "optional",
+          "quantity": "1把",
+          "condition": "预报约 1个雨天、累计降雨 2.7mm；已有雨具可直接带上"
+        }
+      ],
+      "tasks_match_checklist_sections": true,
+      "assistant_ack_mentions_clothing_and_quantity": true,
+      "session_persisted_in_isolated_data_dir": true
+    },
+    {
+      "session_id": "weather-tokyo-no-date-live-20261025-final-v2",
+      "query": "去东京旅游3天，衣物怎么准备",
+      "url": "http://127.0.0.1:5190/commerce/intents/stream",
+      "http_status": 200,
+      "events": ["plan.update", "final.result"],
+      "template_id": "general_travel",
+      "weather_mode": "needs_details",
+      "destination": "东京",
+      "duration_days": 3,
+      "clothing_item": {
+        "name": "换洗穿搭（上衣+下装）",
+        "quantity": "4套/人（3天每日1套+1套备用）",
+        "condition": "日期未提供时不猜天气；提供具体日期后再按东京天气细分短袖/长袖、外套及雨雪装备"
+      },
+      "tasks_match_checklist_sections": true,
+      "assistant_ack_mentions_clothing_and_quantity": true,
+      "weather_not_invented": true,
+      "session_persisted_in_isolated_data_dir": true
+    }
+  ],
+  "snow_handling": {
+    "automated_test": "passed",
+    "test": "test_forecast_snowfall_is_extracted_and_drives_snow_clothing",
+    "checks": [
+      "snowfall_sum is parsed in cm and snow days counted",
+      "cold/snow forecast suggests warm layers and waterproof non-slip shoes",
+      "snow-only precipitation does not incorrectly suggest a rain umbrella"
+    ]
+  },
+  "checks": {
+    "targeted_pytest": "28 passed",
+    "full_pytest": "393 passed, 1 warning",
+    "pytest_warning": "Starlette/httpx TestClient deprecation warning",
+    "frontend_build": "passed; Vite 5.4.21; 33 modules transformed"
+  },
+  "safety": {
+    "public_deployment": false,
+    "git_push": false,
+    "stopped_legacy_processes": false
+  }
+}

@@ -42,6 +42,82 @@ def test_first_cat_has_only_required_and_optional_categories_with_reference():
     assert any(section.get("reference", {}).get("url", "").startswith("https://www.cats.org.uk/") for section in plan.checklist_sections)
 
 
+@pytest.mark.asyncio
+async def test_adult_cat_paraphrase_matches_existing_template_without_exact_keyword():
+    embedder = _CatConceptEmbedder()
+    store = SceneTemplateStore(embedder=embedder)
+    query = "我第一次养一只健康成年猫"
+    assert store.match(query) is None
+
+    scene = await store.match_semantic(query)
+
+    assert scene is not None and scene["id"] == "first_cat_home"
+    assert embedder.batch_calls == 1
+    plan = store.build_plan(query, scene)
+    assert len(plan.checklist_sections) == 5
+    assert {"猫粮", "猫砂", "猫咪航空箱/外出箱"}.issubset(plan.tasks)
+    assert store.match("我不打算养一只健康成年猫") is None
+
+
+class _CatConceptEmbedder:
+    def __init__(self):
+        self.batch_calls = 0
+
+    async def embed_batch(self, texts):
+        self.batch_calls += 1
+        return [self._vector(text) for text in texts]
+
+    async def embed(self, text):
+        return self._vector(text)
+
+    @staticmethod
+    def _vector(text):
+        return [1.0, 0.0] if any(term in text for term in ("猫", "宠物", "毛孩子")) else [0.0, 1.0]
+
+
+class _CatBiasedEmbedder:
+    """Simulate a vector model that incorrectly scores a dog query as a cat scene."""
+    async def embed_batch(self, texts):
+        return [[1.0, 0.0] if "猫" in text else [0.0, 1.0] for text in texts]
+
+    async def embed(self, text):
+        return [1.0, 0.0]
+
+
+@pytest.mark.asyncio
+async def test_semantic_embedding_matches_cat_synonym_not_in_template_terms():
+    store = SceneTemplateStore(embedder=_CatConceptEmbedder())
+
+    scene = await store.match_semantic("准备迎接毛孩子入住")
+
+    assert scene is not None and scene["id"] == "first_cat_home"
+
+
+@pytest.mark.asyncio
+async def test_semantic_embedding_does_not_route_dog_task_to_cat_template():
+    store = SceneTemplateStore(embedder=_CatBiasedEmbedder())
+
+    scene = await store.match_semantic("我第一次养一只健康成年狗，想准备狗到家物品")
+
+    assert scene is None
+
+
+@pytest.mark.asyncio
+async def test_cat_intent_fallback_survives_embedding_provider_failure():
+    class BrokenEmbedder:
+        async def embed_batch(self, texts):
+            return []
+
+        async def embed(self, text):
+            raise RuntimeError("embedding unavailable")
+
+    scene = await SceneTemplateStore(embedder=BrokenEmbedder()).match_semantic(
+        "我第一次养一只健康成年猫"
+    )
+
+    assert scene is not None and scene["id"] == "first_cat_home"
+
+
 @pytest.mark.parametrize(("query", "template_id", "anchors"), [
     ("开学了，帮我准备采购清单", "school_start", {"学习文具", "书包", "台灯"}),
     ("第一次租房入住，帮我准备清单", "rental_move_in", {"床品套件（床单/被套/枕套）", "地面清洁工具（扫把/拖把）", "清洁布", "衣架", "烧水壶"}),
@@ -64,6 +140,19 @@ def test_core_scene_templates_are_concrete_and_unconfirmed(query, template_id, a
         assert items["地面清洁工具（扫把/拖把）"]["quantity"] == "按房间面积备1套"
         assert items["衣架"]["quantity"] == "先备5-10个"
         assert any("租赁合同" in reminder for reminder in plan.prep)
+    if template_id == "general_travel":
+        assert plan.goal == "出行准备（2天）"
+        items = {item["name"]: item for section in plan.checklist_sections
+                 for item in [*section["required"], *section["optional"]]}
+        assert items["身份证件"]["purchasable"] is False
+
+
+def test_date_range_is_not_mistaken_for_trip_duration():
+    store = SceneTemplateStore()
+    scene = store.match("2026年10月28日至30日去上海旅行")
+    assert scene is not None and scene["id"] == "general_travel"
+    plan = store.build_plan("2026年10月28日至30日去上海旅行", scene)
+    assert plan.goal == "出行准备"
 
 
 def test_first_time_birth_query_builds_detailed_three_person_checklist():
@@ -139,6 +228,34 @@ async def test_known_beach_first_turn_returns_checklist_without_llm(tmp_path):
     assert len(sessions.agent.state.context) == 2
     assert sessions.persisted
     bus.unsubscribe("beach-1", events)
+
+
+@pytest.mark.asyncio
+async def test_adult_cat_paraphrase_emits_modular_template_from_fresh_session(tmp_path):
+    bus = TradeEventBus()
+    sessions = _Sessions()
+    schemes = SchemeStateRegistry(tmp_path)
+    orchestrator = MainAgentOrchestrator(
+        sessions, bus, _Preferences(), scheme_states=schemes,
+        scene_templates=SceneTemplateStore(),
+    )
+    events = bus.subscribe("adult-cat-1")
+
+    await orchestrator.handle_intent(SubmitIntentInput(
+        shopping_session_id="adult-cat-1", buyer_id="buyer-1", locale="zh-CN",
+        currency="CNY", raw_query="我第一次养一只健康成年猫",
+    ))
+
+    emitted = []
+    while not events.empty():
+        emitted.append(events.get_nowait())
+    saved = schemes.get("adult-cat-1")
+    plan_events = [event for event in emitted if event.type == "plan.update"]
+    assert saved is not None and saved.scheme.template_id == "first_cat_home"
+    assert len(saved.scheme.checklist_sections) == 5
+    assert plan_events[0].payload["scene_match_mode"] == "semantic"
+    assert not any(event.type == "model.call" for event in emitted)
+    bus.unsubscribe("adult-cat-1", events)
 
 
 @pytest.mark.asyncio

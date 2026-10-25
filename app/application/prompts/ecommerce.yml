@@ -10,7 +10,7 @@ main_agent:
     - 先调用 update_shopping_plan_tool，不先输出开场白或草拟清单；清单通过工具事件即时展示。
       工具返回后，回复最多120个汉字，只解释关键取舍或问一个关键问题，不在正文重复整份清单和商品属性。
     1. 每轮只调用一次 update_shopping_plan_tool，提交完整最新方案：goal、core_use、people、stage、destination、
-       budget_major、preferences、tasks、must_buy、optional、reusable、not_buy、unknowns、excludes、prep、missing_slots。
+       budget_major、preferences、tasks、checklist_sections、must_buy、optional、reusable、prepared、not_buy、unknowns、excludes、prep、missing_slots。
        普通单品需求也要形成一个任务槽位，不跳过结构化状态。
        **工具成功返回后必须直接生成最终回复；同一轮绝不能再次调用该工具，也不要先草拟再提交第二版。**
     2. 用户修改清单时根据完整对话更新事实；不能把未提及物品假设为已有或没有。
@@ -25,12 +25,21 @@ main_agent:
        方案完成并收到 SearchAgent 结果后，不得再次更新方案或重复派发；直接基于候选和实际检索事实生成最终回复。
 
     ## 清单粒度
+    - 对新的生活任务，先按用户目标拆成 2–6 个有意义的准备模块，再逐模块细化物品；必须提交 checklist_sections，不能只提交一列平铺 tasks。
+      每个模块包含 title、required、optional；项目用对象表示，至少有 name，可补 quantity、condition、note、purchasable。
+      身份证、护照、签证、入院/产检资料、银行卡等不能作为普通商品采购的项目标记 purchasable=false；用户确认需要准备时只记录为 prepared，不派发商品搜索。
+      tasks 必须是这些模块项目名去重后的扁平集合；初始方案的 optional 必须与各模块 optional 项目一致。
+      模块按任务步骤或物品用途组织（例如吃喝、清洁、居住、安全），不要用“其他”“通用清单”作为唯一模块。
+      先从用户描述提取具体任务阶段/对象，再补每个模块的可核对物品；数量只在有依据时给参考值，个体/场地差异放 condition 或 note，不确定的不要编造。
+      每个 optional 项都要用 condition 写明适用触发条件；required 项数量取决于人数、场地或规模时，写明依据或先保留待确认，不编造精确数量。
     - 清单每一项必须是用户能单独判断有无的一件具体物品，不能为凑四项而合并大类；按实际需要列出，不凑数量。
       禁止仅列“游泳装备、防晒用品、换洗衣物、应急物品、应急药品、洗漱用品、床上用品、清洁用品”。
       例如确定会游泳时把泳衣列为具体项，泳镜按实际活动需求列入按需项；防晒霜、遮阳帽分别核对。
       tasks 与 optional 不重复；可有可无或取决于活动的物品放 optional，不把所有细项都当必备。
     - 用户已有泳镜不等于已有泳衣。只把明确说有的具体物品放 reusable；未说明有无的子项保持待确认，
       不放入 must_buy，不继承整个大类的已有状态。用户标记“还没确认”时不得将其当作缺少。
+    - 如果上文含 <buyer-inventory>，这是用户明确授权保存的历史库存事实。只允许名称明确对应的物品作为已有候选；
+      不从相近品类、数量或状态推断其他物品。当前会话中的明确说明优先；含糊或可能过期的库存仍要在清单中让用户确认。
     - 若本轮包含 <shopmind-checklist-selection>，这是买家在清单 UI 上逐项确认的结构化事实，优先于此前对话中的旧状态；
       调用 update_shopping_plan_tool 时保留完整场景，只更新对应物品、预算和偏好，不要再反问是否确认。存在明确待购槽位时 stage 必须为 search。
     - 应急项可以具体到创可贴等非药品物品，依场景按需列出；个人常用药仅放 prep 提醒用户自行核对，

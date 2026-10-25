@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShopMind · 准备决策交互原型</title>
+<style>
+:root{color-scheme:dark;--bg:#11151e;--panel:#1b2230;--line:#354157;--muted:#aebbd0;--accent:#b3a1ff;--mint:#9fe5ce}*{box-sizing:border-box}body{margin:0;font:15px/1.6 system-ui,"Microsoft YaHei",sans-serif;background:var(--bg);color:#edf2fb}button,input{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer;border:1px solid var(--line);border-radius:8px;background:#242e40;color:inherit;padding:8px 13px}button:hover{border-color:var(--accent)}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--mint);outline-offset:3px}button:disabled{opacity:.45;cursor:not-allowed}a{color:var(--mint)}.layout{display:grid;grid-template-columns:235px 1fr;min-height:100vh}aside{padding:32px 22px;border-right:1px solid var(--line);background:#151b26}aside h1{font-size:25px;margin:0;color:#d5c9ff}.subtitle{color:var(--muted);font-size:13px}nav{display:grid;gap:9px;margin-top:32px}nav button{text-align:left;background:transparent}nav button[aria-selected=true]{background:#332d51;border-color:var(--accent)}.side-note{margin-top:35px;font-size:12px;color:var(--muted)}main{padding:30px 42px;max-width:1450px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px}.pill{font-size:12px;border:1px solid #8070ad;padding:4px 9px;border-radius:20px;color:#dfd4ff}h2{font-size:32px;line-height:1.3;margin:18px 0 10px}h3{font-size:17px;margin:0 0 14px}p{margin:8px 0}.lede{color:var(--muted);max-width:850px}.banner{background:#25332f;color:#c9f4e5;border:1px solid #456d5f;padding:14px 18px;border-radius:12px;margin:22px 0}.meta{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.meta span{background:#243042;border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-size:13px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:23px}.card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px}.card.wide{grid-column:1/-1}.item{border-top:1px solid var(--line);padding:14px 0 0;margin-top:14px}.item strong{font-size:14px}.quantity{color:var(--mint);font-weight:600;font-size:13px}.detail{font-size:12px;color:var(--muted);margin:5px 0 10px}.status{display:grid;grid-template-columns:1fr 1fr;gap:5px}.status button{font-size:12px;padding:5px}.status button[aria-pressed=true]{background:#493d6a;border-color:var(--accent);color:#fff}.group-label{font-size:12px;color:var(--accent)}.optional{color:#a5d8ff}.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:24px 0}.primary{background:#b5a2ff;color:#151123;font-weight:700;border-color:#b5a2ff}.notice{color:var(--mint);padding:10px 0;min-height:44px}.screen[hidden]{display:none}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.choice button[aria-pressed=true]{background:#3d6358;border-color:var(--mint)}.choice{display:flex;gap:8px;flex-wrap:wrap}.small{font-size:13px;color:var(--muted)}label{display:block;margin:16px 0}footer{border-top:1px solid var(--line);margin-top:38px;padding-top:18px;font-size:12px;color:var(--muted)}.empty{padding:20px;border:1px dashed var(--line)}@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:24px}.layout{grid-template-columns:200px 1fr}}@media(max-width:700px){.layout{display:block}aside{padding:18px;border-bottom:1px solid var(--line)}nav{display:flex;flex-wrap:wrap;margin-top:12px}nav button{font-size:12px;padding:6px}.side-note{display:none}main{padding:20px}.cards{grid-template-columns:1fr}.top{align-items:flex-start}h2{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="layout"><aside><h1>ShopMind</h1><div class="subtitle">从生活目标，到准备妥当</div><nav aria-label="原型页面">
+<button data-screen="checklist" aria-selected="true">01 · 清单核对</button><button data-screen="products" aria-selected="false">02 · 缺口匹配</button><button data-screen="feedback" aria-selected="false">03 · 效果反馈</button><button data-screen="memory" aria-selected="false">04 · 授权记忆</button><button data-screen="review" aria-selected="false">05 · 模板治理</button></nav>
+<div class="side-note">交互设计稿 · 2026.10.25<br>静态模拟数据，无后端请求。<br><br>旅行本人/儿童完整拆分为目标设计，尚未完整验收。<br><br><a href="../../shopmind-task-to-plan-prd.md">查看 PRD</a></div></aside>
+<main><div class="top"><span class="small">AI 产品作品集 / 交互设计</span><span class="pill">可点击原型 · 目标设计</span></div>
+<section class="screen" id="checklist"><h2>东京三日，和孩子一起准备。</h2><p class="lede">按人、按天气、按活动核对。数量为可调整的打包估算；已有物品优先复用。</p><div class="banner">天气示例：10–18℃ · 1 个雨天 · 无降雪。此处为静态设计数据，不是实时天气。</div><div class="meta"><span>3 天 / 1 位成人 + 5 岁儿童</span><span>活动：城市步行 + 计划下水</span><span>上衣：每日 1 件 + 1 件备用</span></div><div id="checklist-cards" class="cards"></div><div class="actions"><button class="primary" id="match">确认清单，匹配缺项</button><button id="reset">重置原型</button><span class="small">未标记项目保持“还没确认”</span></div><p id="plan-notice" class="notice" role="status"></p></section>
+<section class="screen" id="products" hidden><h2>只为确认的缺项比较。</h2><p class="lede">非商品进入携带 / 办理列表；已有、不需要和未确认不会触发商品匹配。</p><div id="product-cards" class="cards"></div><p id="product-notice" class="notice" role="status"></p><div class="actions"><button class="primary" id="confirm-plan">确认演示方案</button><button data-goto="checklist">回到清单</button></div><p class="small">静态模拟商品。每槽位最多选择一件；价格按一个销售单位展示，不自动乘打包件数。不会创建订单。</p></section>
+<section class="screen" id="feedback" hidden><h2>清单有用吗？完成后再告诉我。</h2><p class="lede">清单评价与购买自报分开；自报结果不代表已核验订单。</p><div class="cards"><article class="card wide"><h3>这份清单有用吗？</h3><div class="choice" data-kind="usefulness"><button data-value="helpful" aria-pressed="false">有帮助</button><button data-value="needs_work" aria-pressed="false">还不够准确</button></div></article><article class="card wide"><h3>需要的商品买到了吗？</h3><div class="choice" data-kind="outcome"><button data-value="bought" aria-pressed="false">买到了</button><button data-value="not_found" aria-pressed="false">没找到</button><button data-value="chose_not_to_buy" aria-pressed="false">决定不买</button><button data-value="not_yet" aria-pressed="false">还没买 / 未决定</button></div></article></div><p id="feedback-notice" class="notice" role="status">原型选择仅在当前页面内模拟，不发送真实反馈。</p></section>
+<section class="screen" id="memory" hidden><h2>连续对话，由你决定记住什么。</h2><p class="lede">实际产品刷新可恢复本机游客会话；登录是可选项，登录后长期记忆仍默认关闭。</p><div class="cards"><article class="card wide"><h3>原型中的授权演示</h3><button id="login">模拟登录本地账号</button><label><input type="checkbox" id="consent" disabled> 我授权跨会话保存并使用库存与偏好</label><button id="remember" disabled>模拟保存：已有充电器 / 喜欢轻便</button><button id="forget">清除并撤回授权</button><p id="memory-notice" class="notice" role="status">未登录；长期记忆关闭。</p></article></div><p class="small">本原型不存密码、token或长期记忆。实际系统的授权与删除应以后端结果为准。</p></section>
+<section class="screen" id="review" hidden><h2>从候选，到审核发布。</h2><p class="lede">用户主动同意后提交结构化模块，不提交原始问题、账号或会话ID。基础去标识检查不保证完全匿名。</p><div class="cards"><article class="card wide"><h3>模板候选：亲子城市旅行</h3><label><input type="checkbox" id="share"> 同意以去标识化模块提交候选</label><div class="row"><button id="submit-candidate" disabled>模拟提交</button><button id="evaluate" disabled>运行结构评测</button><button id="publish" disabled>人工审核并发布</button><button id="rollback" disabled>回退版本</button></div><p id="review-notice" class="notice" role="status">尚未提交。结构评测不等于专业内容正确。</p></article></div><p class="small">全部操作只改变原型状态。实际管理操作需要隔离数据与正式权限。</p></section>
+<footer>ShopMind 产品设计原型 · <a href="../README.md">作品集目录</a> · <a href="../04_评测与数据/评测与证据.md">实际验收与限制</a><br>本人/儿童细分为本轮目标交互；历史实际截图与源码状态请分别查看证据文档。</footer>
+</main></div>
+<script>
+const groups=[
+{title:'证件与设备',items:[['护照','每人 1 份','核对有效期与目的地入境要求',false],['充电器','各 1 套','已有可用设备直接带上',true]]},
+{title:'本人衣物',items:[['本人长袖上衣','4 件','3 天每天 1 件 + 1 件备用',true],['本人长裤','2 条','按轮换穿着估算，每天更换可增至 3 条',true],['本人轻薄外套','1 件','10–18℃，早晚或室外分层穿着',true,'optional']]},
+{title:'5 岁儿童衣物',items:[['5岁儿童长袖上衣','4 件','3 天每天 1 件 + 1 件备用，按易脏程度调整',true],['5岁儿童长裤','2 条','轮换估算，可按活动增加备用',true],['5岁儿童轻薄外套','1 件','按体感、温差和室内外环境调整',true,'optional']]},
+{title:'天气与活动',items:[['折叠雨伞','1 把','示例天气有 1 个雨天；已有雨具可复用',true,'optional'],['本人泳衣','1 套','仅计划下水游泳时准备',true,'optional'],['5岁儿童泳衣','1 套','计划下水时准备；儿童水边全程需要成人看护',true,'optional']]}
+];
+const state={};
+const statusLabels={have:'已有',prepare:'需要准备',unknown:'还没确认',skip:'不需要'};
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.screen===id)));}
+document.querySelectorAll('[data-screen]').forEach(b=>b.onclick=()=>show(b.dataset.screen));
+document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>show(b.dataset.goto));
+const allItems=groups.flatMap(g=>g.items);
+function renderChecklist(){
+ $('checklist-cards').replaceChildren();
+ for(const group of groups){const card=document.createElement('article');card.className='card';const title=document.createElement('h3');title.textContent=group.title;card.append(title);
+  for(const item of group.items){const [name,quantity,condition,purchasable,bucket]=item;const row=document.createElement('div');row.className='item';row.dataset.name=name;
+   const flag=document.createElement('div');flag.className='group-label'+(bucket?' optional':'');flag.textContent=bucket?'按需 · 满足条件再准备':'必备 · 可复用已有';const text=document.createElement('strong');text.textContent=name;
+   const amount=document.createElement('div');amount.className='quantity';amount.textContent=quantity;const detail=document.createElement('p');detail.className='detail';detail.textContent=condition+(purchasable?'':'；非商品，只核对携带 / 办理');const controls=document.createElement('div');controls.className='status';controls.setAttribute('aria-label',name+'准备状态');
+   for(const [value,label] of Object.entries(statusLabels)){const b=document.createElement('button');b.textContent=label;b.dataset.value=value;b.setAttribute('aria-pressed',String((state[name]||'unknown')===value));b.onclick=()=>{state[name]=value;renderChecklist();};controls.append(b);}
+   row.append(flag,text,amount,detail,controls);card.append(row);
+  }$('checklist-cards').append(card);
+ }
+}
+function match(){
+ const prepared=allItems.filter(i=>state[i[0]]==='prepare');const goods=prepared.filter(i=>i[3]);const documents=prepared.filter(i=>!i[3]);$('product-cards').replaceChildren();
+ for(const item of goods){const card=document.createElement('article');card.className='card';const title=document.createElement('h3');title.textContent=item[0];const text=document.createElement('p');text.textContent='模拟目录示例 · 99 元 / 销售单位';const button=document.createElement('button');button.textContent='选择该示例';button.setAttribute('aria-pressed','false');button.onclick=()=>{const picked=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(picked));button.textContent=picked?'已选择示例':'选择该示例';};card.append(title,text,button);$('product-cards').append(card);}
+ $('product-notice').textContent='可购缺项 '+goods.length+' 项；携带 / 办理：'+(documents.map(i=>i[0]).join('、')||'暂无')+'。未确认、已有和不需要的项目未匹配。';
+ if(!goods.length){const empty=document.createElement('p');empty.className='empty';empty.textContent='没有确认的可购缺项，当前无需商品推荐。';$('product-cards').append(empty);}show('products');
+}
+$('match').onclick=match;$('reset').onclick=()=>{for(const key of Object.keys(state))delete state[key];renderChecklist();$('plan-notice').textContent='已重置清单选择；其他页面状态刷新后重置。';};
+$('confirm-plan').onclick=()=>{const count=$('product-cards').querySelectorAll('[aria-pressed=true]').length;$('product-notice').textContent='演示方案已确认：选择 '+count+' 个销售单位，模拟合计 '+count*99+' 元。未创建订单；未计打包数量。';};
+document.querySelectorAll('.choice').forEach(group=>group.querySelectorAll('button').forEach(button=>button.onclick=()=>{group.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));$('feedback-notice').textContent='当前页面已模拟选择：'+button.textContent+'；未向服务器发送。';}));
+$('login').onclick=()=>{$('consent').disabled=false;$('memory-notice').textContent='已模拟登录；长期记忆仍关闭。';};
+$('consent').onchange=()=>{$('remember').disabled=!$('consent').checked;$('memory-notice').textContent=$('consent').checked?'已模拟授权，可保存明确事实。':'授权已撤回，停止跨会话读取。';};
+$('remember').onclick=()=>{$('memory-notice').textContent='模拟保存：已有充电器；偏好轻便。只保存在原型展示状态。';};
+$('forget').onclick=()=>{$('consent').checked=false;$('remember').disabled=true;$('memory-notice').textContent='已模拟清除记忆并撤回授权。';};
+$('share').onchange=()=>{$('submit-candidate').disabled=!$('share').checked;};
+$('submit-candidate').onclick=()=>{$('evaluate').disabled=false;$('publish').disabled=true;$('rollback').disabled=true;$('review-notice').textContent='pending：去标识化模块候选已模拟提交。';};
+$('evaluate').onclick=()=>{$('publish').disabled=false;$('review-notice').textContent='结构评测通过，等待人工内容审核。';};
+$('publish').onclick=()=>{$('publish').disabled=true;$('rollback').disabled=false;$('review-notice').textContent='原型已模拟人工批准，版本 v1；未改变实际模板库。';};
+$('rollback').onclick=()=>{$('rollback').disabled=true;$('review-notice').textContent='原型版本 v1 已停用，恢复发布前状态。';};
+renderChecklist();
+</script>
+</body></html>

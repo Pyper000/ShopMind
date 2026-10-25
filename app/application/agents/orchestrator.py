@@ -43,7 +43,8 @@ from agentscope.message import Msg, TextBlock, UserMsg
 from app.application.agents.main_agent import SessionRegistry
 from app.application.agents.scheme_state import CandidatePool, SchemeStateRegistry
 from app.application.agents.intent_router import EditRoute, route_direct_item, route_edit
-from app.application.tools.shopping_plan_tool import commit_checklist_selection
+from app.application.travel_weather import apply_weather_context
+from app.application.tools.shopping_plan_tool import commit_checklist_selection, _is_non_purchasable_slot
 from app.application.harness.drift_detector import DriftDetector
 from app.application.harness.loop_detector import LoopDetector
 from app.application.memory.preference_selector import (
@@ -65,6 +66,7 @@ from app.infrastructure.persistence.scene_template_store import SceneTemplateSto
 from app.infrastructure.budget import init_budget
 from app.infrastructure.security.output_guard import audit_output
 from app.infrastructure.transient import is_transient_error
+from app.infrastructure.weather import OpenMeteoWeatherClient
 from app.domain.session.shopping_plan import ShoppingPlan
 
 logger = logging.getLogger(__name__)
@@ -77,6 +79,7 @@ _TASK_TOOL_NAMES = {"TaskCreate", "TaskUpdate", "TaskList", "TaskGet"}
 # （工具、子 Agent 调度、事件消费）招致的瞬时失败。
 _MAX_TURN_RETRIES = 1
 _RETRY_BASE_SECONDS = 3.0
+_TRAVEL_WEATHER_TIMEOUT_SECONDS = 10.0  # geocoding + forecast, or parallel historical samples
 
 
 def _partial_checklist(arguments: str) -> Optional[dict]:
@@ -110,7 +113,7 @@ def _partial_checklist(arguments: str) -> Optional[dict]:
         return values
 
     tasks = list(dict.fromkeys(
-        item for field in ("tasks", "must_buy", "optional", "unknowns", "reusable", "not_buy")
+        item for field in ("tasks", "must_buy", "optional", "unknowns", "reusable", "prepared", "not_buy")
         for item in read_strings(field)
     ))
     if len(tasks) < 3:
@@ -139,6 +142,7 @@ class SubmitIntentInput:
     currency: str
     raw_query: str
     checklist_selection: Optional[dict] = None
+    memory_consent: bool = False
 
 
 @dataclass(frozen=True)
@@ -155,6 +159,17 @@ def _tasks_snapshot(agent: Agent) -> dict:
             for task in tasks
         ],
     }
+
+
+def _travel_party(query: str) -> Optional[dict]:
+    """Capture only explicitly stated adult/child travel companions."""
+    child_ages = [int(age) for age in re.findall(r"(\d{1,2})\s*岁.{0,5}(?:小孩|孩子|儿童)", query)]
+    if not child_ages:
+        child_ages = [int(age) for age in re.findall(r"(?:小孩|孩子|儿童).{0,5}(\d{1,2})\s*岁", query)]
+    if not child_ages:
+        return None
+    adults = 1 if re.search(r"(?:我和|我们|带)", query) else 0
+    return {"adults": adults, "child_ages": child_ages}
 
 
 def _plan_ack_text(payload: dict) -> str:
@@ -176,9 +191,22 @@ def _plan_ack_text(payload: dict) -> str:
         shown += f"等 {len(items)} 项"
     if not shown:
         shown = "待确认项目"
+    clothing = []
+    for section in payload.get("checklist_sections") or []:
+        if "衣物" not in str(section.get("title", "")):
+            continue
+        for item in [*(section.get("required") or []), *(section.get("optional") or [])]:
+            name = str(item.get("name", ""))
+            if any(term in name for term in ("成套穿搭", "换洗穿搭", "上衣", "长裤", "短裤", "外套", "雨伞", "雨衣", "防水防滑鞋")):
+                detail = f"{name} {item['quantity']}" if item.get("quantity") else name
+                if item.get("condition"):
+                    detail += f"（{item['condition']}）"
+                clothing.append(detail)
+    clothing_summary = f"衣物建议：{'；'.join(clothing[:4])}。" if clothing else ""
     return (
         f"我先按“{goal}”整理了清单：{shown}。"
-        "请在下方逐项标记已有、需要购买或还没确认；我只会为明确要买的项目找商品。"
+        + clothing_summary
+        + "请在下方逐项标记已有、需要准备或还没确认；证件、资料等非商品只记录准备，可购买的物品才会进入商品匹配。"
     )
 
 
@@ -212,8 +240,12 @@ def _search_ack_text(payload: dict) -> str:
 def _edit_ack_text(route: EditRoute, plan) -> str:
     """One short factual receipt for a deterministic edit turn."""
     if route.kind == "buy_item":
+        if route.added[0] in plan.prepared:
+            return f"「{route.added[0]}」属于证件或资料等非商品，已列为需要准备；没有启动商品搜索。"
         return f"已加上「{route.added[0]}」，只为这一项找商品；其余清单和已确认状态不变。"
     if route.kind == "set_buy":
+        if route.slots[0] in plan.prepared:
+            return f"「{route.slots[0]}」属于证件或资料等非商品，已列为需要准备；没有启动商品搜索。"
         return f"已把「{route.slots[0]}」记为这次要买，只重新匹配这一项。"
     if route.kind == "set_have":
         return f"已把「{route.slots[0]}」记为已有，不再为它推荐商品；合计已更新。"
@@ -234,11 +266,12 @@ def _apply_edit(plan, route: EditRoute):
     must_buy = list(plan.must_buy)
     optional = list(plan.optional)
     reusable = list(plan.reusable)
+    prepared = list(plan.prepared)
     not_buy = list(plan.not_buy)
     unknowns = list(plan.unknowns)
 
     def bucket(remove: str, target: list[str]) -> None:
-        for pool in (must_buy, optional, reusable, not_buy, unknowns):
+        for pool in (must_buy, optional, reusable, prepared, not_buy, unknowns):
             while remove in pool:
                 pool.remove(remove)
         if remove not in target:
@@ -248,9 +281,10 @@ def _apply_edit(plan, route: EditRoute):
         slot = route.added[0]
         if slot not in tasks:
             tasks.append(slot)
-        bucket(slot, must_buy)
+        bucket(slot, prepared if _is_non_purchasable_slot(plan, slot) else must_buy)
     elif route.kind == "set_buy":
-        bucket(route.slots[0], must_buy)
+        slot = route.slots[0]
+        bucket(slot, prepared if _is_non_purchasable_slot(plan, slot) else must_buy)
     elif route.kind == "set_have":
         bucket(route.slots[0], reusable)
     elif route.kind == "set_skip":
@@ -269,6 +303,7 @@ def _apply_edit(plan, route: EditRoute):
         must_buy=must_buy,
         optional=optional,
         reusable=reusable,
+        prepared=prepared,
         not_buy=not_buy,
         unknowns=unknowns,
         stage=stage,
@@ -296,6 +331,8 @@ class MainAgentOrchestrator:
         scene_templates: Optional[SceneTemplateStore] = None,
         candidate_pool: Optional[CandidatePool] = None,
         confirmed_search: Optional[Callable[..., Awaitable[list[dict]]]] = None,
+        inventory_store: Any = None,
+        weather_client: Optional[OpenMeteoWeatherClient] = None,
     ) -> None:
         self._sessions = sessions
         self._bus = bus
@@ -313,8 +350,10 @@ class MainAgentOrchestrator:
         self._scene_templates = scene_templates
         self._candidate_pool = candidate_pool
         self._confirmed_search = confirmed_search
+        self._inventory_store = inventory_store
+        self._weather_client = weather_client
         # 会话内已注入的偏好快照，变化时才重新注入，避免每轮重复填充上下文
-        self._injected_preferences: dict[str, str] = {}
+        self._injected_memory_hints: dict[str, str] = {}
 
     def _guard_final_text(self, session_id: str, text: str) -> str:
         """L4 输出审核：最终回复推给买家前脱敏内部信息。
@@ -332,6 +371,31 @@ class MainAgentOrchestrator:
 
     async def handle_intent(self, intent: SubmitIntentInput) -> SubmitIntentOutput:
         session_id = intent.shopping_session_id
+        started_at = time.monotonic()
+        saved_scheme = self._scheme_states.get(session_id) if self._scheme_states else None
+        weather_context = None
+        if self._weather_client is not None:
+            try:
+                weather_context = await asyncio.wait_for(
+                    self._weather_client.for_query(intent.raw_query),
+                    timeout=_TRAVEL_WEATHER_TIMEOUT_SECONDS,
+                )
+            except Exception as err:  # noqa: BLE001 — weather is a best-effort checklist hint
+                logger.warning("天气查询失败，按通用清单继续：%s", err)
+                weather_context = {"mode": "unavailable", "provider": "Open-Meteo"}
+        if (
+            weather_context is None
+            and saved_scheme is not None
+            and saved_scheme.scheme.weather_context
+            and saved_scheme.scheme.template_id in {"general_travel", "beach_weekend"}
+        ):
+            # Follow-up turns often contain only new constraints (e.g. child age),
+            # not the original destination/date; keep the trip's weather snapshot.
+            weather_context = dict(saved_scheme.scheme.weather_context)
+        if weather_context is not None:
+            party = _travel_party(intent.raw_query)
+            if party:
+                weather_context = {**weather_context, "travel_party": party}
         snapshot = ShoppingContextSnapshot(
             shopping_session_id=session_id,
             buyer_id=intent.buyer_id,
@@ -339,9 +403,10 @@ class MainAgentOrchestrator:
             currency=intent.currency,
             raw_query=intent.raw_query,
             checklist_selection=intent.checklist_selection,
+            memory_consent=intent.memory_consent,
+            weather_context=weather_context,
         )
         token = ShoppingContext.set(snapshot)
-        started_at = time.monotonic()
         # 本轮 Token 预算（TOKEN_BUDGET_TOTAL=0时为 None，不启用四档降级）
         init_budget(self._token_budget_total)
         if self._drift_detector is not None:
@@ -353,8 +418,12 @@ class MainAgentOrchestrator:
             agent = await self._sessions.get_or_create(session_id)
             summary_before = agent.state.summary
             has_history = bool(agent.state.context)
-            saved_scheme = self._scheme_states.get(session_id) if self._scheme_states else None
             matched_scene = self._scene_templates.match(intent.raw_query) if self._scene_templates else None
+            scene_match_mode = "keyword" if matched_scene else None
+            if matched_scene is None and self._scene_templates is not None:
+                matched_scene = await self._scene_templates.match_semantic(intent.raw_query)
+                if matched_scene is not None:
+                    scene_match_mode = "semantic"
             direct_item = route_direct_item(intent.raw_query)
             if (
                 saved_scheme is None
@@ -399,7 +468,15 @@ class MainAgentOrchestrator:
                 and self._scheme_states is not None
                 and self._scene_templates is not None
             ):
-                plan = self._scene_templates.build_plan(intent.raw_query, matched_scene)
+                planning_query = intent.raw_query
+                if (saved_scheme is not None and saved_scheme.scheme.template_id in {"general_travel", "beach_weekend"}
+                        and matched_scene["id"] in {"general_travel", "beach_weekend"}):
+                    duration = re.search(r"（(\d{1,2})天）", saved_scheme.scheme.goal)
+                    if duration and not re.search(r"(?:\d+|[一二两三四五六七八九十]+)\s*(?:天|晚|夜)", planning_query):
+                        planning_query += f" {duration.group(1)}天"
+                plan = self._scene_templates.build_plan(planning_query, matched_scene)
+                if weather_context:
+                    plan = apply_weather_context(plan, weather_context)
                 request = self._scheme_states.update(session_id, plan)
                 # A newly matched scene replaces an old scene deterministically.
                 # No LLM round-trip is needed to repeat a known checklist.
@@ -419,6 +496,7 @@ class MainAgentOrchestrator:
                         "shopping_plan": request.scheme.to_dict(),
                         "mutation": request.mutation.to_dict(),
                         "search_request": request.to_dict(),
+                        "scene_match_mode": scene_match_mode,
                     },
                 )
                 self._bus.publish(session_id, "final.result", {"text": final_text})
@@ -570,7 +648,7 @@ class MainAgentOrchestrator:
             intent.buyer_id,
             intent.raw_query,
             has_history,
-            scope=await self._preference_scope(intent.buyer_id),
+            scope=await self._preference_scope(intent.buyer_id) if intent.memory_consent else "",
         )
         if hit is None:
             return None
@@ -592,7 +670,7 @@ class MainAgentOrchestrator:
             intent.raw_query,
             final_text,
             has_history,
-            scope=await self._preference_scope(intent.buyer_id),
+            scope=await self._preference_scope(intent.buyer_id) if intent.memory_consent else "",
         )
 
     async def _record_conversation(
@@ -842,25 +920,42 @@ class MainAgentOrchestrator:
                 intent.checklist_selection, ensure_ascii=False,
             ) + "</shopmind-checklist-selection>"
         user_msg = UserMsg(intent.buyer_id, content)
+        if not intent.memory_consent:
+            self._injected_memory_hints.pop(session_id, None)
+            return [user_msg]
         try:
             preferences = await self._preference_store.list_by_buyer(intent.buyer_id)
+            selected = await self._preference_selector.select(
+                preferences, query=intent.raw_query, top_k=self._preference_top_k,
+            )
         except Exception as err:  # noqa: BLE001 —— 记忆读取失败不阻断对话
             logger.warning("读取买家偏好失败：%s", err)
-            preferences = []
-        if not preferences:
+            selected = []
+        try:
+            inventory = self._inventory_store.list_inventory(intent.buyer_id) if self._inventory_store else []
+        except Exception as err:  # noqa: BLE001 —— 库存记忆读取失败不阻断对话
+            logger.warning("读取买家库存失败：%s", err)
+            inventory = []
+        if not selected and not inventory:
             return [user_msg]
 
-        # 按与本轮 query 的相关性挑选：偏好越攒越多时，全量铺进去会把真正相关的那几条稀释。
-        # dislike 不参与截断（见 PreferenceSelector 文档字符串）。
-        selected = await self._preference_selector.select(
-            preferences, query=intent.raw_query, top_k=self._preference_top_k,
-        )
-        if not selected:
+        blocks: list[str] = []
+        if selected:
+            blocks.append(render_preference_hint(selected))
+        if inventory:
+            items = [
+                f"- {item['item']}" + (f"（数量：{item['quantity']}）" if item.get("quantity") else "")
+                + (f"（状态/条件：{item['condition']}）" if item.get("condition") else "")
+                for item in inventory
+            ]
+            blocks.append(
+                "<buyer-inventory>\n以下是用户明确授权保存的库存事实。只能把名称明确对应的物品作为已有候选；"
+                "不得推断相近物品也已拥有。当前会话中的新说明优先于这些旧记录。\n"
+                + "\n".join(items) + "\n</buyer-inventory>"
+            )
+        rendered = "\n".join(blocks)
+        if self._injected_memory_hints.get(session_id) == rendered:
             return [user_msg]
-
-        rendered = render_preference_lines(selected)
-        if self._injected_preferences.get(session_id) == rendered:
-            return [user_msg]
-        self._injected_preferences[session_id] = rendered
-        hint_msg = UserMsg("memory_hint", render_preference_hint(selected))
+        self._injected_memory_hints[session_id] = rendered
+        hint_msg = UserMsg("memory_hint", rendered)
         return [hint_msg, user_msg]

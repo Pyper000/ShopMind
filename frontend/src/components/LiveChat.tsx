@@ -3,13 +3,22 @@ import ChatAvatar from './ChatAvatar';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 type Product = { id: string; title: string; brand: string; category: string; subcategory: string; price: number; currency: string; highlights: string[]; reason: string; tradeoff: string };
-type ChecklistItem = { name: string; quantity?: string; note?: string; condition?: string };
+type ChecklistItem = { name: string; quantity?: string; note?: string; condition?: string; purchasable?: boolean };
 type ChecklistSection = { id: string; title: string; required: ChecklistItem[]; optional: ChecklistItem[]; reference?: { title: string; url?: string; note?: string } };
-type Result = { text: string; preview?: boolean; scheme?: { state_version: number; goal: string; core_use?: string; people?: number | null; stage: string; budget: number | null; destination: string | null; excludes: string[]; tasks?: string[]; must_buy?: string[]; optional?: string[]; prep?: string[]; reusable?: string[]; not_buy?: string[]; unknowns?: string[]; preferences?: string[] }; mutation?: { state_version: number; target_slots: { name: string; status: string }[]; added_slots: string[]; removed_slots: string[]; existing_slots: string[]; deferred_slots: string[]; pending_slots: string[]; budget_change: unknown; preference_change: unknown; scene_changed: boolean; core_use_changed: boolean }; plan: { goal: string; template_id?: string; core_use?: string; people?: number | null; stage: string; budget: number | null; destination: string | null; excludes: string[]; tasks?: string[]; must_buy?: string[]; optional?: string[]; prep?: string[]; reusable?: string[]; not_buy?: string[]; unknowns?: string[]; preferences?: string[]; checklist_sections?: ChecklistSection[] }; groups: { name: string; priority: 'must_buy' | 'optional' | 'candidate'; products: Product[]; catalog_message?: string }[]; budget?: { limit: number | null; minimum_total: number; optional_total: number; status: string }; trace?: { candidate_ids?: string[]; retrieval_signature?: string; retrieval_action?: string; retrieval_strategy?: string; retrieval_explanation?: string } };
-type SlotStatus = 'have' | 'buy' | 'unknown' | 'not_needed';
-const CHECKLIST_STATUSES: [SlotStatus, string][] = [['have', '已有'], ['buy', '需要购买'], ['unknown', '还没确认'], ['not_needed', '不需要']];
+type Result = { text: string; preview?: boolean; scheme?: { state_version: number; goal: string; core_use?: string; people?: number | null; stage: string; budget: number | null; destination: string | null; excludes: string[]; tasks?: string[]; must_buy?: string[]; optional?: string[]; prep?: string[]; reusable?: string[]; prepared?: string[]; not_buy?: string[]; unknowns?: string[]; preferences?: string[] }; mutation?: { state_version: number; target_slots: { name: string; status: string }[]; added_slots: string[]; removed_slots: string[]; existing_slots: string[]; deferred_slots: string[]; pending_slots: string[]; budget_change: unknown; preference_change: unknown; scene_changed: boolean; core_use_changed: boolean }; plan: { goal: string; template_id?: string; core_use?: string; people?: number | null; stage: string; budget: number | null; destination: string | null; excludes: string[]; tasks?: string[]; must_buy?: string[]; optional?: string[]; prep?: string[]; reusable?: string[]; prepared?: string[]; not_buy?: string[]; unknowns?: string[]; preferences?: string[]; checklist_sections?: ChecklistSection[] }; groups: { name: string; priority: 'must_buy' | 'optional' | 'candidate'; products: Product[]; catalog_message?: string }[]; budget?: { limit: number | null; minimum_total: number; optional_total: number; status: string }; trace?: { candidate_ids?: string[]; retrieval_signature?: string; retrieval_action?: string; retrieval_strategy?: string; retrieval_explanation?: string } };
+type SlotStatus = 'have' | 'prepare' | 'unknown' | 'not_needed';
+const CHECKLIST_STATUSES: [SlotStatus, string][] = [['have', '已有'], ['prepare', '需要准备'], ['unknown', '还没确认'], ['not_needed', '不需要']];
+
+function isNonPurchasableName(name: string) {
+  if (/(收纳包|收纳袋|证件包|证件夹|护照夹|证件套|卡套)/.test(name)) return false;
+  return /(身份证|护照|签证|驾驶证|驾照|医保卡|社保卡|银行卡|出生证明|结婚证|产检资料|入院资料|入院凭证|病历|就诊资料|疫苗记录|健康记录|处方药)/.test(name);
+}
 type CommerceEvent = { type: string; payload: Record<string, unknown> };
 type CommerceResponse = { shopping_session_id: string; final_text: string; events: CommerceEvent[]; detail?: string };
+type MemoryPreference = { kind: 'like' | 'dislike'; statement: string; created_at?: string };
+type InventoryItem = { item: string; quantity: string; condition: string; updated_at?: string };
+type TemplateCandidate = { candidate_id: string; status: string; created_at: string; sections: ChecklistSection[]; evaluation_passed?: boolean | null; evaluation?: { checks?: Record<string, boolean>; module_count?: number; item_count?: number }; published_scene_id?: string; published_version?: number | null; reviewer?: string; active?: boolean };
+type QuickFeedbackKind = 'checklist_usefulness' | 'purchase_outcome';
 type TestRun = {
   test_id: string; tester_id: string; scenario_id: string; version: string; device_type: string;
   start_time: string; end_time: string; duration_sec: number; user_turns: number; assistant_turns: number;
@@ -32,6 +41,13 @@ function record(value: unknown): Record<string, unknown> {
 
 function stringList(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+}
+
+async function readApiJson<T>(response: Response): Promise<T> {
+  if (!(response.headers.get('content-type') || '').includes('application/json')) {
+    throw new Error('本地后端尚未加载 ShopMind MVP 接口；请重启隔离后端后重试。');
+  }
+  return await response.json() as T;
 }
 
 function eventLabel(event: CommerceEvent) {
@@ -59,7 +75,7 @@ function fromCommerceResponse(response: CommerceResponse): Result {
     budget: typeof planData.budget_major === 'number' ? planData.budget_major : null,
     destination: typeof planData.destination === 'string' ? planData.destination : null,
     excludes: stringList(planData.excludes), tasks: stringList(planData.tasks),
-    must_buy: stringList(planData.must_buy), optional: stringList(planData.optional),
+    must_buy: stringList(planData.must_buy), optional: stringList(planData.optional), prepared: stringList(planData.prepared),
     prep: stringList(planData.prep), reusable: stringList(planData.reusable),
     not_buy: stringList(planData.not_buy), unknowns: stringList(planData.unknowns),
     preferences: stringList(planData.preferences),
@@ -180,11 +196,35 @@ function storedId(storage: Storage, key: string, prefix: string) {
 }
 
 const STORAGE_KEY = 'shopmind-usability-tests-v1';
+const CHAT_SESSION_KEY = 'shopmind.session';
 const VERSION = 'live-chat-v8-sse-agentscope';
 const columns: (keyof TestRun)[] = ['test_id', 'tester_id', 'scenario_id', 'version', 'device_type', 'start_time', 'end_time', 'duration_sec', 'first_feedback_sec', 'first_checklist_sec', 'first_committed_checklist_sec', 'first_products_sec', 'turn_end_sec', 'user_turns', 'assistant_turns', 'clarify_turns', 'plan_updates', 'plan_task_slots', 'plan_must_buy_slots', 'plan_optional_slots', 'plan_reusable_items', 'plan_not_buy_items', 'plan_unknown_items', 'budget_limit_cny', 'minimum_required_total_cny', 'optional_total_cny', 'budget_status', 'compare_selection_actions', 'model_compare_requests', 'product_candidates_returned', 'retrieval_actions', 'retrieval_strategies', 'conversation_transcript', 'task_completed', 'completion_step', 'abandon_reason', 'satisfaction_1to5', 'ease_1to5', 'trust_1to5', 'plan_completeness_1to5', 'omission_confidence_1to5', 'budget_understanding_1to5', 'tradeoff_understanding_1to5', 'decision_confidence_1to5', 'stuck_step', 'error_count'];
 
 function readRuns(): TestRun[] {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+
+function readSessionId() {
+  const saved = localStorage.getItem(CHAT_SESSION_KEY) || sessionStorage.getItem(CHAT_SESSION_KEY);
+  if (saved) { localStorage.setItem(CHAT_SESSION_KEY, saved); return saved; }
+  const created = newId('session');
+  localStorage.setItem(CHAT_SESSION_KEY, created);
+  return created;
+}
+
+function readSavedChat(sessionId: string) {
+  try {
+    const value = JSON.parse(localStorage.getItem(`shopmind.chat:${sessionId}`) || '{}');
+    return {
+      messages: Array.isArray(value.messages) ? value.messages as Message[] : [],
+      result: value.result as Result | undefined,
+      slotStatus: value.slotStatus && typeof value.slotStatus === 'object' ? Object.fromEntries(Object.entries(value.slotStatus).map(([key, status]) => [key, status === 'buy' ? 'prepare' : status])) as Record<string, SlotStatus> : {},
+      planBudget: typeof value.planBudget === 'string' ? value.planBudget : '',
+      planPriority: typeof value.planPriority === 'string' ? value.planPriority : '',
+      picked: value.picked && typeof value.picked === 'object' ? value.picked as Record<string, string> : {},
+      planConfirmed: Boolean(value.planConfirmed),
+    };
+  } catch { return { messages: [] as Message[], result: undefined, slotStatus: {}, planBudget: '', planPriority: '', picked: {}, planConfirmed: false }; }
 }
 
 function csvCell(value: unknown) {
@@ -202,9 +242,9 @@ function downloadCsv(runs: TestRun[]) {
 }
 
 export default function LiveChat() {
-  const [sessionId, setSessionId] = useState(() => storedId(sessionStorage, 'shopmind.session', 'session'));
-  const [buyerId] = useState(() => storedId(localStorage, 'shopmind.buyer', 'buyer'));
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [sessionId, setSessionId] = useState(readSessionId);
+  const [buyerId, setBuyerId] = useState(() => localStorage.getItem('shopmind.user_id') || storedId(localStorage, 'shopmind.buyer', 'buyer'));
+  const [messages, setMessages] = useState<Message[]>(() => readSavedChat(readSessionId()).messages);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [checklistSubmitting, setChecklistSubmitting] = useState(false);
@@ -212,13 +252,13 @@ export default function LiveChat() {
   const [streamEvents, setStreamEvents] = useState<CommerceEvent[]>([]);
   const [streamText, setStreamText] = useState('');
   const [error, setError] = useState('');
-  const [result, setResult] = useState<Result>();
-  const [planConfirmed, setPlanConfirmed] = useState(false);
-  const [slotStatus, setSlotStatus] = useState<Record<string, SlotStatus>>({});
-  const [planBudget, setPlanBudget] = useState('');
-  const [planPriority, setPlanPriority] = useState('');
+  const [result, setResult] = useState<Result | undefined>(() => readSavedChat(readSessionId()).result);
+  const [planConfirmed, setPlanConfirmed] = useState(() => readSavedChat(readSessionId()).planConfirmed);
+  const [slotStatus, setSlotStatus] = useState<Record<string, SlotStatus>>(() => readSavedChat(readSessionId()).slotStatus);
+  const [planBudget, setPlanBudget] = useState(() => readSavedChat(readSessionId()).planBudget);
+  const [planPriority, setPlanPriority] = useState(() => readSavedChat(readSessionId()).planPriority);
   // 每个槽位只允许选一件：group name -> product id。总价只按已选商品计算。
-  const [picked, setPicked] = useState<Record<string, string>>({});
+  const [picked, setPicked] = useState<Record<string, string>>(() => readSavedChat(readSessionId()).picked);
   const [testerId, setTesterId] = useState('');
   const [scenarioId, setScenarioId] = useState('');
   const [runs, setRuns] = useState<TestRun[]>(readRuns);
@@ -227,14 +267,208 @@ export default function LiveChat() {
   });
   const [testOpen, setTestOpen] = useState(false);
   const [survey, setSurvey] = useState({ task_completed: 'partial', completion_step: 'understood', abandon_reason: '', satisfaction_1to5: '', ease_1to5: '', trust_1to5: '', plan_completeness_1to5: '', omission_confidence_1to5: '', budget_understanding_1to5: '', tradeoff_understanding_1to5: '', decision_confidence_1to5: '', stuck_step: '' });
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem('shopmind.auth_token') || '');
+  const [accountName, setAccountName] = useState('');
+  const [accountPassword, setAccountPassword] = useState('');
+  const [authMessage, setAuthMessage] = useState('');
+  const [memoryConsent, setMemoryConsent] = useState(false);
+  const [memoryPreferences, setMemoryPreferences] = useState<MemoryPreference[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [newPreference, setNewPreference] = useState('');
+  const [newPreferenceKind, setNewPreferenceKind] = useState<'like' | 'dislike'>('like');
+  const [newInventoryItem, setNewInventoryItem] = useState('');
+  const [newInventoryQuantity, setNewInventoryQuantity] = useState('');
+  const [feedbackSaved, setFeedbackSaved] = useState<Record<string, string>>(() => {
+    try { return JSON.parse(localStorage.getItem(`shopmind.feedback:${readSessionId()}`) || '{}'); } catch { return {}; }
+  });
+  const [candidateSubmitted, setCandidateSubmitted] = useState(() => localStorage.getItem(`shopmind.candidate:${readSessionId()}`) || '');
+  const [reviewCandidates, setReviewCandidates] = useState<TemplateCandidate[]>([]);
+  const [publishedCandidates, setPublishedCandidates] = useState<TemplateCandidate[]>([]);
+  const [reviewMessage, setReviewMessage] = useState('');
+  const [reviewDraft, setReviewDraft] = useState<Record<string, { scene_id: string; name: string; core_use: string; match_terms: string; reviewer: string }>>({});
   const base = import.meta.env.VITE_API_BASE ?? (import.meta.env.DEV ? '' : location.origin);
+  const authHeaders = (token = authToken): Record<string, string> => token ? { Authorization: `Bearer ${token}` } : {};
+
+  async function loadMemory(token = authToken) {
+    if (!token) { setMemoryConsent(false); setMemoryPreferences([]); setInventory([]); return; }
+    try {
+      const response = await fetch(`${base}/commerce/mvp/memory`, { headers: authHeaders(token) });
+      if (!response.ok) throw new Error('读取授权记忆失败');
+      const data = await readApiJson<{ consent: boolean; preferences: MemoryPreference[]; inventory: InventoryItem[] }>(response);
+      setMemoryConsent(data.consent); setMemoryPreferences(data.preferences); setInventory(data.inventory);
+    } catch (e) { setAuthMessage(e instanceof Error ? e.message : '读取记忆失败'); }
+  }
+
+  async function authenticate(register: boolean) {
+    setAuthMessage('');
+    try {
+      const response = await fetch(`${base}/commerce/mvp/auth/${register ? 'register' : 'login'}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: accountName, password: accountPassword }),
+      });
+      const data = await readApiJson<{ detail?: string; user_id?: string; token?: string }>(response);
+      if (!response.ok || !data.token || !data.user_id) throw new Error(data.detail || '登录失败');
+      localStorage.setItem('shopmind.auth_token', data.token);
+      localStorage.setItem('shopmind.user_id', data.user_id);
+      setAuthToken(data.token); setBuyerId(data.user_id); setAccountPassword('');
+      setAuthMessage(register ? '账号已创建；长期记忆默认关闭。' : '已登录；长期记忆默认关闭。');
+      await loadMemory(data.token);
+    } catch (e) { setAuthMessage(e instanceof Error ? e.message : '登录失败'); }
+  }
+
+  async function logout() {
+    try { await fetch(`${base}/commerce/mvp/auth/logout`, { method: 'POST', headers: authHeaders() }); } catch { /* local sign-out still completes */ }
+    localStorage.removeItem('shopmind.auth_token'); localStorage.removeItem('shopmind.user_id');
+    setAuthToken(''); setBuyerId(storedId(localStorage, 'shopmind.buyer', 'buyer'));
+    setMemoryConsent(false); setMemoryPreferences([]); setInventory([]); setAuthMessage('已退出登录。游客会话仍保存在此浏览器。');
+  }
+
+  async function toggleMemoryConsent(enabled: boolean) {
+    if (!authToken) return;
+    const response = await fetch(`${base}/commerce/mvp/memory/consent`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ enabled }),
+    });
+    const data = await readApiJson<{ detail?: string; consent?: boolean }>(response);
+    if (!response.ok) throw new Error(data.detail || '授权设置失败');
+    setMemoryConsent(Boolean(data.consent));
+    await loadMemory();
+  }
+
+  async function addPreference() {
+    if (!newPreference.trim()) return;
+    const response = await fetch(`${base}/commerce/mvp/memory/preferences`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ kind: newPreferenceKind, statement: newPreference.trim() }),
+    });
+    const data = await readApiJson<{ detail?: string }>(response);
+    if (!response.ok) throw new Error(data.detail || '偏好保存失败');
+    setNewPreference(''); await loadMemory();
+  }
+
+  async function addInventory() {
+    if (!newInventoryItem.trim()) return;
+    const response = await fetch(`${base}/commerce/mvp/memory/inventory`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ item: newInventoryItem.trim(), quantity: newInventoryQuantity.trim() }),
+    });
+    const data = await readApiJson<{ detail?: string }>(response);
+    if (!response.ok) throw new Error(data.detail || '库存保存失败');
+    setNewInventoryItem(''); setNewInventoryQuantity(''); await loadMemory();
+  }
+
+  async function deleteInventory(item: string) {
+    const response = await fetch(`${base}/commerce/mvp/memory/inventory/${encodeURIComponent(item)}`, { method: 'DELETE', headers: authHeaders() });
+    if (!response.ok) throw new Error('删除库存记忆失败');
+    await loadMemory();
+  }
+
+  async function forgetAllMemory() {
+    const response = await fetch(`${base}/commerce/mvp/memory`, { method: 'DELETE', headers: authHeaders() });
+    if (!response.ok) throw new Error('清除记忆失败');
+    await loadMemory(); setAuthMessage('已清除库存与偏好记忆，授权已关闭。');
+  }
+
+  async function recordQuickFeedback(kind: QuickFeedbackKind, value: string) {
+    const key = kind;
+    try {
+      const response = await fetch(`${base}/commerce/mvp/feedback`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, kind, value }),
+      });
+    const data = await readApiJson<{ detail?: string }>(response);
+      if (!response.ok) throw new Error(data.detail || '反馈提交失败');
+      setFeedbackSaved(current => ({ ...current, [key]: value }));
+      setAuthMessage('反馈已记录，可随时更新；购买结果是用户自报，不代表真实订单。');
+    } catch (e) { setError(e instanceof Error ? e.message : '反馈提交失败'); }
+  }
+
+  async function submitCandidate() {
+    if (!result?.plan.checklist_sections?.length) return;
+    try {
+      const sections = result.plan.checklist_sections.map(section => ({
+        title: section.title,
+        required: section.required.map(({ name, quantity, condition, purchasable }) => ({ name, quantity, condition, purchasable })),
+        optional: section.optional.map(({ name, quantity, condition, purchasable }) => ({ name, quantity, condition, purchasable })),
+      }));
+      const response = await fetch(`${base}/commerce/mvp/template-candidates`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ anonymized: true, sections }),
+      });
+      const data = await readApiJson<{ detail?: string; candidate_id?: string }>(response);
+      if (!response.ok || !data.candidate_id) throw new Error(data.detail || '匿名候选提交失败');
+      setCandidateSubmitted(data.candidate_id); setReviewMessage(`匿名候选 ${data.candidate_id} 已进入待人工审核池。`);
+    } catch (e) { setError(e instanceof Error ? e.message : '候选提交失败'); }
+  }
+
+  async function loadReviewCandidates() {
+    const [pendingResponse, approvedResponse] = await Promise.all([
+      fetch(`${base}/commerce/mvp/template-candidates?status=pending`),
+      fetch(`${base}/commerce/mvp/template-candidates?status=approved`),
+    ]);
+    const data = await readApiJson<{ items?: TemplateCandidate[]; detail?: string }>(pendingResponse);
+    const approvedData = await readApiJson<{ items?: TemplateCandidate[]; detail?: string }>(approvedResponse);
+    if (!pendingResponse.ok || !approvedResponse.ok) throw new Error(data.detail || approvedData.detail || '读取审核候选失败');
+    const items = data.items || [];
+    setPublishedCandidates(approvedData.items || []);
+    setReviewCandidates(items);
+    setReviewDraft(current => {
+      const next = { ...current };
+      for (const candidate of items) if (!next[candidate.candidate_id]) next[candidate.candidate_id] = {
+        scene_id: `scene_${candidate.candidate_id.slice(-8)}`,
+        name: candidate.sections[0]?.title || '新场景', core_use: '', match_terms: '', reviewer: 'local-reviewer',
+      };
+      return next;
+    });
+  }
+
+  async function reviewCandidate(candidate: TemplateCandidate, action: 'approve' | 'reject') {
+    const draft = reviewDraft[candidate.candidate_id];
+    if (!draft) return;
+    const response = await fetch(`${base}/commerce/mvp/template-candidates/${candidate.candidate_id}/review`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action, reviewer: draft.reviewer, scene_id: draft.scene_id, name: draft.name,
+        core_use: draft.core_use, semantic_description: `${draft.name}；${draft.core_use}`,
+        match_terms: draft.match_terms.split(/[，,]/).map(term => term.trim()).filter(Boolean),
+        note: action === 'reject' ? '人工审核未通过' : '本地人工审核发布',
+      }),
+    });
+    const data = await readApiJson<{ detail?: string; status?: string; published_version?: number }>(response);
+    if (!response.ok) throw new Error(data.detail || '候选审核失败');
+    setReviewMessage(action === 'approve' ? `已发布 ${draft.scene_id} v${data.published_version}；新会话可命中该模板。` : '候选已拒绝。');
+    await loadReviewCandidates();
+  }
+
+  async function evaluateCandidate(candidate: TemplateCandidate) {
+    const response = await fetch(`${base}/commerce/mvp/template-candidates/${candidate.candidate_id}/evaluate`, { method: 'POST' });
+    const data = await readApiJson<{ detail?: string; evaluation_passed?: boolean; evaluation?: { checks?: Record<string, boolean> } }>(response);
+    if (!response.ok) throw new Error(data.detail || '结构评测失败');
+    const passed = Boolean(data.evaluation_passed);
+    setReviewMessage(passed ? `结构评测通过：${candidate.candidate_id}，现在可进入人工审核。` : `结构评测未通过：${Object.entries(data.evaluation?.checks || {}).filter(([, ok]) => !ok).map(([name]) => name).join('、')}`);
+    await loadReviewCandidates();
+  }
+
+  async function rollbackTemplate(candidate: TemplateCandidate) {
+    if (!candidate.published_scene_id) return;
+    const response = await fetch(`${base}/commerce/mvp/templates/${candidate.published_scene_id}/rollback`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reviewer: 'local-reviewer', note: `人工回退候选 ${candidate.candidate_id}` }),
+    });
+    const data = await readApiJson<{ detail?: string; restored_version?: number | null }>(response);
+    if (!response.ok) throw new Error(data.detail || '模板回退失败');
+    setReviewMessage(`模板 ${candidate.published_scene_id} 已回退，恢复版本 ${data.restored_version ?? '内置版本/无动态版本'}。`);
+    await loadReviewCandidates();
+  }
+
   function showResult(data: Result, initializeChecklist = false) {
     setResult(data);
     if (initializeChecklist && data.plan.stage === 'plan') {
       const statuses: Record<string, SlotStatus> = {};
       for (const [prefix, items] of [['required', data.plan.tasks ?? []], ['optional', data.plan.optional ?? []]] as const) {
         for (const item of items) statuses[`${prefix}:${item}`] = data.plan.reusable?.includes(item) ? 'have'
-          : data.plan.not_buy?.includes(item) ? 'not_needed' : data.plan.must_buy?.includes(item) ? 'buy' : 'unknown';
+          : data.plan.prepared?.includes(item) || data.plan.must_buy?.includes(item) || data.plan.optional?.includes(item) ? 'prepare'
+            : data.plan.not_buy?.includes(item) ? 'not_needed' : 'unknown';
       }
       setSlotStatus(statuses);
       setPlanBudget(data.plan.budget ? String(data.plan.budget) : '');
@@ -242,7 +476,11 @@ export default function LiveChat() {
       setPlanPriority(/轻装|轻便|少占空间/.test(preferences) ? 'lightweight' : /省钱|实惠|性价比|预算/.test(preferences) ? 'value' : /品质|耐用/.test(preferences) ? 'quality' : /周全|齐全/.test(preferences) ? 'complete' : /美观|颜值/.test(preferences) ? 'appearance' : '');
     }
   }
-  useEffect(() => { sessionStorage.setItem('shopmind.session', sessionId); }, [sessionId]);
+  useEffect(() => { localStorage.setItem(CHAT_SESSION_KEY, sessionId); sessionStorage.setItem(CHAT_SESSION_KEY, sessionId); }, [sessionId]);
+  useEffect(() => { localStorage.setItem(`shopmind.chat:${sessionId}`, JSON.stringify({ messages, result, slotStatus, planBudget, planPriority, picked, planConfirmed })); }, [sessionId, messages, result, slotStatus, planBudget, planPriority, picked, planConfirmed]);
+  useEffect(() => { localStorage.setItem(`shopmind.feedback:${sessionId}`, JSON.stringify(feedbackSaved)); }, [sessionId, feedbackSaved]);
+  useEffect(() => { if (candidateSubmitted) localStorage.setItem(`shopmind.candidate:${sessionId}`, candidateSubmitted); else localStorage.removeItem(`shopmind.candidate:${sessionId}`); }, [sessionId, candidateSubmitted]);
+  useEffect(() => { if (authToken) void loadMemory(authToken); else { setMemoryConsent(false); setMemoryPreferences([]); setInventory([]); } }, [authToken]);
   useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify(runs)); }, [runs]);
   useEffect(() => { if (activeRun) localStorage.setItem(`${STORAGE_KEY}-active`, JSON.stringify(activeRun)); else localStorage.removeItem(`${STORAGE_KEY}-active`); }, [activeRun]);
   useEffect(() => {
@@ -263,6 +501,7 @@ export default function LiveChat() {
     setMessages([]); setResult(undefined); setError(''); setPicked({});
     setPlanConfirmed(false);
     setSessionId(newId('session')); setSlotStatus({});
+    setFeedbackSaved({}); setCandidateSubmitted('');
     setActiveRun({ test_id: crypto.randomUUID(), tester_id: testerId.trim(), scenario_id: scenarioId.trim(), version: VERSION,
       device_type: matchMedia('(max-width: 760px)').matches ? 'mobile' : 'desktop', start_time: start.toISOString(), end_time: '', duration_sec: 0,
       user_turns: 0, assistant_turns: 0, clarify_turns: 0, plan_updates: 0, compare_selection_actions: 0, model_compare_requests: 0, product_candidates_returned: 0, retrieval_actions: '', retrieval_strategies: '', conversation_transcript: '',
@@ -296,7 +535,7 @@ export default function LiveChat() {
       });
     };
     try {
-      const response = await fetch(`${base}/commerce/intents/stream`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(`${base}/commerce/intents/stream`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ shopping_session_id: requestSessionId, buyer_id: buyerId, locale: 'zh-CN', currency: 'CNY', raw_query: query, ...(checklistSelection ? { checklist_selection: checklistSelection } : {}) }), signal: AbortSignal.timeout(240000) });
       if (!response.ok) {
         const payload = await response.json() as CommerceResponse;
@@ -351,7 +590,7 @@ export default function LiveChat() {
       });
       setPlanConfirmed(false);
       if (activeRun) patchRun(run => {
-        const state = JSON.stringify([data.plan.budget, data.plan.destination, data.plan.excludes, data.plan.tasks, data.plan.must_buy, data.plan.optional, data.plan.prep, data.plan.reusable, data.plan.not_buy, data.plan.unknowns, data.groups.map(group => [group.name, group.priority, group.products.map(product => product.id)])]);
+        const state = JSON.stringify([data.plan.budget, data.plan.destination, data.plan.excludes, data.plan.tasks, data.plan.must_buy, data.plan.optional, data.plan.prep, data.plan.reusable, data.plan.prepared, data.plan.not_buy, data.plan.unknowns, data.groups.map(group => [group.name, group.priority, group.products.map(product => product.id)])]);
         const changed = run.last_conditions !== '' && run.last_conditions !== state;
           const cards = currentData.groups.reduce((count: number, group: Result['groups'][number]) => count + group.products.length, 0);
         return { ...run, assistant_turns: run.assistant_turns + 1, clarify_turns: run.clarify_turns + (data.plan.stage === 'clarify' ? 1 : 0),
@@ -383,7 +622,7 @@ export default function LiveChat() {
     const prefix = isOptional ? 'optional' : 'required';
     const key = prefix + ':' + item.name;
     const options = CHECKLIST_STATUSES;
-    return <div className={'checklist-item ' + (isOptional ? 'is-optional' : 'is-required')} key={sectionId + ':' + key}><div className="checklist-item-copy"><b>{item.name}</b>{(item.quantity || item.condition || item.note) && <small>{[item.quantity, item.condition, item.note].filter(Boolean).join(' · ')}</small>}</div><div role="group" aria-label={item.name + '状态'}>{options.map(([status, label]) => <button type="button" key={status} disabled={busy || Boolean(result?.preview)} className={slotStatus[key] === status ? 'selected' : ''} aria-pressed={slotStatus[key] === status} onClick={() => setSlotStatus(current => ({ ...current, [key]: current[key] === status ? 'unknown' : status }))}>{label}</button>)}</div></div>;
+    return <div className={'checklist-item ' + (isOptional ? 'is-optional' : 'is-required')} key={sectionId + ':' + key}><div className="checklist-item-copy"><b>{item.name}</b>{(item.quantity || item.condition || item.note) && <small>{[item.quantity, item.condition, item.note].filter(Boolean).join(' · ')}</small>}{(item.purchasable === false || isNonPurchasableName(item.name)) && <small>非商品：按要求携带或办理，不会搜索商品</small>}</div><div role="group" aria-label={item.name + '状态'}>{options.map(([status, label]) => <button type="button" key={status} disabled={busy || Boolean(result?.preview)} className={slotStatus[key] === status ? 'selected' : ''} aria-pressed={slotStatus[key] === status} onClick={() => setSlotStatus(current => ({ ...current, [key]: current[key] === status ? 'unknown' : status }))}>{label}</button>)}</div></div>;
   }
   const productGroups = result?.groups.filter(group => group.products.length) ?? [];
   const pickedGroups = productGroups.filter(group => {
@@ -416,29 +655,61 @@ export default function LiveChat() {
       ? !slotStatus[`${prefix}:${item}`] || slotStatus[`${prefix}:${item}`] === 'unknown'
       : slotStatus[`${prefix}:${item}`] === status);
     const have = [...labels(required, 'required', 'have'), ...labels(optional, 'optional', 'have')];
-    const missing = labels(required, 'required', 'buy');
-    const addOptional = labels(optional, 'optional', 'buy');
+    const prepare = [...labels(required, 'required', 'prepare'), ...labels(optional, 'optional', 'prepare')];
+    const nonProductPrepare = prepare.filter(item => {
+      const checklistItem = result.plan.checklist_sections?.flatMap(section => [...section.required, ...section.optional]).find(entry => entry.name === item);
+      return checklistItem?.purchasable === false || isNonPurchasableName(item);
+    });
+    const productPrepare = prepare.filter(item => !nonProductPrepare.includes(item));
+    const requiredBuy = productPrepare.filter(item => required.includes(item));
+    const optionalBuy = productPrepare.filter(item => optional.includes(item));
     const notNeeded = [...labels(required, 'required', 'not_needed'), ...labels(optional, 'optional', 'not_needed')];
     const unknown = [...labels(required, 'required', 'unknown'), ...labels(optional, 'optional', 'unknown')];
     const priorityLabels: Record<string, string> = { lightweight: '轻便少占空间', value: '实惠/性价比', quality: '品质耐用', complete: '准备周全', appearance: '美观协调' };
     const summary = [
       `清单已逐项确认。已有可复用：${have.join('、') || '暂无'}`,
-      `明确缺少、需要购买的必备项：${missing.join('、') || '暂无'}`,
-      `按需项中标记为需要购买：${addOptional.join('、') || '暂无'}`,
+      `需要准备：${prepare.join('、') || '暂无'}`,
       `明确不需要：${notNeeded.join('、') || '暂无'}`,
       `还没确认：${unknown.join('、') || '暂无'}`,
       planBudget ? `整套预算上限 ${planBudget} 元。` : '预算暂未提供。',
       planPriority ? `优先考虑${priorityLabels[planPriority]}。` : '请根据清单先匹配商品，并询问我最关键的取舍偏好。',
-      '请只为标记需要购买的必备项和按需项匹配商品；已有、不需要和还没确认的项目不要推荐。商品候选后说明选择与取舍，并汇总预算。',
+      '证件、资料等非商品只记录为需要准备，不进入商品搜索；请只为可购买的待准备物品匹配商品，已有、不需要和还没确认的项目不要推荐。商品候选后说明选择与取舍，并汇总预算。',
     ].join(' ');
     setChecklistSubmitting(true);
     void send(summary, false, false, {
-      have, must_buy: missing, optional_buy: addOptional, deferred: notNeeded, unknown,
+      have, prepare: nonProductPrepare, must_buy: requiredBuy, optional_buy: optionalBuy,
+      deferred: notNeeded, unknown,
       budget_major: planBudget ? Number(planBudget) : null, priority: planPriority,
     });
   }
   return <section className="live-section" id="demo">
     <div className="section-heading"><p className="eyebrow">SCENARIO DEMO / LIVE AGENT</p><h2>场景演示：与 ShopMind 实时对话</h2><p>本区通过本地 Commerce API 实际运行；已配置场景会优先生成清单模板，后续澄清与商品检索按实际链路调用。商品和价格来自模拟目录，不涉及真实交易。</p></div>
+    <details className="account-panel">
+      <summary>{authToken ? `已登录 · ${buyerId.slice(0, 16)} · 管理授权记忆` : '游客模式 · 当前会话自动保存在此浏览器 · 可选登录'}</summary>
+      {!authToken ? <div className="account-controls">
+        <label>账号<input value={accountName} maxLength={48} onChange={event => setAccountName(event.target.value)} placeholder="3–48 位" autoComplete="username" /></label>
+        <label>密码<input type="password" value={accountPassword} maxLength={256} onChange={event => setAccountPassword(event.target.value)} placeholder="注册至少 10 位" autoComplete="current-password" /></label>
+        <button type="button" disabled={!accountName.trim() || !accountPassword} onClick={() => void authenticate(false)}>登录</button>
+        <button type="button" disabled={!accountName.trim() || accountPassword.length < 10} onClick={() => void authenticate(true)}>创建本地账号</button>
+      </div> : <>
+        <div className="memory-consent-row"><label><input type="checkbox" checked={memoryConsent} onChange={event => void toggleMemoryConsent(event.target.checked).catch(error => setAuthMessage(error instanceof Error ? error.message : '授权更新失败'))} /> 我授权 ShopMind 跨会话保存并使用我的库存与偏好</label><button type="button" onClick={() => void logout()}>退出登录</button></div>
+        {!memoryConsent ? <p className="account-note">长期记忆当前关闭；开启后可在此管理。对话游客记录仍保存在本机浏览器中。</p> : <div className="memory-manager">
+          <form onSubmit={event => { event.preventDefault(); void addPreference().catch(error => setAuthMessage(error instanceof Error ? error.message : '偏好保存失败')); }}>
+            <select value={newPreferenceKind} onChange={event => setNewPreferenceKind(event.target.value as 'like' | 'dislike')} aria-label="偏好类型"><option value="like">偏好</option><option value="dislike">避免</option></select>
+            <input value={newPreference} maxLength={200} onChange={event => setNewPreference(event.target.value)} placeholder="例如：喜欢易清洁材质" />
+            <button disabled={!newPreference.trim()}>记住偏好</button>
+          </form>
+          <form onSubmit={event => { event.preventDefault(); void addInventory().catch(error => setAuthMessage(error instanceof Error ? error.message : '库存保存失败')); }}>
+            <input value={newInventoryItem} maxLength={100} onChange={event => setNewInventoryItem(event.target.value)} placeholder="已有物品，例如：猫砂盆" />
+            <input value={newInventoryQuantity} maxLength={80} onChange={event => setNewInventoryQuantity(event.target.value)} placeholder="数量/备注（可选）" />
+            <button disabled={!newInventoryItem.trim()}>记住库存</button>
+          </form>
+          <div className="memory-columns"><div><b>已授权偏好</b>{memoryPreferences.length ? memoryPreferences.map((item, index) => <p key={`${item.kind}-${index}`}>{item.kind === 'like' ? '偏好' : '避免'}：{item.statement}</p>) : <p>暂无</p>}</div><div><b>已授权库存</b>{inventory.length ? inventory.map(item => <p key={item.item}>{item.item}{item.quantity ? ` · ${item.quantity}` : ''}<button type="button" aria-label={`删除${item.item}`} onClick={() => void deleteInventory(item.item).catch(error => setAuthMessage(error instanceof Error ? error.message : '删除失败'))}>删除</button></p>) : <p>暂无</p>}</div></div>
+          <button type="button" className="memory-clear" onClick={() => void forgetAllMemory().catch(error => setAuthMessage(error instanceof Error ? error.message : '清除失败'))}>清除库存与偏好并撤回授权</button>
+        </div>}
+      </>}
+      {authMessage && <p className="account-note" role="status">{authMessage}</p>}
+    </details>
     <div className={`test-panel ${testOpen || activeRun ? 'open' : ''}`}>
       <button className="test-panel-toggle" type="button" onClick={() => setTestOpen(open => !open)} aria-expanded={testOpen || Boolean(activeRun)}><strong>前端可用性测试</strong><span>{activeRun ? `记录中 · ${activeRun.scenario_id}` : `本机已保存 ${runs.length} 条`}</span><b>{testOpen || activeRun ? '收起' : '展开测试模式'}</b></button>
       {(testOpen || activeRun) && <>
@@ -467,7 +738,7 @@ export default function LiveChat() {
     <div className="live-console-head"><strong>ShopMind Assistant</strong><span>{busy ? '正在整理最小采购方案' : '准备好帮你规划'}</span></div>
       <div className="live-actions"><button disabled={busy} onClick={() => { setMessages([]); setResult(undefined); setPlanConfirmed(false); setError(''); setPicked({}); setSlotStatus({}); setPlanBudget(''); setPlanPriority(''); const freshSession = newId('session'); setSessionId(freshSession); sessionStorage.setItem('shopmind.session', freshSession); }}>新对话</button>
       {['周末去海边两天，帮我准备购物清单', '第一次租房入住，不知道要准备什么', '开学了，帮我准备一份采购清单', '我第一次生产，想准备待产包', '第一次养猫，我需要准备清单'].map(q => <button disabled={busy} key={q} onClick={() => { setMessages([]); setResult(undefined); setPlanConfirmed(false); setSlotStatus({}); setPicked({}); setError(''); void send(q, false, true); }}>{q}</button>)}</div>
-    <div className="live-messages" aria-live="polite">{messages.map((m, i) => <div key={i} className={`live-message ${m.role}`}><small><ChatAvatar role={m.role} />{m.role === 'user' ? '你' : 'ShopMind'}</small><p>{m.role === 'assistant' ? <>{m.content.split('\n').filter(line => !/^.+: P\d/.test(line)).join('\n').replace(/\*\*/g, '').replace(/^\s*[-*]\s+/gm, '• ')}{result?.plan.stage === 'plan' && i === messages.length - 1 ? '\n\n请在下方逐项选择已有、需要购买、还没确认或不需要，再确认预算和优先级。' : ''}</> : m.content}</p></div>)}
+    <div className="live-messages" aria-live="polite">{messages.map((m, i) => <div key={i} className={`live-message ${m.role}`}><small><ChatAvatar role={m.role} />{m.role === 'user' ? '你' : 'ShopMind'}</small><p>{m.role === 'assistant' ? <>{m.content.split('\n').filter(line => !/^.+: P\d/.test(line)).join('\n').replace(/\*\*/g, '').replace(/^\s*[-*]\s+/gm, '• ')}{result?.plan.stage === 'plan' && i === messages.length - 1 ? '\n\n请在下方逐项选择已有、需要准备、还没确认或不需要。' : ''}</> : m.content}</p></div>)}
       {!messages.length && <div className="live-message assistant"><small><ChatAvatar role="assistant" />ShopMind</small><p>还没想好商品名也没关系。说说你要完成的生活任务，我会先问清会改变清单的场景条件，再列准备品类。</p></div>}
       {busy && <div className="live-status" role="status"><span className="live-spinner" />{busySeconds >= 20 ? `Agent 仍在整理方案，已等待 ${busySeconds} 秒…` : 'MainAgent 正在理解需求，SearchAgent 将按方案检索…'}</div>}
       {busy && streamText && <div className="live-message assistant streaming-reply"><small><ChatAvatar role="assistant" />ShopMind · 实时回复</small><p>{streamText}</p></div>}
@@ -475,7 +746,7 @@ export default function LiveChat() {
       {error && <div role="alert">{error} {messages[messages.length - 1]?.role === 'user' && <button onClick={() => void send(messages[messages.length - 1].content, true)}>重试</button>}</div>}
     </div>
     {result && <><div className="insight-chips"><span>目标：{result.plan.goal}</span><span>总预算：{result.plan.budget ?? '待确认'} {result.plan.budget ? 'CNY（商品价）' : ''}</span><span>配送地：{result.plan.destination ?? '待确认'}</span>{result.plan.excludes.map(x => <span key={x}>不买：{x}</span>)}</div>
-      {result.plan.stage === 'plan' && !result.groups.length && <section className={'checklist-step' + (result.plan.template_id === 'maternity_hospital_bag' ? ' maternity-checklist' : '')} aria-label="逐项核对采购清单" aria-busy={busy || Boolean(result.preview)}>
+      {(result.plan.stage === 'plan' || result.plan.stage === 'confirm') && !result.groups.length && <section className={'checklist-step' + (result.plan.template_id === 'maternity_hospital_bag' ? ' maternity-checklist' : '')} aria-label="逐项核对准备清单" aria-busy={busy || Boolean(result.preview)}>
         <header><div><strong>{result.preview ? '清单草稿 · 正在生成' : '逐项核对清单'}</strong><span>{result.preview ? '正在整理分组清单；草稿暂不作为正式核对项' : '点选状态即可，不用把已有物品逐条打字'}</span></div><small>未标记的项目保持“还没确认”</small></header>
         {result.preview && !result.plan.checklist_sections?.length && <div className="checklist-draft-wait" role="status"><span className="live-spinner" />正在整理详细物品、数量和分类，请稍候…</div>}
         {!!result.plan.checklist_sections?.length && result.plan.checklist_sections.map(section => <div className="checklist-section" key={section.id}>
@@ -496,14 +767,31 @@ export default function LiveChat() {
             {CHECKLIST_STATUSES.map(([status, label]) => <button type="button" key={status} disabled={busy || Boolean(result.preview)} className={slotStatus[key] === status ? 'selected' : ''} aria-pressed={slotStatus[key] === status} onClick={() => setSlotStatus(current => ({ ...current, [key]: current[key] === status ? 'unknown' : status }))}>{label}</button>)}
           </div></div>;
         })}</div>}
-        {!!result.plan.prep?.length && <div className="checklist-reminders"><h3>出发前提醒（不需要购买）</h3><p>{result.plan.prep.join(' · ')}</p></div>}
+        {!!result.plan.prep?.length && <div className="checklist-reminders"><h3>出发前提醒（不推荐商品）</h3><p>{result.plan.prep.join(' · ')}</p></div>}
         <div className="checklist-preferences"><label>预算上限（商品价）<span><input type="number" min="1" disabled={busy} value={planBudget} onChange={event => setPlanBudget(event.target.value)} placeholder="可留空" /> 元</span></label><label>优先考虑<select disabled={busy} value={planPriority} onChange={event => setPlanPriority(event.target.value)}><option value="">暂不选，让 ShopMind 根据清单追问</option><option value="lightweight">轻便少占空间</option><option value="value">实惠 / 性价比</option><option value="quality">品质耐用</option><option value="complete">准备周全</option><option value="appearance">美观协调</option></select></label></div>
-        <div className="checklist-next"><span>{result.preview ? '清单仍在生成，确认按钮暂不可用。' : checklistReady ? '只为标记“需要购买”的项目找商品；已有、不需要和还没确认的项目不会推荐。' : '请先标记至少一项；其他项目可以保持还没确认。'}</span><button type="button" disabled={busy || Boolean(result.preview) || !checklistReady} aria-busy={checklistSubmitting} onClick={confirmChecklist}>{checklistSubmitting ? <><span className="live-spinner" aria-hidden="true" />正在处理清单… {busySeconds} 秒</> : '确认清单，匹配商品 →'}</button></div>
-        {checklistSubmitting && <div className="checklist-progress" role="status">{busySeconds >= 30 ? '本轮耗时较长，仍在等待 Agent 返回；你的选择已保留，请勿重复提交。' : '正在提交物品状态，并为明确待购项匹配商品；无需重复点击。'}</div>}
+        <div className="checklist-next"><span>{result.preview ? '清单仍在生成，确认按钮暂不可用。' : checklistReady ? '选择“需要准备”后，证件/资料等非商品只记录准备；可购买的物品才会进入商品匹配。' : '请先标记至少一项；其他项目可以保持还没确认。'}</span><button type="button" disabled={busy || Boolean(result.preview) || !checklistReady} aria-busy={checklistSubmitting} onClick={confirmChecklist}>{checklistSubmitting ? <><span className="live-spinner" aria-hidden="true" />正在处理清单… {busySeconds} 秒</> : '确认准备清单 →'}</button></div>
+        {checklistSubmitting && <div className="checklist-progress" role="status">{busySeconds >= 30 ? '本轮耗时较长，仍在等待 Agent 返回；你的选择已保留，请勿重复提交。' : '正在提交准备状态；只为可购买物品匹配商品，无需重复点击。'}</div>}
+      </section>}
+      {(result.plan.checklist_sections?.length ?? 0) > 0 && result.plan.stage !== 'clarify' && <section className="quick-feedback" aria-label="清单效果反馈">
+        <div className="quick-feedback-row"><div><strong>这份清单有用吗？</strong><small>一键记录，可在同一会话中更新</small></div><div className="feedback-options">
+          <button type="button" aria-pressed={feedbackSaved.checklist_usefulness === 'helpful'} onClick={() => void recordQuickFeedback('checklist_usefulness', 'helpful')}>有帮助</button>
+          <button type="button" aria-pressed={feedbackSaved.checklist_usefulness === 'needs_work'} onClick={() => void recordQuickFeedback('checklist_usefulness', 'needs_work')}>还不够准确</button>
+        </div></div>
+        <div className="quick-feedback-row"><div><strong>完成后，需要的商品买到了吗？</strong><small>可稍后回来更新；用户自报结果，不代表真实订单</small></div><div className="feedback-options">
+          <button type="button" aria-pressed={feedbackSaved.purchase_outcome === 'bought'} onClick={() => void recordQuickFeedback('purchase_outcome', 'bought')}>买到了</button>
+          <button type="button" aria-pressed={feedbackSaved.purchase_outcome === 'not_found'} onClick={() => void recordQuickFeedback('purchase_outcome', 'not_found')}>没找到</button>
+          <button type="button" aria-pressed={feedbackSaved.purchase_outcome === 'chose_not_to_buy'} onClick={() => void recordQuickFeedback('purchase_outcome', 'chose_not_to_buy')}>决定不买</button>
+          <button type="button" aria-pressed={feedbackSaved.purchase_outcome === 'not_yet'} onClick={() => void recordQuickFeedback('purchase_outcome', 'not_yet')}>还没买/未决定</button>
+        </div></div>
+        {!result.plan.template_id && (result.plan.checklist_sections?.length ?? 0) >= 2 && (result.plan.checklist_sections?.length ?? 0) <= 6 && <div className="candidate-share">
+          <p>匿名贡献：仅提交模块标题、物品名、数量和条件，不提交原始对话、账号或会话编号。提交后需人工审核，不会自动成为模板。</p>
+          <button type="button" disabled={Boolean(candidateSubmitted)} onClick={() => void submitCandidate()}>{candidateSubmitted ? '已匿名提交，等待人工审核' : '同意匿名分享这份清单作为模板候选'}</button>
+        </div>}
       </section>}
       {result.plan.stage !== 'clarify' && result.plan.stage !== 'plan' && <div className="plan-readout">
         <div><b>必备任务槽位</b><span>{result.plan.tasks?.join(' · ') || '按当前场景整理'}</span></div>
         <div><b>已有 / 可复用</b><span>{result.plan.reusable?.join(' · ') || '已有物品尚未确认'}</span></div>
+        <div><b>需要携带 / 办理（不搜商品）</b><span>{result.plan.prepared?.join(' · ') || '暂无'}</span></div>
         <div><b>明确不需要</b><span>{result.plan.not_buy?.join(' · ') || '暂无'}</span></div>
         <div><b>按需项目与未确认项</b><span>{[...(result.plan.optional ?? []), ...(result.plan.unknowns ?? [])].join(' · ') || '暂无额外项'}</span></div>
       </div>}
@@ -516,6 +804,35 @@ export default function LiveChat() {
       </>}
     <form className="demo-composer" onSubmit={e => { e.preventDefault(); void send(); }}><input maxLength={1500} value={input} onChange={e => setInput(e.target.value)} placeholder="说说你要完成的生活任务，或已经卡住的选择…" aria-label="真实对话输入" /><button disabled={busy || !input.trim()} type="submit" aria-label="发送真实对话" title="发送">↑</button></form>
     </div>
+    <details className="review-panel">
+      <summary>本地人工审核模板候选</summary>
+      <div className="review-panel-body"><p>仅本机可访问。审核通过时需补齐模板名称、核心用途和匹配词；通过后生成新版本并供后续匹配。</p>
+        <button type="button" onClick={() => void loadReviewCandidates().then(() => setReviewMessage('已载入待审核候选。')).catch(error => setReviewMessage(error instanceof Error ? error.message : '读取失败'))}>载入待审核候选</button>
+        {reviewMessage && <p role="status">{reviewMessage}</p>}
+        {!reviewCandidates.length ? <p>当前没有已载入的待审候选。</p> : reviewCandidates.map(candidate => {
+          const draft = reviewDraft[candidate.candidate_id];
+          if (!draft) return null;
+          const update = (key: keyof typeof draft, value: string) => setReviewDraft(current => ({ ...current, [candidate.candidate_id]: { ...draft, [key]: value } }));
+          return <article className="review-candidate" key={candidate.candidate_id}>
+            <h3>{candidate.candidate_id} · 待审核</h3>
+            {candidate.sections.map(section => <p key={section.id}><b>{section.title}</b>：必备 {section.required.map(item => item.name).join('、')}；按需 {section.optional.map(item => item.name).join('、') || '无'}</p>)}
+            <p>结构评测：{candidate.evaluation_passed === true ? `通过（${candidate.evaluation?.module_count} 模块 / ${candidate.evaluation?.item_count} 项）` : candidate.evaluation_passed === false ? '未通过，需提交修订后的匿名候选' : '尚未运行'}</p>
+            <div className="review-fields">
+              <label>模板 ID<input value={draft.scene_id} onChange={event => update('scene_id', event.target.value)} /></label>
+              <label>模板名称<input value={draft.name} onChange={event => update('name', event.target.value)} /></label>
+              <label>核心用途<input value={draft.core_use} onChange={event => update('core_use', event.target.value)} /></label>
+              <label>匹配词（逗号分隔）<input value={draft.match_terms} onChange={event => update('match_terms', event.target.value)} placeholder="至少两个" /></label>
+              <label>审核人<input value={draft.reviewer} onChange={event => update('reviewer', event.target.value)} /></label>
+            </div>
+            <div className="feedback-options"><button type="button" onClick={() => void evaluateCandidate(candidate).catch(error => setReviewMessage(error instanceof Error ? error.message : '评测失败'))}>运行结构评测</button><button type="button" disabled={!candidate.evaluation_passed} onClick={() => void reviewCandidate(candidate, 'approve').catch(error => setReviewMessage(error instanceof Error ? error.message : '审核失败'))}>评测通过后人工发布</button><button type="button" onClick={() => void reviewCandidate(candidate, 'reject').catch(error => setReviewMessage(error instanceof Error ? error.message : '审核失败'))}>拒绝候选</button></div>
+          </article>;
+        })}
+        {!!publishedCandidates.length && <div className="published-candidates"><h3>已发布版本</h3>{publishedCandidates.map(candidate => <article key={candidate.candidate_id}>
+          <span>{candidate.published_scene_id} · v{candidate.published_version} · {candidate.active ? '当前生效' : '已停用'} · 审核人 {candidate.reviewer}</span>
+          <button type="button" disabled={!candidate.active} onClick={() => void rollbackTemplate(candidate).catch(error => setReviewMessage(error instanceof Error ? error.message : '回退失败'))}>回退该模板</button>
+        </article>)}</div>}
+      </div>
+    </details>
     <p className="live-note">商品、品牌、价格、库存与配送范围均为虚拟演示数据；方案预算按商品价估算，未确认配送地时不能判断可购买性。</p>
   </section>;
 }

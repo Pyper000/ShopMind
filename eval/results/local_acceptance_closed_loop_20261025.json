@@ -1,0 +1,239 @@
+{
+  "acceptance": "shopmind_local_closed_loop",
+  "tested_at": {
+    "utc": "2026-10-25T03:17:33Z",
+    "local_timezone": "Asia/Singapore",
+    "local_date": "2026-10-25"
+  },
+  "workspace": "F:\\徐嘉铭\\产品学习\\ecommerce-public-deploy",
+  "decision": {
+    "milestones_1_to_5_implementation": "implemented_and_automated_tests_passed",
+    "stage1_live_sse_acceptance": "passed; see local_acceptance_stage1_20261025.json",
+    "full_live_closed_loop_acceptance": "passed",
+    "reason": "The isolated backend on port 8014 was reloaded with the current code. The same endpoint now returns JSON and the live SSE/API/workflow checks pass.",
+    "api_fallback_note": "Before the reload, the stale backend returned the Vite SPA HTML for /commerce/mvp/feedback/summary. That was an API correctness issue, not a useful fallback: clients could treat HTTP 200 HTML as success. The current backend returns JSON for the API route and returns 404 rather than SPA HTML for unknown /commerce/mvp paths.",
+    "next_step": "No further runtime fix is required for this local MVP; retain the recorded smoke/SSE evidence and add production auth/rate-limit controls before any public deployment."
+  },
+  "services": {
+    "frontend": {
+      "url": "http://127.0.0.1:5190/",
+      "pid": 147984,
+      "state": "listening",
+      "http_status": 200,
+      "content_type": "text/html",
+      "served_title": "ShopMind AI | 对话式购物助手",
+      "source_markers": ["/@vite/client", "/@react-refresh", "/assets/index-DuNl6u3H.js"],
+      "screenshot": "eval/results/local_acceptance_closed_loop_20261025_cat.png"
+    },
+    "isolated_backend": {
+      "url": "http://127.0.0.1:8014",
+      "pid": 145896,
+      "state": "listening",
+      "health": {
+        "url": "http://127.0.0.1:5190/health",
+        "http_status": 200,
+        "body": {
+          "status": "ok",
+          "model": "deepseek-ai/DeepSeek-V3.2",
+          "database": "sqlite",
+          "redis": "disabled",
+          "semantic_cache": false,
+          "queue": "disabled",
+          "queue_depth": 0
+        }
+      },
+      "mvp_api_smoke": {
+        "url": "http://127.0.0.1:5190/commerce/mvp/feedback/summary",
+        "http_status": 200,
+        "content_type": "application/json",
+        "expected_content_type": "application/json",
+        "body": {
+          "checklist_usefulness": {"responses": 1, "helpful": 1, "needs_work": 0, "helpful_rate": 1.0},
+          "purchase_outcomes": {"not_yet": 1}
+        },
+        "passed": true,
+        "latency_seconds": 0.003953,
+        "unknown_mvp_path": {"url": "http://127.0.0.1:5190/commerce/mvp/not-a-real-route", "http_status": 404, "content_type": "application/json", "body": {"detail": "ShopMind MVP 路由不存在"}}
+      }
+    },
+    "legacy_services": {
+      "backend_8013": {"pid": 200512, "state": "listening", "touched_or_stopped": false},
+      "frontend_5185": {"pid": 75344, "state": "listening", "touched_or_stopped": false}
+    }
+  },
+  "stage1_sse_evidence": {
+    "artifact": "eval/results/local_acceptance_stage1_20261025.json",
+    "cat": {
+      "query": "我第一次养一只健康成年猫",
+      "http_status": 200,
+      "event_counts": {"plan.update": 1, "final.result": 1},
+      "template_id": "first_cat_home",
+      "scene_match_mode": "semantic",
+      "module_count": 5,
+      "required_count": 8,
+      "optional_count": 6,
+      "sse_file": "eval/results/local_acceptance_stage1_20261025_cat_current.sse"
+    },
+    "dog_conflict": {
+      "query": "我第一次养一只健康成年狗",
+      "http_status": 200,
+      "event_counts": {"plan.preview": 7, "model.call": 1, "plan.update": 1, "final.result": 1},
+      "template_id": null,
+      "route": "open_scene",
+      "module_count": 6,
+      "required_count": 12,
+      "optional_count": 3,
+      "sse_file": "eval/results/local_acceptance_stage1_20261025_dog_current.sse"
+    },
+    "new_scene": {
+      "query": "我第一次组织社区旧物义卖活动，帮我准备一份采购清单，尽量具体到单项，考虑前期准备、现场售卖和收尾。",
+      "http_status": 200,
+      "event_counts": {"plan.preview": 9, "model.call": 1, "plan.update": 1, "final.result": 1},
+      "template_id": null,
+      "route": "open_scene",
+      "module_count": 5,
+      "required_count": 15,
+      "optional_count": 5,
+      "sse_file": "eval/results/local_acceptance_stage1_20261025_untemplated_current.sse"
+    }
+  },
+  "live_closed_loop_evidence": {
+    "api_json_smoke": {
+      "url": "http://127.0.0.1:5190/commerce/mvp/feedback/summary",
+      "http_status": 200,
+      "content_type": "application/json",
+      "latency_seconds": 0.003953,
+      "body": {
+        "checklist_usefulness": {"responses": 1, "helpful": 1, "needs_work": 0, "helpful_rate": 1.0},
+        "purchase_outcomes": {"not_yet": 1}
+      }
+    },
+    "cat": {
+      "query": "我第一次养一只健康成年猫",
+      "template_id": "first_cat_home",
+      "scene_match_mode": "semantic",
+      "module_count": 5,
+      "required_count": 8,
+      "optional_count": 6,
+      "tasks_equal_module_items": true,
+      "module_shape_valid": true,
+      "sse_file": "eval/results/local_acceptance_closed_loop_20261025_final2_cat.sse"
+    },
+    "dog_object_conflict": {
+      "query": "我第一次养一只健康成年狗",
+      "template_id": null,
+      "route": "open_scene",
+      "module_count": 6,
+      "required_count": 17,
+      "optional_count": 3,
+      "no_cat_in_module_titles": true,
+      "tasks_equal_module_items": true,
+      "module_shape_valid": true,
+      "sse_file": "eval/results/local_acceptance_closed_loop_20261025_final2_dog.sse"
+    },
+    "new_open_scene": {
+      "query": "我第一次在社区图书漂流点启动图书交换服务，帮我准备一份具体采购清单，按书籍收纳、登记、空间布置和维护分组。",
+      "template_id": null,
+      "route": "open_scene",
+      "module_count": 4,
+      "required_count": 13,
+      "optional_count": 4,
+      "condition_count": 9,
+      "quantity_count": 13,
+      "tasks_equal_module_items": true,
+      "module_shape_valid": true,
+      "sse_file": "eval/results/local_acceptance_closed_loop_20261025_final2_open.sse"
+    },
+    "search_roundtrip": {
+      "sse_file": "eval/results/local_acceptance_closed_loop_20261025_live_search_roundtrip.sse",
+      "event_types": ["plan.update", "agent.dispatch", "tool.invoke", "tool.result", "agent.result", "final.result"],
+      "confirmed_must_buy": ["猫粮"],
+      "reusable": ["食盆"],
+      "search_tool": "product_search_tool",
+      "hit_count": 3,
+      "retrieval_explanation": "仅为新增任务局部召回：猫粮。"
+    },
+    "feedback_account_memory_live": {
+      "feedback_summary": {"helpful_rate": 1.0, "purchase_outcomes": {"not_yet": 1}},
+      "account_login_roundtrip": true,
+      "memory_consent_default": false,
+      "memory_consent_after_opt_in": true,
+      "preference_and_inventory_saved": true,
+      "clear_revoked_consent": true,
+      "candidate_pii_fields_absent": true,
+      "candidate_structural_evaluation": true,
+      "manual_publish": true,
+      "version_publish_and_rollback": {"published_version": 6, "restored_version": 5}
+    }
+  },
+  "roadmap": {
+    "1_template_conflict_and_shared_checklist_shape": {
+      "status": "implemented_and_tested",
+      "evidence": ["tests/test_scene_templates.py", "tests/test_tools_and_eventbus.py", "eval/results/local_acceptance_stage1_20261025.json"]
+    },
+    "2_routing_regression_evaluation": {
+      "status": "implemented_and_tested",
+      "dataset": "eval/shopmind_mvp_regression_v1.json",
+      "case_count": 4,
+      "evidence": "tests/test_shopmind_regression_eval.py"
+    },
+    "3_checklist_feedback_and_purchase_self_report": {
+      "status": "implemented_and_api_tested",
+      "feedback_values": ["helpful", "needs_work"],
+      "purchase_outcomes": ["bought", "not_found", "chose_not_to_buy", "not_yet"],
+      "evidence": "tests/test_shopmind_mvp_workflows.py::test_one_tap_feedback_and_explicit_purchase_outcome_are_aggregated",
+      "actual_user_efficacy_data_collected": false,
+      "note": "Feedback mechanics and aggregation are tested; real checklist helpfulness cannot be concluded until users provide feedback. Purchase outcome is self-report, not an order."
+    },
+    "4_guest_session_optional_account_and_consented_memory": {
+      "status": "implemented_and_automated_tested",
+      "evidence": ["frontend/src/components/LiveChat.tsx", "tests/test_shopmind_mvp_workflows.py", "tests/test_authorized_inventory_memory.py"],
+      "consent_default": false
+    },
+    "5_anonymized_candidate_review_publish_and_rollback": {
+      "status": "implemented_and_automated_tested",
+      "evidence": "tests/test_shopmind_mvp_workflows.py::test_candidate_anonymization_human_review_and_versioned_publish",
+      "steps_tested": ["PII rejection", "candidate submission", "structural evaluation", "manual review", "versioned publish", "rollback"]
+    }
+  },
+  "integration_test_scope": {
+    "result": "passed",
+    "evidence": ["tests/test_shopmind_mvp_workflows.py", "eval/results/local_acceptance_closed_loop_20261025_live_search_roundtrip.sse"],
+    "method": "FastAPI TestClient regression coverage plus real curl through 5190 -> 8014 for JSON API, SSE planning, checklist feedback, account/memory, candidate review and SearchAgent roundtrip."
+  },
+  "screenshots": [
+    "eval/results/local_acceptance_closed_loop_20261025_cat.png",
+    "eval/results/local_acceptance_closed_loop_20261025_cat_feedback.png",
+    "eval/results/local_acceptance_closed_loop_20261025_open_scene_candidate.png",
+    "eval/results/local_acceptance_stage1_20261025_browser_dog.png"
+  ],
+  "verification": {
+    "pytest": {
+      "command": ".venv\\Scripts\\python.exe -m pytest -q --junitxml=eval\\results\\local_acceptance_closed_loop_20261025_pytest.xml",
+      "result": "374 passed, 1 warning, 51.59s",
+      "warning": "StarletteDeprecationWarning: using httpx with starlette.testclient is deprecated",
+      "junit_xml": "eval/results/local_acceptance_closed_loop_20261025_pytest.xml"
+    },
+    "frontend_build": {
+      "command": "npm run build",
+      "working_directory": "frontend",
+      "result": "passed",
+      "vite": "5.4.21",
+      "modules_transformed": 33,
+      "bundle": "dist/assets/index-DuNl6u3H.js"
+    },
+    "git_diff_check": {
+      "result": "passed",
+      "exit_code": 0,
+      "notes": "Only Git LF/CRLF working-copy warnings; no whitespace errors."
+    }
+  },
+  "safety": {
+    "git_push": false,
+    "public_deployment": false,
+    "stopped_8013_or_5185": false,
+    "restarted_services_this_turn": true,
+    "restarted_only_isolated_backend_8014": true,
+    "isolated_backend_final_pid": 145896
+  }
+}

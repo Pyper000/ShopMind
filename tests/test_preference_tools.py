@@ -15,6 +15,7 @@ from app.infrastructure.persistence.json_file_stores import JsonFilePreferenceSt
 
 SNAPSHOT = ShoppingContextSnapshot(
     shopping_session_id="s1", buyer_id="buyer-001", locale="zh-CN", currency="CNY",
+    memory_consent=True,
 )
 
 
@@ -106,6 +107,20 @@ class TestForgetPreferenceTool:
 
 
 class TestRememberForgetRoundTrip:
+    async def test_remember_requires_explicit_memory_consent(self, tmp_path):
+        store = JsonFilePreferenceStore(tmp_path)
+        remember = build_remember_preference_tool(store, TradeEventBus())
+        snapshot = ShoppingContextSnapshot(
+            shopping_session_id="s1", buyer_id="buyer-001", locale="zh-CN", currency="CNY",
+        )
+        token = ShoppingContext.set(snapshot)
+        try:
+            result = await remember(kind="like", statement="喜欢耐用材质")
+        finally:
+            ShoppingContext.reset(token)
+        assert "尚未授权" in _text(result)
+        assert await store.list_by_buyer("buyer-001") == []
+
     async def test_remember_then_forget(self, tmp_path):
         store = JsonFilePreferenceStore(tmp_path)
         bus = TradeEventBus()

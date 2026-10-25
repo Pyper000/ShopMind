@@ -35,6 +35,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 
+from app.domain.buyer.preference import BuyerPreference
 from app.application.agents.orchestrator import SubmitIntentInput
 from app.composition import Container, build_container
 from app.domain.queue.ports.task_queue import IntentTask, TaskStatus
@@ -43,6 +44,16 @@ from app.presentation.dto import (
     CancelOrderRequest,
     SubmitIntentRequest,
     SubmitIntentResponse,
+)
+from app.presentation.mvp_dto import (
+    AccountRequest,
+    InventoryRequest,
+    MemoryConsentRequest,
+    PreferenceRequest,
+    QuickFeedbackRequest,
+    TemplateCandidateRequest,
+    TemplateRollbackRequest,
+    TemplateReviewRequest,
 )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -99,6 +110,36 @@ def build_app() -> FastAPI:
             raise HTTPException(status_code=503, detail="服务尚未就绪")
         return state["c"]
 
+    def _mvp_store(c: Container):
+        if c.mvp_store is None:
+            raise HTTPException(status_code=503, detail="本地 MVP 持久化未配置")
+        return c.mvp_store
+
+    def _authenticated_user(c: Container, request: Request, required: bool = True) -> str | None:
+        authorization = request.headers.get("authorization", "")
+        if not authorization:
+            if required:
+                raise HTTPException(status_code=401, detail="此操作需要登录")
+            return None
+        scheme, _, token = authorization.partition(" ")
+        if scheme.lower() != "bearer" or not token:
+            raise HTTPException(status_code=401, detail="登录凭证无效")
+        user_id = _mvp_store(c).authenticate(token)
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="登录已失效，请重新登录")
+        return user_id
+
+    def _intent_identity(c: Container, request: Request, session_id: str) -> tuple[str, bool]:
+        user_id = _authenticated_user(c, request, required=False)
+        if user_id is None:
+            return f"guest-{session_id}", False
+        return user_id, _mvp_store(c).has_memory_consent(user_id)
+
+    def _local_review_request(request: Request) -> None:
+        host = request.client.host if request.client else ""
+        if host not in {"127.0.0.1", "::1", "localhost", "testclient"}:
+            raise HTTPException(status_code=403, detail="模板审核仅允许本机访问")
+
     settings_origins = build_container_origins()
     api.add_middleware(
         CORSMiddleware,
@@ -137,13 +178,15 @@ def build_app() -> FastAPI:
     async def submit_intent(body: SubmitIntentRequest, request: Request) -> SubmitIntentResponse:
         c = container()
         session_id = body.shopping_session_id or f"session-{uuid.uuid4().hex[:8]}"
+        buyer_id, memory_consent = _intent_identity(c, request, session_id)
         intent = SubmitIntentInput(
             shopping_session_id=session_id,
-            buyer_id=body.buyer_id,
+            buyer_id=buyer_id,
             locale=body.locale,
             currency=body.currency,
             raw_query=body.raw_query,
             checklist_selection=body.checklist_selection.model_dump() if body.checklist_selection else None,
+            memory_consent=memory_consent,
         )
         if c.task_queue is None:
             now = time.monotonic()
@@ -187,6 +230,7 @@ def build_app() -> FastAPI:
         if c.task_queue is not None:
             raise HTTPException(status_code=503, detail="实时流暂不支持队列模式")
         session_id = body.shopping_session_id or f"session-{uuid.uuid4().hex[:8]}"
+        buyer_id, memory_consent = _intent_identity(c, request, session_id)
         now = time.monotonic()
         for address in list(request_times):
             request_times[address] = [t for t in request_times[address] if now - t < 3600]
@@ -203,11 +247,12 @@ def build_app() -> FastAPI:
         trace = c.bus.subscribe(session_id)
         intent = SubmitIntentInput(
             shopping_session_id=session_id,
-            buyer_id=body.buyer_id,
+            buyer_id=buyer_id,
             locale=body.locale,
             currency=body.currency,
             raw_query=body.raw_query,
             checklist_selection=body.checklist_selection.model_dump() if body.checklist_selection else None,
+            memory_consent=memory_consent,
         )
 
         async def process_turn() -> None:
@@ -250,17 +295,211 @@ def build_app() -> FastAPI:
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
 
+    @api.post("/commerce/mvp/auth/register")
+    async def register_account(body: AccountRequest) -> dict:
+        try:
+            user_id, token = _mvp_store(container()).register(body.username, body.password)
+        except ValueError as err:
+            raise HTTPException(status_code=400, detail=str(err)) from err
+        return {"user_id": user_id, "token": token, "token_ttl_days": 30}
+
+    @api.post("/commerce/mvp/auth/login")
+    async def login_account(body: AccountRequest) -> dict:
+        try:
+            user_id, token = _mvp_store(container()).login(body.username, body.password)
+        except ValueError as err:
+            raise HTTPException(status_code=401, detail=str(err)) from err
+        return {"user_id": user_id, "token": token, "token_ttl_days": 30}
+
+    @api.post("/commerce/mvp/auth/logout")
+    async def logout_account(request: Request) -> dict:
+        _authenticated_user(container(), request)
+        _, _, token = request.headers.get("authorization", "").partition(" ")
+        _mvp_store(container()).revoke_token(token)
+        return {"logged_out": True}
+
+    @api.get("/commerce/mvp/memory")
+    async def get_memory(request: Request) -> dict:
+        c = container()
+        user_id = _authenticated_user(c, request)
+        store = _mvp_store(c)
+        enabled = store.has_memory_consent(user_id)
+        if not enabled:
+            return {"consent": False, "preferences": [], "inventory": []}
+        preferences = await c.preference_store.list_by_buyer(user_id)
+        return {
+            "consent": True,
+            "preferences": [
+                {"kind": item.kind, "statement": item.statement, "created_at": item.created_at}
+                for item in preferences
+            ],
+            "inventory": store.list_inventory(user_id),
+        }
+
+    @api.post("/commerce/mvp/memory/consent")
+    async def set_memory_consent(body: MemoryConsentRequest, request: Request) -> dict:
+        c = container()
+        user_id = _authenticated_user(c, request)
+        _mvp_store(c).set_memory_consent(user_id, body.enabled)
+        return {"user_id": user_id, "consent": body.enabled}
+
+    @api.post("/commerce/mvp/memory/preferences")
+    async def add_memory_preference(body: PreferenceRequest, request: Request) -> dict:
+        c = container()
+        user_id = _authenticated_user(c, request)
+        if not _mvp_store(c).has_memory_consent(user_id):
+            raise HTTPException(status_code=403, detail="请先明确授权跨会话记忆")
+        try:
+            preference = BuyerPreference(user_id, body.kind, body.statement.strip())
+            await c.preference_store.append(preference)
+        except ValueError as err:
+            raise HTTPException(status_code=422, detail=str(err)) from err
+        return {"saved": True, "kind": preference.kind, "statement": preference.statement}
+
+    @api.delete("/commerce/mvp/memory/preferences")
+    async def delete_memory_preference(statement: str, request: Request) -> dict:
+        c = container()
+        user_id = _authenticated_user(c, request)
+        deleted = await c.preference_store.delete(user_id, statement)
+        return {"deleted": deleted}
+
+    @api.post("/commerce/mvp/memory/inventory")
+    async def add_inventory_item(body: InventoryRequest, request: Request) -> dict:
+        c = container()
+        user_id = _authenticated_user(c, request)
+        if not _mvp_store(c).has_memory_consent(user_id):
+            raise HTTPException(status_code=403, detail="请先明确授权跨会话记忆")
+        try:
+            item = _mvp_store(c).add_inventory(user_id, body.item, body.quantity, body.condition)
+        except ValueError as err:
+            raise HTTPException(status_code=422, detail=str(err)) from err
+        return {"saved": True, **item}
+
+    @api.delete("/commerce/mvp/memory/inventory/{item}")
+    async def delete_inventory_item(item: str, request: Request) -> dict:
+        c = container()
+        user_id = _authenticated_user(c, request)
+        return {"deleted": _mvp_store(c).delete_inventory(user_id, item)}
+
+    @api.delete("/commerce/mvp/memory")
+    async def forget_all_memory(request: Request) -> dict:
+        c = container()
+        user_id = _authenticated_user(c, request)
+        preferences = await c.preference_store.list_by_buyer(user_id)
+        for preference in preferences:
+            await c.preference_store.delete(user_id, preference.statement)
+        _mvp_store(c).clear_inventory(user_id)
+        _mvp_store(c).set_memory_consent(user_id, False)
+        return {"deleted_preferences": len(preferences), "deleted_inventory": True, "consent": False}
+
+    @api.post("/commerce/mvp/feedback")
+    async def save_quick_feedback(body: QuickFeedbackRequest) -> dict:
+        try:
+            return _mvp_store(container()).save_feedback(body.session_id, body.kind, body.value, body.note)
+        except ValueError as err:
+            raise HTTPException(status_code=422, detail=str(err)) from err
+
+    @api.get("/commerce/mvp/feedback/summary")
+    async def get_feedback_summary() -> dict:
+        return _mvp_store(container()).feedback_summary()
+
+    @api.post("/commerce/mvp/template-candidates")
+    async def submit_template_candidate(body: TemplateCandidateRequest) -> dict:
+        sections = [section.model_dump(exclude_none=True) for section in body.sections]
+        try:
+            return _mvp_store(container()).submit_template_candidate(sections)
+        except ValueError as err:
+            raise HTTPException(status_code=422, detail=str(err)) from err
+
+    @api.post("/commerce/mvp/template-candidates/{candidate_id}/evaluate")
+    async def evaluate_template_candidate(candidate_id: str, request: Request) -> dict:
+        _local_review_request(request)
+        try:
+            result = _mvp_store(container()).evaluate_template_candidate(candidate_id)
+        except ValueError as err:
+            raise HTTPException(status_code=409, detail=str(err)) from err
+        if result is None:
+            raise HTTPException(status_code=404, detail="候选不存在")
+        return result
+
+    @api.get("/commerce/mvp/template-candidates")
+    async def list_template_candidates(request: Request, status: str = "pending") -> dict:
+        _local_review_request(request)
+        try:
+            items = _mvp_store(container()).list_template_candidates(status)
+        except ValueError as err:
+            raise HTTPException(status_code=422, detail=str(err)) from err
+        c = container()
+        if status == "approved" and c.scene_templates is not None:
+            for item in items:
+                item["active"] = c.scene_templates.is_published_version_active(
+                    item["published_scene_id"], item["published_version"],
+                )
+        return {"items": items}
+
+    @api.post("/commerce/mvp/template-candidates/{candidate_id}/review")
+    async def review_template_candidate(
+        candidate_id: str, body: TemplateReviewRequest, request: Request,
+    ) -> dict:
+        _local_review_request(request)
+        c = container()
+        mvp_store = _mvp_store(c)
+        candidate = mvp_store.get_template_candidate(candidate_id)
+        if candidate is None:
+            raise HTTPException(status_code=404, detail="候选不存在")
+        if candidate["status"] != "pending":
+            raise HTTPException(status_code=409, detail="该候选已审核")
+        scene_id = ""
+        version = None
+        if body.action == "approve":
+            if c.scene_templates is None:
+                raise HTTPException(status_code=503, detail="模板运行时未配置")
+            if not candidate["evaluation_passed"]:
+                raise HTTPException(status_code=409, detail="候选必须先通过结构评测，才能人工审核发布")
+            review = body.model_dump()
+            try:
+                scene_id, version = c.scene_templates.publish_reviewed_candidate(candidate, review)
+            except (ValueError, RuntimeError) as err:
+                raise HTTPException(status_code=422, detail=str(err)) from err
+            status = "approved"
+        else:
+            status = "rejected"
+        result = mvp_store.review_template_candidate(
+            candidate_id, status=status, reviewer=body.reviewer, note=body.note,
+            scene_id=scene_id, version=version,
+        )
+        return result or {"candidate_id": candidate_id, "status": status}
+
+    @api.post("/commerce/mvp/templates/{scene_id}/rollback")
+    async def rollback_template(
+        scene_id: str, body: TemplateRollbackRequest, request: Request,
+    ) -> dict:
+        _local_review_request(request)
+        c = container()
+        if c.scene_templates is None:
+            raise HTTPException(status_code=503, detail="模板运行时未配置")
+        try:
+            restored_version = c.scene_templates.rollback_published_template(scene_id)
+        except ValueError as err:
+            raise HTTPException(status_code=409, detail=str(err)) from err
+        action = _mvp_store(c).record_template_action(
+            scene_id, "rollback", body.reviewer, body.note, restored_version,
+        )
+        return {"scene_id": scene_id, "restored_version": restored_version, **action}
+
     @api.post("/commerce/intents/async")
-    async def submit_intent_async(body: SubmitIntentRequest) -> dict:
+    async def submit_intent_async(body: SubmitIntentRequest, request: Request) -> dict:
         c = container()
         session_id = body.shopping_session_id or f"session-{uuid.uuid4().hex[:8]}"
+        buyer_id, memory_consent = _intent_identity(c, request, session_id)
         intent = SubmitIntentInput(
             shopping_session_id=session_id,
-            buyer_id=body.buyer_id,
+            buyer_id=buyer_id,
             locale=body.locale,
             currency=body.currency,
             raw_query=body.raw_query,
             checklist_selection=body.checklist_selection.model_dump() if body.checklist_selection else None,
+            memory_consent=memory_consent,
         )
         if c.task_queue is None:
             raise HTTPException(status_code=503, detail="队列未启用，请使用 /commerce/intents")
@@ -313,6 +552,8 @@ def build_app() -> FastAPI:
 
         @api.get("/{path:path}", include_in_schema=False)
         async def serve_frontend(path: str) -> FileResponse:
+            if path.startswith("commerce/mvp"):
+                raise HTTPException(status_code=404, detail="ShopMind MVP 路由不存在")
             static_root = static_dir.resolve()
             requested = (static_root / path).resolve()
             if requested.is_file() and static_root in requested.parents:
@@ -368,6 +609,7 @@ async def _enqueue(c: Container, intent: SubmitIntentInput) -> str:
             locale=intent.locale,
             currency=intent.currency,
             raw_query=intent.raw_query,
+            memory_consent=intent.memory_consent,
             priority=await _queue_priority(c, intent.shopping_session_id),
         ),
     )

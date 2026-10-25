@@ -68,6 +68,8 @@ def build_mutation(previous: Optional[ShoppingPlan], current: ShoppingPlan) -> S
     for slot in current.tasks:
         if slot in current.reusable:
             statuses[slot] = "have"
+        elif slot in current.prepared:
+            statuses[slot] = "prepare"
         elif slot in current.not_buy:
             statuses[slot] = "deferred"
         elif slot in current.unknowns:
@@ -78,13 +80,15 @@ def build_mutation(previous: Optional[ShoppingPlan], current: ShoppingPlan) -> S
             statuses[slot] = "must_buy"
         else:
             statuses[slot] = "pending"
-    for slot in [*current.must_buy, *current.optional, *current.reusable, *current.not_buy, *current.unknowns]:
+    for slot in [*current.must_buy, *current.optional, *current.reusable, *current.prepared, *current.not_buy, *current.unknowns]:
         if slot in current.must_buy:
             status = "must_buy"
         elif slot in current.optional:
             status = "optional"
         elif slot in current.reusable:
             status = "have"
+        elif slot in current.prepared:
+            status = "prepare"
         elif slot in current.not_buy:
             status = "deferred"
         else:

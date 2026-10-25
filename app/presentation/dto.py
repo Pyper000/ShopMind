@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 
 class ChecklistSelectionRequest(BaseModel):
     have: list[str] = Field(default_factory=list, max_length=24)
+    prepare: list[str] = Field(default_factory=list, max_length=24)
     must_buy: list[str] = Field(default_factory=list, max_length=24)
     optional_buy: list[str] = Field(default_factory=list, max_length=24)
     deferred: list[str] = Field(default_factory=list, max_length=24)
