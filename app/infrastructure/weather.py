@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 import re
 import time
+from itertools import zip_longest
 from datetime import date, datetime, timedelta, timezone
 from statistics import mean
 from typing import Optional
@@ -31,15 +33,21 @@ _DATE_PATTERN = re.compile(
 
 def _parse_destination(query: str) -> Optional[str]:
     match = re.search(
-        r"(?:目的地(?:是|为)?|去|到|前往|飞往|抵达)\s*"
+        r"(?:目的地(?:改为|改成|是|为)?|去|到|前往|飞往|抵达)\s*"
         r"([\u3400-\u9fffA-Za-z·\s]{2,32}?)"
         r"(?:\s*[（(](?:日本|Japan|JP)[）)])?"
-        r"(?=旅行|旅游|出行|出差|度假|出游|游玩|[，,。；;、\d]|$)",
+        r"(?=旅行|旅游|出行|出差|度假|出游|游玩|玩|[，,。；;、\d]|$)",
         query,
     )
     if not match:
+        match = re.search(r"(?:^|[，,。；;])\s*([\u3400-\u9fffA-Za-z·]{2,12}?)(?=\d+\s*日游|[一二两三四五六七八九十]+日游)", query)
+    if not match:
+        match = re.search(r"(?:圣诞节|春节|元旦|国庆|暑假|寒假)\s*(?:去|到|前往)?\s*([\u3400-\u9fffA-Za-z·]{2,12})", query)
+    if not match:
         return None
     destination = re.sub(r"\s+", " ", match.group(1)).strip()
+    if destination.startswith(("海边", "沙滩", "海岛", "游泳", "下水", "泳池")):
+        return None  # Activities/venues are not a replacement for a known city.
     return destination.removeprefix("日本") if destination.startswith("日本") and len(destination) > 2 else destination
 
 
@@ -51,7 +59,7 @@ def _parse_dates(query: str, today: date) -> tuple[Optional[date], Optional[date
         try:
             current = date(year, int(match.group("month")), int(match.group("day")))
         except ValueError:
-            continue
+            return None, None
         if dates and match.group("year") is None and match.group("iso_year") is None:
             current = current.replace(year=dates[0].year)
             if current < dates[0]:
@@ -71,7 +79,7 @@ def _parse_dates(query: str, today: date) -> tuple[Optional[date], Optional[date
                     end = end.replace(month=end.month + 1) if end.month < 12 else date(end.year + 1, 1, end.day)
                 return dates[0], end
             except ValueError:
-                pass
+                return None, None
         duration_query = re.sub(
             r"(?:(?:20\d{2})(?:年|[-/.]))?\d{1,2}(?:月|[-/.])\d{1,2}日?"
             r"(?:(?:至|到|[-~～])\d{1,2}日?)?",
@@ -101,21 +109,71 @@ def _parse_dates(query: str, today: date) -> tuple[Optional[date], Optional[date
     return None, None
 
 
-def parse_trip_weather_request(query: str, today: Optional[date] = None) -> Optional[dict]:
+def parse_trip_weather_request(
+    query: str, today: Optional[date] = None, previous_context: Optional[dict] = None,
+) -> Optional[dict]:
     """Return a small request only for travel text; dates are never guessed from locale."""
-    travel_cues = ("准备", "清单", "出发", "行程", "天气", "穿衣", "周末", "日期", "目的地", "去", "到")
+    travel_cues = ("准备", "清单", "出发", "行程", "天气", "穿衣", "周末", "日期", "目的地", "去", "到",
+                   "圣诞节", "春节", "元旦", "国庆", "暑假", "寒假")
     is_trip = (
         any(term in query for term in _TRAVEL_TERMS)
+        or any(term in query for term in ("圣诞节", "春节", "元旦", "国庆", "暑假", "寒假"))
         or ("旅行" in query and any(cue in query for cue in travel_cues))
         or bool(re.search(r"(?:去|到).{0,12}(?:玩|逛)", query))
+        or bool(re.search(r"[\u3400-\u9fffA-Za-z]{2,}\d+日游", query))
     )
-    if not is_trip:
-        return None
     today = today or date.today()
     destination = _parse_destination(query)
     start, end = _parse_dates(query, today)
+    duration_query = _DATE_PATTERN.sub("", query)
+    duration_query = re.sub(r"(?:至|到|[-~～])\s*\d{1,2}日?", "", duration_query)
+    duration = re.search(r"(\d{1,2}|[一二两三四五六七八九十]+)\s*(?:天|晚|夜|日游|日)", duration_query)
+    explicit_dates = bool(_DATE_PATTERN.search(query)) or start is not None
+    if not is_trip and not (previous_context and (
+        destination or explicit_dates or duration or any(term in query for term in ("天气", "气温", "下雨", "下雪", "穿衣"))
+    )):
+        return None
+    inherited = []
+    if previous_context:
+        if not destination:
+            destination = previous_context.get("destination") or (previous_context.get("location") or "").split("，")[0] or None
+            if destination:
+                inherited.append("destination")
+        if not explicit_dates:
+            try:
+                start = date.fromisoformat(previous_context["start_date"])
+                end = date.fromisoformat(previous_context["end_date"])
+            except (KeyError, TypeError, ValueError):
+                start = end = None
+            if start and end:
+                inherited.append("travel_dates")
+    duration_days = None
+    if duration:
+        raw = duration.group(1)
+        digits = {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+        if raw.isdigit():
+            duration_days = int(raw)
+        elif "十" in raw:
+            left, _, right = raw.partition("十")
+            duration_days = (digits.get(left, 1) if left else 1) * 10 + digits.get(right, 0)
+        else:
+            duration_days = digits.get(raw, 1)
+    elif previous_context and (not explicit_dates or (start and end == start and len(list(_DATE_PATTERN.finditer(query))) <= 1)):
+        duration_days = previous_context.get("duration_days")
+        if not duration_days:
+            try:
+                duration_days = (date.fromisoformat(previous_context["end_date"]) - date.fromisoformat(previous_context["start_date"])).days + 1
+            except (KeyError, ValueError, TypeError):
+                pass
+    if start and duration_days:
+        end = start + timedelta(days=max(1, duration_days) - 1)
+        if "travel_dates" in inherited and duration:
+            inherited.remove("travel_dates")
+            inherited.append("start_date")
+    if start and end:
+        duration_days = (end - start).days + 1
     missing = [field for field, value in (("destination", destination), ("travel_dates", start and end)) if not value]
-    if start and end and (end < start or (end - start).days > 30):
+    if start and end and (end < start or (end - start).days >= 30):
         missing.append("a_trip_of_30_days_or_less")
     request = {
         "destination": destination,
@@ -123,8 +181,18 @@ def parse_trip_weather_request(query: str, today: Optional[date] = None) -> Opti
         "end_date": end.isoformat() if end else None,
         "missing": missing,
     }
-    if destination == "东京" or re.search(r"日本|\bJapan\b|\bJP\b", query, re.IGNORECASE):
+    if duration_days is not None:
+        request["duration_days"] = duration_days
+        if not 1 <= duration_days <= 30 and "a_trip_of_30_days_or_less" not in missing:
+            missing.append("a_trip_of_30_days_or_less")
+    if destination in {"东京", "大阪", "京都", "札幌", "冲绳"} or re.search(r"日本|\bJapan\b|\bJP\b", query, re.IGNORECASE):
         request["country_code"] = "JP"
+    elif destination in {"济州岛", "济州"} or re.search(r"韩国|\bKorea\b|\bKR\b", query, re.IGNORECASE):
+        request["country_code"] = "KR"
+    elif previous_context and destination == previous_context.get("destination") and previous_context.get("country_code"):
+        request["country_code"] = previous_context["country_code"]
+    if previous_context:
+        request["inherited_fields"] = inherited
     return request
 
 
@@ -136,14 +204,18 @@ def _shift_year(value: date, years: int) -> date:
 
 
 def _values(daily: dict, key: str) -> list[float]:
-    return [float(value) for value in daily.get(key, []) if isinstance(value, (int, float))]
+    return [float(value) for value in (daily.get(key) or []) if _is_number(value)]
+
+
+def _is_number(value) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
 
 def _rain_values(daily: dict) -> list[float]:
-    rain, showers = _values(daily, "rain_sum"), _values(daily, "showers_sum")
+    rain, showers = daily.get("rain_sum") or [], daily.get("showers_sum") or []
     return [
-        (rain[index] if index < len(rain) else 0) + (showers[index] if index < len(showers) else 0)
-        for index in range(max(len(rain), len(showers)))
+        sum(value for value in pair if _is_number(value))
+        for pair in zip_longest(rain, showers) if any(_is_number(value) for value in pair)
     ]
 
 
@@ -163,9 +235,11 @@ class OpenMeteoWeatherClient:
         self._timeout = timeout
         self._cache: dict[tuple[str, str, str, str], tuple[float, dict]] = {}
 
-    async def for_query(self, query: str, today: Optional[date] = None) -> Optional[dict]:
+    async def for_query(
+        self, query: str, today: Optional[date] = None, previous_context: Optional[dict] = None,
+    ) -> Optional[dict]:
         today = today or date.today()
-        request = parse_trip_weather_request(query, today)
+        request = parse_trip_weather_request(query, today, previous_context)
         if request is None:
             return None
         if request["missing"]:
@@ -176,12 +250,13 @@ class OpenMeteoWeatherClient:
         key = (destination.casefold(), country_code, start_text, end_text)
         cached = self._cache.get(key)
         if cached and cached[0] > time.monotonic():
-            return dict(cached[1])
+            return {**cached[1], **request}
 
         start, end = date.fromisoformat(start_text), date.fromisoformat(end_text)
         try:
             async with httpx.AsyncClient(timeout=self._timeout, transport=self._transport) as client:
-                geo_params = {"name": destination, "count": 5, "language": "zh"}
+                geo_name = {"济州岛": "Jeju City", "济州": "Jeju City"}.get(destination, destination)
+                geo_params = {"name": geo_name, "count": 5, "language": "en" if geo_name != destination else "zh"}
                 if country_code:
                     geo_params["countryCode"] = country_code
                 if country_code == "JP" and destination == "东京":
@@ -229,12 +304,12 @@ class OpenMeteoWeatherClient:
                     context = self._forecast_context(response.json(), request, location_name)
                 else:
                     context = await self._climate_context(client, location, request, location_name, today)
-        except (httpx.HTTPError, KeyError, TypeError, ValueError) as err:
+        except (httpx.HTTPError, KeyError, TypeError, ValueError, AttributeError) as err:
             logger.warning("Open-Meteo 查询失败，退回通用出行清单：%s", err)
             return {"mode": "unavailable", **request, "provider": "Open-Meteo"}
 
         self._cache[key] = (time.monotonic() + 6 * 60 * 60, context)
-        return dict(context)
+        return {**context, **request}
 
     @staticmethod
     def _forecast_context(data: dict, request: dict, location_name: str) -> dict:
@@ -251,7 +326,7 @@ class OpenMeteoWeatherClient:
             "temperature_min_c": min(_values(daily, "temperature_2m_min"), default=None),
             "temperature_max_c": max(_values(daily, "temperature_2m_max"), default=None),
             "precipitation_probability_max_pct": max(_values(daily, "precipitation_probability_max"), default=None),
-            "precipitation_mm_sum": round(sum(_values(daily, "precipitation_sum")), 1),
+            "precipitation_mm_sum": round(sum(_values(daily, "precipitation_sum")), 1) if _values(daily, "precipitation_sum") else None,
             "rainfall_mm_sum": round(sum(rain), 1) if rain else None,
             "rain_days": sum(value >= 0.1 for value in rain) if rain else None,
             "snowfall_cm_sum": round(sum(snow), 1) if snow else None,
@@ -285,7 +360,7 @@ class OpenMeteoWeatherClient:
         highs = [value for data in histories for value in _values(data, "temperature_2m_max")]
         rain_values = [_rain_values(data) for data in histories]
         snow_values = [_values(data, "snowfall_sum") for data in histories]
-        precipitation_by_year = [sum(_values(data, "precipitation_sum")) for data in histories]
+        precipitation_by_year = [sum(_values(data, "precipitation_sum")) for data in histories if _values(data, "precipitation_sum")]
         rain_by_year = [sum(values) for values in rain_values if values]
         rain_days_by_year = [sum(value >= 0.1 for value in values) for values in rain_values if values]
         snow_by_year = [sum(values) for values in snow_values if values]

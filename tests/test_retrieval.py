@@ -5,9 +5,10 @@ embedding 用确定性桩实现（关键词特征轴 + 余弦），向量索引�
 全程不依赖外部服务与 LLM。
 """
 import pytest
+from unittest.mock import AsyncMock
 
 from app.application.usecases.catalog_search import CatalogSearchUseCase
-from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, Reranker
+from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, Reranker, VectorHit
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 from app.infrastructure.persistence.in_memory_repositories import InMemoryProductRepository
 from app.infrastructure.settings import Settings
@@ -68,6 +69,49 @@ async def indexed(tmp_path):
     assert ok, "本地嵌入模式建库应成功"
     yield repo, embedder, index
     await index.close()
+
+
+class TestCarrierChecklistSearch:
+    @pytest.mark.parametrize("slot", ["猫咪航空箱", "猫咪航空箱/外出箱"])
+    async def test_carrier_alias_returns_carriers_not_mat(self, slot):
+        usecase = CatalogSearchUseCase(InMemoryProductRepository())
+        result = await usecase.execute(ProductSearchSpec(
+            normalized_query=slot, shopping_task=slot, top_k=8,
+        ))
+        assert {p["product_id"] for p in result["hits"]} == {
+            "P2116", "P2117", "P2118", "P2119", "P2120",
+        }
+        assert all("猫咪航空箱" in p["title"] for p in result["hits"])
+
+    async def test_wrong_vector_pool_falls_back_without_claiming_catalog_gap(self):
+        embedder = AsyncMock()
+        index = AsyncMock()
+        index.search.return_value = [VectorHit(product_id="P2152", score=0.9)]
+        usecase = CatalogSearchUseCase(InMemoryProductRepository(), embedder=embedder, vector_index=index)
+        result = await usecase.execute(ProductSearchSpec(
+            normalized_query="猫咪航空箱/外出箱", shopping_task="猫咪航空箱/外出箱",
+        ))
+        assert len(result["hits"]) == 5
+        assert all("猫咪航空箱" in p["title"] for p in result["hits"])
+        assert result["recall_strategy"] == "keyword_2gram_slot_fallback"
+        assert result["rerank_applied"] is False
+
+    async def test_cached_mat_is_not_replaced_by_new_candidates(self):
+        result = await CatalogSearchUseCase(InMemoryProductRepository()).execute(ProductSearchSpec(
+            normalized_query="猫咪航空箱/外出箱", shopping_task="猫咪航空箱/外出箱",
+            candidate_ids=["P2152"],
+        ))
+        assert result["hits"] == []
+        assert result["candidate_ids"] == []
+
+    async def test_carrier_alias_still_respects_budget(self):
+        result = await CatalogSearchUseCase(InMemoryProductRepository()).execute(ProductSearchSpec(
+            normalized_query="猫咪航空箱/外出箱", shopping_task="猫咪航空箱/外出箱",
+            price_max_major=1,
+        ))
+        assert result["hits"] == []
+        assert result["filtered_out"]
+        assert all(p["reason"] == "over_price_cap" for p in result["filtered_out"])
 
 
 class TestTwoStageRecall:

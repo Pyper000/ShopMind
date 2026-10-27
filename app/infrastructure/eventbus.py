@@ -17,6 +17,7 @@ Presentation 层按 shopping_session_id 订阅后推送给前端 WebSocket。
     cache.hit           语义缓存命中，本轮未调模型（四期）
     task.queued         意图已入队，等待 worker 领取（四期）
     task.started        worker 已开始处理（四期）
+    weather.lookup      行程天气查询开始、结果或降级原因
     final.result        最终回复
     error               异常
 """
@@ -43,6 +44,7 @@ EVENT_TYPES = (
     "cache.hit",
     "task.queued",
     "task.started",
+    "weather.lookup",
     "final.result",
     "error",
 )

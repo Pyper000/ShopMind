@@ -53,6 +53,15 @@ async function readApiJson<T>(response: Response): Promise<T> {
 function eventLabel(event: CommerceEvent) {
   const payload = event.payload;
   if (event.type === 'plan.update') return 'MainAgent 已更新购物清单';
+  if (event.type === 'weather.lookup') {
+    const status = String(payload.status || payload.mode || 'unknown');
+    if (status === 'started') return '天气 API 开始查询';
+    if (status === 'needs_details') return '天气 API 等待目的地或日期';
+    if (status === 'forecast') return '天气 API 已返回行程预报';
+    if (status === 'climate_reference') return '天气 API 已返回历史气候参考';
+    if (status === 'unavailable') return '天气 API 暂不可用，已保留基础清单';
+    return `天气 API：${status}`;
+  }
   if (event.type === 'plan.preview') return 'MainAgent 正在生成清单草稿';
     if (event.type === 'model.call') return `${String(payload.agent || 'Agent')} 模型调用 ${Number(payload.elapsed_ms || 0) / 1000} 秒`;
   if (event.type === 'agent.dispatch') return payload.agent === 'search_agent' ? 'SearchAgent 开始检索' : `已派发 ${String(payload.agent || '子 Agent')}`;
@@ -467,7 +476,7 @@ export default function LiveChat() {
       const statuses: Record<string, SlotStatus> = {};
       for (const [prefix, items] of [['required', data.plan.tasks ?? []], ['optional', data.plan.optional ?? []]] as const) {
         for (const item of items) statuses[`${prefix}:${item}`] = data.plan.reusable?.includes(item) ? 'have'
-          : data.plan.prepared?.includes(item) || data.plan.must_buy?.includes(item) || data.plan.optional?.includes(item) ? 'prepare'
+          : data.plan.prepared?.includes(item) || data.plan.must_buy?.includes(item) ? 'prepare'
             : data.plan.not_buy?.includes(item) ? 'not_needed' : 'unknown';
       }
       setSlotStatus(statuses);

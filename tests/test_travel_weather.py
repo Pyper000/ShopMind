@@ -30,7 +30,7 @@ def test_trip_weather_request_requires_explicit_place_and_date_but_parses_common
         "2026年10月28日至30日去上海旅行", today=date(2026, 10, 25),
     )
     assert request == {
-        "destination": "上海", "start_date": "2026-10-28", "end_date": "2026-10-30", "missing": [],
+        "destination": "上海", "start_date": "2026-10-28", "end_date": "2026-10-30", "missing": [], "duration_days": 3,
     }
     assert parse_trip_weather_request("2026年10月28到30去上海旅行", today=date(2026, 10, 25))["end_date"] == "2026-10-30"
     assert parse_trip_weather_request("2027年11月10日去上海旅行", today=date(2026, 10, 25))["end_date"] == "2027-11-10"
@@ -231,6 +231,41 @@ def test_explicit_adult_and_child_party_gets_separate_weather_clothing_counts():
     assert items["5岁儿童内衣"]["quantity"] == "4件"
     assert "换洗上衣" not in items and "内衣" not in items
     assert set(enriched.tasks) == set(items)
+
+
+def test_multiple_adults_show_per_person_quantity_instead_of_aggregate_total():
+    plan = SceneTemplateStore().build_plan(
+        "2026年12月24日至26日去济州岛旅行", SceneTemplateStore().match("2026年12月24日至26日去济州岛旅行")
+    )
+    enriched = apply_weather_context(plan, {
+        "mode": "forecast", "destination": "济州岛", "location": "济州岛，韩国",
+        "start_date": "2026-12-24", "end_date": "2026-12-26",
+        "duration_days": 3,
+        "temperature_min_c": 2, "temperature_max_c": 9,
+        "travel_party": {"adults": 3, "child_ages": []},
+    })
+    entries = {item["name"]: item for section in enriched.checklist_sections
+               for item in [*section["required"], *section["optional"]]}
+    assert entries["成人保暖长袖上衣"]["quantity"] == "4件/人（3位成人各4件）"
+    assert "12件" not in entries["成人保暖长袖上衣"]["quantity"]
+    acknowledgement = _plan_ack_text(enriched.to_dict())
+    assert "成人换洗穿搭 4套/人（3位成人各4套）" in acknowledgement
+    assert "成人厚外套" in acknowledgement
+
+
+def test_missing_weather_still_shows_each_adult_basics_not_aggregate_total():
+    store = SceneTemplateStore()
+    query = "去济州岛旅游3天，3个成人，帮我准备清单"
+    plan = store.build_plan(query, store.match(query))
+    enriched = apply_weather_context(plan, {
+        "mode": "needs_details", "destination": "济州岛", "missing": ["travel_dates"],
+        "duration_days": 3, "travel_party": {"adults": 3, "child_ages": []},
+    })
+    entries = {item["name"]: item for section in enriched.checklist_sections
+               for item in [*section["required"], *section["optional"]]}
+    assert entries["成人换洗穿搭（上衣+下装）"]["quantity"] == "4套/人（3位成人各4套）"
+    assert entries["成人内衣"]["quantity"] == "4件/人（3位成人各4件）"
+    assert "12" not in entries["成人内衣"]["quantity"]
 
 
 def test_beach_swimwear_is_conditional_on_planning_to_swim():

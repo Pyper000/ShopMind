@@ -43,7 +43,7 @@ from agentscope.message import Msg, TextBlock, UserMsg
 from app.application.agents.main_agent import SessionRegistry
 from app.application.agents.scheme_state import CandidatePool, SchemeStateRegistry
 from app.application.agents.intent_router import EditRoute, route_direct_item, route_edit
-from app.application.travel_weather import apply_weather_context
+from app.application.travel_weather import apply_weather_context, update_travel_party, travel_activity_patch
 from app.application.tools.shopping_plan_tool import commit_checklist_selection, _is_non_purchasable_slot
 from app.application.harness.drift_detector import DriftDetector
 from app.application.harness.loop_detector import LoopDetector
@@ -66,7 +66,7 @@ from app.infrastructure.persistence.scene_template_store import SceneTemplateSto
 from app.infrastructure.budget import init_budget
 from app.infrastructure.security.output_guard import audit_output
 from app.infrastructure.transient import is_transient_error
-from app.infrastructure.weather import OpenMeteoWeatherClient
+from app.infrastructure.weather import OpenMeteoWeatherClient, parse_trip_weather_request
 from app.domain.session.shopping_plan import ShoppingPlan
 
 logger = logging.getLogger(__name__)
@@ -163,13 +163,7 @@ def _tasks_snapshot(agent: Agent) -> dict:
 
 def _travel_party(query: str) -> Optional[dict]:
     """Capture only explicitly stated adult/child travel companions."""
-    child_ages = [int(age) for age in re.findall(r"(\d{1,2})\s*岁.{0,5}(?:小孩|孩子|儿童)", query)]
-    if not child_ages:
-        child_ages = [int(age) for age in re.findall(r"(?:小孩|孩子|儿童).{0,5}(\d{1,2})\s*岁", query)]
-    if not child_ages:
-        return None
-    adults = 1 if re.search(r"(?:我和|我们|带)", query) else 0
-    return {"adults": adults, "child_ages": child_ages}
+    return update_travel_party(query)
 
 
 def _plan_ack_text(payload: dict) -> str:
@@ -202,10 +196,37 @@ def _plan_ack_text(payload: dict) -> str:
                 if item.get("condition"):
                     detail += f"（{item['condition']}）"
                 clothing.append(detail)
-    clothing_summary = f"衣物建议：{'；'.join(clothing[:4])}。" if clothing else ""
+    weather = payload.get("weather_context") or {}
+    outfit_summary = []
+    if weather.get("mode") in {"forecast", "climate_reference"}:
+        party = weather.get("travel_party") or {}
+        try:
+            outfits = int(weather.get("duration_days")) + 1
+        except (TypeError, ValueError):
+            outfits = 0
+        has_existing_outfit_line = any("换洗穿搭" in detail or "成套穿搭" in detail for detail in clothing)
+        if 1 <= outfits <= 31 and not has_existing_outfit_line:
+            adults = int(party.get("adults") or 0)
+            if adults:
+                label = "本人" if adults == 1 else "成人"
+                outfit_summary.append(
+                    f"{label}换洗穿搭 {outfits}套/人（{adults}位{label}各{outfits}套）"
+                    if adults > 1 else f"本人换洗穿搭 {outfits}套"
+                )
+            children = list(party.get("child_ages") or [])
+            for age in dict.fromkeys(children):
+                count = children.count(age)
+                outfit_summary.append(
+                    f"{age}岁儿童换洗穿搭 {outfits}套/人（{count}位{age}岁儿童各{outfits}套）"
+                )
+    clothing_summary = f"衣物建议：{'；'.join([*outfit_summary, *clothing[:7]])}。" if clothing or outfit_summary else ""
+    weather_question = ""
+    if weather.get("mode") == "needs_details" and "travel_dates" in (weather.get("missing") or []):
+        weather_question = "为了按目的地天气细分厚外套、轻薄外套和每人衣物套数，请告诉我具体出发日期和返程日期。"
     return (
         f"我先按“{goal}”整理了清单：{shown}。"
         + clothing_summary
+        + weather_question
         + "请在下方逐项标记已有、需要准备或还没确认；证件、资料等非商品只记录准备，可购买的物品才会进入商品匹配。"
     )
 
@@ -373,29 +394,78 @@ class MainAgentOrchestrator:
         session_id = intent.shopping_session_id
         started_at = time.monotonic()
         saved_scheme = self._scheme_states.get(session_id) if self._scheme_states else None
+        matched_scene = self._scene_templates.match(intent.raw_query) if self._scene_templates else None
+        scene_match_mode = "keyword" if matched_scene else None
+        if matched_scene is None and self._scene_templates is not None:
+            matched_scene = await self._scene_templates.match_semantic(intent.raw_query)
+            if matched_scene is not None:
+                scene_match_mode = "semantic"
+        travel_templates = {"general_travel", "beach_weekend"}
+        previous_weather = (
+            saved_scheme.scheme.weather_context
+            if saved_scheme and saved_scheme.scheme.template_id in {*travel_templates, None}
+            and (matched_scene is None or matched_scene["id"] in travel_templates) else None
+        )
+        trip_request = parse_trip_weather_request(intent.raw_query, previous_context=previous_weather)
+        if matched_scene is None and saved_scheme is None and trip_request and trip_request.get("destination"):
+            matched_scene = self._scene_templates.match("出行") if self._scene_templates else None
+            scene_match_mode = "trip_request" if matched_scene else None
         weather_context = None
         if self._weather_client is not None:
+            weather_started = time.monotonic()
+            self._bus.publish(session_id, "weather.lookup", {
+                "status": "started",
+                "provider": "Open-Meteo",
+                "request": trip_request or {},
+                "inherited_fields": (trip_request or {}).get("inherited_fields", []),
+            })
             try:
+                kwargs = {"previous_context": previous_weather} if previous_weather else {}
                 weather_context = await asyncio.wait_for(
-                    self._weather_client.for_query(intent.raw_query),
+                    self._weather_client.for_query(intent.raw_query, **kwargs),
                     timeout=_TRAVEL_WEATHER_TIMEOUT_SECONDS,
                 )
+                self._bus.publish(session_id, "weather.lookup", {
+                    "status": weather_context.get("mode") if weather_context else "not_applicable",
+                    "provider": "Open-Meteo",
+                    "mode": weather_context.get("mode") if weather_context else None,
+                    "destination": (weather_context or {}).get("destination"),
+                    "start_date": (weather_context or {}).get("start_date"),
+                    "end_date": (weather_context or {}).get("end_date"),
+                    "elapsed_ms": round((time.monotonic() - weather_started) * 1000),
+                })
             except Exception as err:  # noqa: BLE001 — weather is a best-effort checklist hint
                 logger.warning("天气查询失败，按通用清单继续：%s", err)
-                weather_context = {"mode": "unavailable", "provider": "Open-Meteo"}
-        if (
-            weather_context is None
-            and saved_scheme is not None
-            and saved_scheme.scheme.weather_context
-            and saved_scheme.scheme.template_id in {"general_travel", "beach_weekend"}
-        ):
+                if trip_request:
+                    weather_context = {**trip_request, "mode": "unavailable", "provider": "Open-Meteo"}
+                self._bus.publish(session_id, "weather.lookup", {
+                    "status": "unavailable", "mode": "unavailable", "provider": "Open-Meteo",
+                    "destination": (trip_request or {}).get("destination"),
+                    "start_date": (trip_request or {}).get("start_date"),
+                    "end_date": (trip_request or {}).get("end_date"),
+                    "elapsed_ms": round((time.monotonic() - weather_started) * 1000),
+                    "fallback": "basic_checklist",
+                })
+        if weather_context is None and previous_weather:
             # Follow-up turns often contain only new constraints (e.g. child age),
             # not the original destination/date; keep the trip's weather snapshot.
-            weather_context = dict(saved_scheme.scheme.weather_context)
+            weather_context = dict(previous_weather)
+        party_patch = update_travel_party(intent.raw_query, (previous_weather or {}).get("travel_party"))
+        activity_patch = travel_activity_patch(intent.raw_query)
+        party = party_patch
         if weather_context is not None:
-            party = _travel_party(intent.raw_query)
+            if not party and previous_weather:
+                party = previous_weather.get("travel_party")
             if party:
                 weather_context = {**weather_context, "travel_party": party}
+            activities = {**(previous_weather or {}).get("activities", {}), **activity_patch}
+            if activities:
+                weather_context = {**weather_context, "activities": activities}
+        weather_edit = bool(
+            previous_weather and weather_context and (trip_request or party_patch or activity_patch)
+            and (matched_scene is None or matched_scene["id"] == saved_scheme.scheme.template_id
+                 or (activity_patch and matched_scene["id"] in travel_templates))
+        )
         snapshot = ShoppingContextSnapshot(
             shopping_session_id=session_id,
             buyer_id=intent.buyer_id,
@@ -418,12 +488,6 @@ class MainAgentOrchestrator:
             agent = await self._sessions.get_or_create(session_id)
             summary_before = agent.state.summary
             has_history = bool(agent.state.context)
-            matched_scene = self._scene_templates.match(intent.raw_query) if self._scene_templates else None
-            scene_match_mode = "keyword" if matched_scene else None
-            if matched_scene is None and self._scene_templates is not None:
-                matched_scene = await self._scene_templates.match_semantic(intent.raw_query)
-                if matched_scene is not None:
-                    scene_match_mode = "semantic"
             direct_item = route_direct_item(intent.raw_query)
             if (
                 saved_scheme is None
@@ -462,22 +526,28 @@ class MainAgentOrchestrator:
                 self._bus.publish(session_id, "final.result", {"text": final_text})
                 return SubmitIntentOutput(shopping_session_id=session_id, final_text=final_text)
             if (
-                matched_scene is not None
-                and (saved_scheme is None or saved_scheme.scheme.template_id != matched_scene["id"])
+                (weather_edit or (matched_scene is not None
+                and (saved_scheme is None or saved_scheme.scheme.template_id != matched_scene["id"])))
                 and not intent.checklist_selection
                 and self._scheme_states is not None
                 and self._scene_templates is not None
             ):
                 planning_query = intent.raw_query
-                if (saved_scheme is not None and saved_scheme.scheme.template_id in {"general_travel", "beach_weekend"}
-                        and matched_scene["id"] in {"general_travel", "beach_weekend"}):
+                if (not weather_edit and saved_scheme is not None and saved_scheme.scheme.template_id in travel_templates
+                        and matched_scene["id"] in travel_templates):
                     duration = re.search(r"（(\d{1,2})天）", saved_scheme.scheme.goal)
                     if duration and not re.search(r"(?:\d+|[一二两三四五六七八九十]+)\s*(?:天|晚|夜)", planning_query):
                         planning_query += f" {duration.group(1)}天"
-                plan = self._scene_templates.build_plan(planning_query, matched_scene)
+                plan = saved_scheme.scheme if weather_edit else self._scene_templates.build_plan(planning_query, matched_scene)
+                if party and weather_context:
+                    people = (party.get("adults") or 0) + len(party.get("child_ages") or [])
+                    if people:
+                        plan = replace(plan, people=people)
                 if weather_context:
                     plan = apply_weather_context(plan, weather_context)
                 request = self._scheme_states.update(session_id, plan)
+                if self._candidate_pool is not None:
+                    self._candidate_pool.apply(session_id, request.mutation)
                 # A newly matched scene replaces an old scene deterministically.
                 # No LLM round-trip is needed to repeat a known checklist.
                 agent.state.context.append(UserMsg(intent.buyer_id, intent.raw_query))
@@ -497,6 +567,7 @@ class MainAgentOrchestrator:
                         "mutation": request.mutation.to_dict(),
                         "search_request": request.to_dict(),
                         "scene_match_mode": scene_match_mode,
+                        "route": "travel_weather_update" if weather_edit else "scene_template",
                     },
                 )
                 self._bus.publish(session_id, "final.result", {"text": final_text})

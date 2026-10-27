@@ -42,6 +42,20 @@ _RECALL_TOP_N = 8
 # 被硬约束挡掉的候选回传条数上限（只回摘要，避免上下文膨胀）
 _FILTERED_OUT_LIMIT = 3
 
+# 已确认的清单同义名称；不按任意斜杠拆分，避免放宽对象/用途约束。
+_TASK_ALIASES = {
+    "猫咪航空箱/外出箱": ("猫咪航空箱", "猫咪外出箱"),
+}
+
+
+def _matches_task(product: Product, task: str) -> bool:
+    task = task.casefold().strip()
+    terms = _TASK_ALIASES.get(task, (task,))
+    text = " ".join(
+        [product.title, *(h.label + " " + h.detail for h in product.highlights)],
+    ).casefold()
+    return any(term in text for term in terms)
+
 
 @dataclass(frozen=True)
 class ProductCard:
@@ -144,14 +158,15 @@ class CatalogSearchUseCase:
         # 清单槽位是明确的商品任务。向量相似度只能召回候选，不能证明品类一致；
         # 目录未覆盖该槽位时宁可返回空结果，也不把相邻用途的商品伪装成匹配项。
         if spec.shopping_task:
-            task = spec.shopping_task.casefold().strip()
-            scored = [
-                (score, product)
-                for score, product in scored
-                if task in " ".join(
-                    [product.title, *(highlight.label + " " + highlight.detail for highlight in product.highlights)],
-                ).casefold()
-            ]
+            scored = [(score, product) for score, product in scored
+                      if _matches_task(product, spec.shopping_task)]
+            # 向量 top-N 全被品类检查排除，不代表整个目录没有商品。
+            # 只对首次召回补查关键词；缓存候选的细化不得越出原候选池。
+            if not scored and not spec.candidate_ids and recall_strategy.startswith("embedding"):
+                scored = [(score, product) for score, product in await self._keyword_recall(spec)
+                          if _matches_task(product, spec.shopping_task)]
+                recall_strategy = "keyword_2gram_slot_fallback"
+                rerank_applied = False
 
         # ship_to / 价格硬约束过滤 + top_k 截断（硬约束走结构化过滤，不交给模型）
         filtered: list[tuple[float, Product]] = []
